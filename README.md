@@ -42,6 +42,21 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Clevergy is a company surfaced as a portfolio company of serena and added to the API Evangelist network as a stub for enrichment. Sector: climate-tech. This profile is a lead awaiting the enrichment pipeline.
+Clevergy (The Clevergy Solution, SL) is a Madrid-based climate-tech SaaS company, founded in 2022,
+selling white-label energy-management software to electricity and gas retailers, solar installers
+and energy advisors. It ingests household consumption data — from Spanish distributors and the
+Datadis smart-meter hub via the CUPS supply-point code, or from connected solar inverters and smart
+devices — and turns it into analytics, invoice breakdowns, recommendations, appliance-level
+disaggregation, virtual battery/wallet balances, energy-community shares and sales leads.
 
-Source: portfolio company of [serena](https://github.com/api-evangelist/serena) — https://clever.gy/fr/
+Two public integration surfaces are profiled here:
+
+- **[Clevergy Connect API](https://docs.clever.gy/connect-api/clevergy-connect-api)** — a Swagger 2.0
+  REST API on `connect.clever.gy`, 62 paths / 83 operations / 102 definitions, harvested verbatim to
+  [`openapi/`](openapi/). Auth is a tenant API key in the `clevergy-api-key` header.
+- **[Microfrontends](https://docs.clever.gy/helpdesk/microfrontends-catalog)** — ~30 embeddable web
+  components catalogued in [`components/`](components/), loaded from a single unpinned ES module and
+  authenticated with a 1-hour per-user JWT.
+
+Sector: climate-tech. Source: portfolio company of
+[serena](https://github.com/api-evangelist/serena) — https://clever.gy/en/

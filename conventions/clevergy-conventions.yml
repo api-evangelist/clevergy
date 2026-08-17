@@ -1,0 +1,154 @@
+generated: '2026-08-17'
+method: searched
+source: >-
+  https://docs.clever.gy/developer/getting-started/authentication and
+  openapi/clevergy-connect-api-openapi.yml — the cross-cutting request/response semantics that
+  apply across the Clevergy Connect API rather than to any single operation.
+description: >-
+  How the Clevergy Connect API behaves across its operations: authentication style, pagination
+  (two different styles coexist), error envelope, resource addressing, and what it does NOT
+  document. Recorded so an agent or integrator knows the runtime rules OpenAPI 2.0 does not
+  express.
+
+base_url: https://connect.clever.gy
+api_style: REST over HTTPS, JSON request and response bodies
+spec_format: Swagger 2.0 (openapi/clevergy-connect-api-openapi.yml)
+
+authentication:
+  scheme: API key in a custom request header
+  header: clevergy-api-key
+  scope: tenant (one key per environment, regenerable from the Operations Portal)
+  user_delegation: >-
+    Per-user JWTs are minted server-side via retrieveUserAccessToken and are what embedded
+    microfrontends carry; the API key itself must stay server-side.
+  docs: https://docs.clever.gy/developer/getting-started/authentication
+  detail: authentication/clevergy-authentication.yml
+
+idempotency:
+  supported: false
+  documented: false
+  mechanism: null
+  note: >-
+    No Idempotency-Key header, request-id echo, or replay semantics appear anywhere in the
+    OpenAPI parameters or the published documentation. Several operations are unsafe to retry
+    blindly as a result — most notably createInvoice (which mints a 15-minute signed upload
+    URL), createVirtualWalletTransaction and createVirtualBatteryTransaction (which post a
+    balance delta), and scheduleStorageEquipmentAction (which programs battery hardware).
+    409 Conflict responses on eight operations (including createUser via HttpErrorUserExists)
+    give a caller a way to detect a duplicate after the fact, but that is conflict detection,
+    not idempotency. Recorded as a gap, deliberately, so no Idempotency pointer is claimed.
+
+pagination:
+  styles_in_use: 2
+  note: >-
+    The API mixes two pagination models across resources; a client cannot assume one.
+  page_number:
+    used_by: [getUsers, getSalesOpportunities, getTenantEquipments]
+    request_params:
+      page: zero-or-one-based page index (see the operation)
+      size: number of elements per page
+      sort: field to sort on
+      direction: sort direction
+    response_fields:
+      size: number of elements in the page requested
+      page: number of the page requested
+      totalPages: number of total pages
+      totalElements: number of total elements in the list
+      elements: array of results
+    schemas: [UsersPage, SalesOpportunitiesPage, EquipmentsPage]
+  cursor:
+    used_by: [getTenantHouses]
+    request_params:
+      cursor: opaque UUID cursor for the next page
+      limit: page size
+    response_fields:
+      cursor: cursor to pass on the next request
+      elements: array of results
+    schemas: [HousesPage]
+
+time_range_queries:
+  params: [startDate, endDate, month, granularity, timeZone, includeTimeSpanStart, includeTimeSpanEnd]
+  note: >-
+    Energy, power, SOC and disaggregation reads are time-window queries. timeZone is an explicit
+    parameter on two operations rather than an assumed UTC, and includeTimeSpanStart /
+    includeTimeSpanEnd control boundary inclusion.
+
+error_envelope:
+  format: custom (not RFC 9457 application/problem+json)
+  content_type: application/json
+  status_specific_shape:
+    timestamp: request date and time (ISO 8601 with offset)
+    status: HTTP status code, as an integer
+    error: short HTTP error description
+    path: the request path
+  default_shape:
+    code: integer
+    message: string
+  note: >-
+    Each 4xx status has its own named schema (HttpErrorBadRequest, HttpErrorUnauthorized,
+    HttpErrorForbidden, HttpErrorNotFound, HttpErrorConflict, HttpErrorUserExists,
+    HttpErrorUnprocessableEntity) carrying the same four fields; the catch-all `default`
+    response uses a different two-field shape (code + message). There is no machine-readable
+    error `type` URI or application-level error code vocabulary.
+  detail: errors/clevergy-problem-types.yml
+
+versioning:
+  scheme: none in the URL
+  current: 'Connect API 1.0.0 (info.version)'
+  note: >-
+    Paths are unversioned (https://connect.clever.gy/users, not /v1/users). Evolution is
+    handled by tag rather than by version: the spec carries "Contracts - Deprecated" and
+    "Invoices - Deprecated" tag groups holding the superseded house-scoped operations, whose
+    replacements are the user-scoped electricity/gas contract and contract-scoped invoice
+    operations. One operation carries the OpenAPI deprecated flag (getUserHouses).
+  detail: lifecycle/clevergy-lifecycle.yml
+
+rate_limits:
+  documented: false
+  headers: null
+  note: >-
+    No published limits and no rate-limit response headers appear in the spec or docs. See
+    rate-limits/clevergy-rate-limits.yml.
+
+request_tracing:
+  request_id_header: null
+  documented: false
+  note: >-
+    No correlation/request-id header is documented. The error envelope echoes the request `path`
+    and a `timestamp`, which is the only correlation material a caller gets.
+
+file_upload:
+  pattern: signed URL, out of band
+  flow: >-
+    createInvoice returns a fileUrl — a signed URL valid for 15 minutes — and the caller PUTs
+    the invoice PDF to it. If the PDF is not uploaded the invoice is never processed and never
+    becomes visible to the customer. createCommentAttachmentSignedUrl follows the same pattern
+    for ticket comment attachments.
+  docs: https://docs.clever.gy/developer/how-to-set-up/invoices
+
+resource_identity:
+  external_ids: >-
+    First-class support for the integrator's own identifiers: assignExternalUserIdToUser and
+    assignExternalContractIdToContract attach an external id, and
+    getHouseContractIdByExternalId resolves back the other way. getUsers accepts externalUserId
+    as a query filter. This is how a utility keeps its CRM as the system of record.
+  domain_identifiers:
+    CUPS: >-
+      Spanish supply-point code — the key Clevergy uses to connect directly to the electricity
+      distributor and pull consumption for a supply point.
+    NIF: Spanish tax identifier, accepted as a query filter on getUsers.
+
+events:
+  mechanism: outbound webhooks (HTTP POST callbacks)
+  catalog: asyncapi/clevergy-webhooks.yml
+  note: >-
+    Webhooks are notification-only by design — the docs state that the payload carries an
+    identifier and the full object must always then be fetched from the Connect API.
+
+related:
+  authentication: authentication/clevergy-authentication.yml
+  errors: errors/clevergy-problem-types.yml
+  lifecycle: lifecycle/clevergy-lifecycle.yml
+  rate_limits: rate-limits/clevergy-rate-limits.yml
+  data_model: data-model/clevergy-data-model.yml
+  webhooks: asyncapi/clevergy-webhooks.yml

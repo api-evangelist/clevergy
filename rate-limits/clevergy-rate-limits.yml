@@ -1,0 +1,59 @@
+generated: '2026-08-17'
+method: searched
+source: >-
+  Full-text search of the Clevergy documentation corpus (https://docs.clever.gy/llms-full.txt,
+  261KB covering the developer guide, Connect API guides, microfrontend catalog and operations
+  portal help) plus inspection of every response and parameter in
+  openapi/clevergy-connect-api-openapi.yml.
+description: >-
+  Recorded ABSENCE. Clevergy publishes no rate limits for the Connect API, declares no 429
+  response on any of its 83 operations, and documents no rate-limit response headers. An agent or
+  integrator has no runtime signal for how hard it may call, and no documented backoff contract.
+limit_count: 0
+documented: false
+
+limits: []
+
+headers:
+  published: false
+  ratelimit_standard: null
+  x_ratelimit: null
+  retry_after: null
+  note: >-
+    No RateLimit-Limit/Remaining/Reset (RFC 9331-style), no X-RateLimit-*, and no Retry-After are
+    documented or declared in the spec.
+
+exhaustion:
+  status_code: null
+  note: >-
+    429 Too Many Requests appears in NO operation's responses. The declared error statuses are
+    400, 401, 403, 404, 409 and 422, plus a `default` catch-all — so a throttled caller would
+    land on the two-field {code, message} default envelope with nothing to distinguish
+    throttling from any other server-side failure. See errors/clevergy-problem-types.yml.
+
+evidence:
+- source: https://docs.clever.gy/llms-full.txt
+  status: 200
+  method: >-
+    Case-insensitive search for "rate limit", "429", "X-RateLimit", "RateLimit-", "Retry-After",
+    "throttl" and "quota"
+  matches: 0
+  checked: '2026-08-17'
+- source: openapi/clevergy-connect-api-openapi.yml
+  method: enumerated every declared response status across all 83 operations
+  matches_429: 0
+  checked: '2026-08-17'
+
+third_party_limits_note: >-
+  The one place request limits ARE discussed in Clevergy's docs is upstream, not downstream: the
+  Enphase inverter integration page states that Clevergy syncs Enphase data weekly by default and
+  that increasing the frequency requires upgrading to an Enphase plan with higher request limits.
+  That is a limit Enphase imposes on Clevergy, recorded here so it is not mistaken for a Clevergy
+  API limit. Source:
+  https://docs.clever.gy/helpdesk/integrations/inverters/enphase
+
+provider_action: >-
+  The cheapest fix available to Clevergy on this artifact: declare a 429 response with a
+  Retry-After header in the OpenAPI and publish the per-key limit. The API is already gated on a
+  commercially issued tenant key, so the limit is presumably known internally — it is simply not
+  written down where a caller can read it.

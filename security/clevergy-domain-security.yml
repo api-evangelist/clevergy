@@ -1,0 +1,21 @@
+generated: '2026-08-17'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: clever.gy
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Sep 19 15:35:24 2026 GMT
+  hsts: false
+- host: connect.clever.gy
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct  9 02:20:34 2026 GMT
+  hsts: null
+domains:
+- domain: clever.gy
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: quarantine

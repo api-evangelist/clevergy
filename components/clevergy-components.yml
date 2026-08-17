@@ -1,0 +1,202 @@
+generated: '2026-08-17'
+method: searched
+source: https://docs.clever.gy/developer/microfrontends
+docs: https://docs.clever.gy/helpdesk/microfrontends-catalog
+description: >-
+  Clevergy's primary integration surface for end-user experiences is not an SDK — it is a
+  catalog of embeddable "microfrontends": custom elements (web components) that render a React
+  tree inside a shadow-styled container and fetch their own data directly from the Clevergy
+  API. Every element is defined by a single ES-module loader script; the integrator drops a tag
+  into their own page or webview and passes parameters as data-* attributes. This artifact
+  records the published catalog. It is distinct from packages/ (distribution) and from
+  openapi/ (the server contract the components call).
+
+loader:
+  type: es-module script tag
+  url: https://assets.clever.gy/clevergy-modules.js
+  markup: <script type="module" src="https://assets.clever.gy/clevergy-modules.js"></script>
+  placement: inside <head>
+  pinned: false
+  note: >-
+    The distribution URL carries no version segment or query, so a consumer always receives
+    whatever build is currently in the bucket. Observed Last-Modified on 2026-08-17 was
+    2026-08-17T10:12:50 GMT with Cache-Control max-age=60 — i.e. the bundle is rebuilt and
+    republished frequently and there is no way for an integrator to pin a known-good version.
+  size_bytes: 592093
+  probe:
+    url: https://assets.clever.gy/clevergy-modules.js
+    http_status: 200
+    content_type: text/javascript
+    fetched: '2026-08-17'
+
+authentication:
+  mechanism: data-token attribute carrying a Clevergy user JWT
+  minted_by: retrieveUserAccessToken (GET /auth/{userId}/token on the Connect API)
+  ttl: 3600
+  note: >-
+    Not every component requires a token — unauthenticated ones (e.g. energy prices) render
+    public data. Components that read user-owned data require the JWT. The docs are explicit
+    that the integrator's own backend must mint the JWT with the API key; the API key must
+    never be exposed to the browser.
+  detail: authentication/clevergy-authentication.yml
+
+styling:
+  mechanism: CSS custom properties, all prefixed --clevergy to avoid collisions
+  isolation: >-
+    Host page CSS does not affect the component and component CSS does not leak out.
+  common_variables:
+  - --clevergy-font-family
+  - --clevergy-color-primary
+  - --clevergy-color-secondary
+  - --clevergy-color-text
+  - --clevergy-color-subtext
+  - --clevergy-color-unselected
+  - --clevergy-color-border
+  - --clevergy-module-header-title-color
+  - --clevergy-module-header-action-color
+  - --clevergy-module-container-background
+
+events:
+  supported: true
+  description: >-
+    Components can emit DOM events to notify the host application of things that happened
+    inside them; per-component events are documented in the catalog entry for each element.
+
+families:
+- family: account-setup-integrations
+  docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations
+  description: >-
+    Onboarding, contracting and device/data-source connection flows — the components that get a
+    customer and their energy data sources into the platform.
+  components:
+  - element: clevergy-create-contract-opportunity
+    name: Create contract opportunity
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/create-contract-opportunity
+    summary: >-
+      Runs the entire electricity contracting process from any digital touchpoint (website,
+      app or landing page).
+  - element: clevergy-house-contracts
+    name: House contracts
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/house-contracts
+    summary: View and manage the contracts attached to a house.
+  - element: clevergy-house-settings
+    name: House settings
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/house-settings
+  - element: clevergy-integration-electric-vehicle
+    name: Integration electric vehicle
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/integration-electric-vehicle
+    note: A clevergy-integration-electric-vehicle-b variant also appears in the docs.
+  - element: clevergy-integration-smart-devices
+    name: Integration smart devices
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/integration-smart-devices
+  - element: clevergy-integration-smartmeter
+    name: Integration smartmeter
+    docs: https://docs.clever.gy/developer/microfrontends/include-smart-meter
+    summary: Authorizes the connection with Datadis (the Spanish smart-meter data hub).
+  - element: clevergy-integration-solar-inverters
+    name: Integration solar inverters
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/integration-solar-inverter
+  - element: clevergy-invoice-ocr
+    name: Invoice OCR
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/invoice-ocr
+    summary: Extracts structured information from an uploaded electricity bill.
+  - element: clevergy-invoices
+    name: Invoices
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/invoices
+    summary: >-
+      Displays customer invoice information in two visualization modes selected by the
+      data-visualization-mode parameter.
+  - element: clevergy-smart-devices-settings
+    name: Smart devices settings
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/smart-devices-settings
+  - element: clevergy-virtual-battery
+    name: Virtual battery
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/virtual-battery
+    summary: Virtual balance surface denominated in kWh.
+  - element: clevergy-virtual-wallet
+    name: Virtual wallet
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/virtual-wallet
+    summary: Virtual balance surface denominated in EUR.
+- family: energy-insights
+  docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-insights
+  description: Consumption, cost and solar analytics rendered from the customer's own data.
+  components:
+  - element: clevergy-breakdown
+    name: Breakdown
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-insights/breakdown
+  - element: clevergy-consumption-cumulative
+    name: Consumption cumulative
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-insights/consumption-cumulative
+    status: deprecating
+    note: >-
+      The docs state this module will be progressively deprecated as clients migrate to
+      clevergy-invoice-estimation.
+  - element: clevergy-energy-chart
+    name: Energy chart
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-insights/energy-chart
+  - element: clevergy-invoice-estimation
+    name: Invoice estimation
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-insights/invoice-estimation
+    summary: >-
+      Shows spend to date in the current billing period and estimates the next electricity
+      bill. Replaces clevergy-consumption-cumulative.
+  - element: clevergy-solar-amortization
+    name: Solar amortization
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-insights/solar-amortization
+  - element: clevergy-solar-info
+    name: Solar info
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-insights/solar-info
+  - element: clevergy-solar-summary
+    name: Solar summary
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-insights/solar-summary
+- family: energy-optimization-recommendations
+  docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-optimization-recommendations
+  description: Tariff comparison, price signals, recommendations and alerting.
+  components:
+  - element: clevergy-alerts-settings
+    name: Alerts settings
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-optimization-recommendations/alerts-settings
+  - element: clevergy-contract-tariffs
+    name: Energy contract tariffs
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-optimization-recommendations/energy-contract-tariffs
+  - element: clevergy-energy-prices
+    name: Energy prices
+    docs: https://docs.clever.gy/developer/microfrontends/include-prices
+    summary: Hourly energy price panel; the docs carry a dedicated integration guide for it.
+  - element: clevergy-house-comparison
+    name: House comparison
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-optimization-recommendations/house-comparison
+  - element: clevergy-recommendations
+    name: Recommendations
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-optimization-recommendations/recommendations
+  - element: clevergy-solar-recommender
+    name: Solar recommender
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-optimization-recommendations/solar-recommender
+  - element: clevergy-tips-panel
+    name: Tips panel
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-optimization-recommendations/tips-panel
+- family: real-time-monitoring-devices-control
+  docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/real-time-monitoring-devices-control
+  description: Live power, battery and smart-device monitoring and control surfaces.
+  components:
+  - element: clevergy-battery
+    name: Battery monitoring
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/real-time-monitoring-devices-control/battery
+  - element: clevergy-power-chart
+    name: Power chart
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/real-time-monitoring-devices-control/power-chart
+  - element: clevergy-smart-devices
+    name: Smart devices
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/real-time-monitoring-devices-control/smart-devices
+  - element: clevergy-solar-real-time
+    name: Solar real-time
+    docs: https://docs.clever.gy/helpdesk/microfrontends-catalog/real-time-monitoring-devices-control/solar-real-time
+
+coverage:
+  families: 4
+  components: 30
+  note: >-
+    Count is of distinct documented custom elements. clevergy-microfrontend-name is the
+    placeholder used in the docs examples and is not a real element, so it is excluded.
+    clevergy-integration-electric-vehicle-b appears as a variant of the electric-vehicle
+    element rather than a separate catalog entry.

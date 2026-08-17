@@ -1,0 +1,136 @@
+generated: '2026-08-17'
+method: searched
+source: https://docs.clever.gy/webhooks/clevergy-webhooks
+spec_type: none
+spec_type_note: >-
+  Clevergy publishes NO AsyncAPI document. The event surface is documented as an OpenAPI-style
+  callback reference on the docs site (docs.clever.gy/webhooks/*) with its own "Clevergy
+  Webhooks" version 1.0.0 heading, rendered by the same Docusaurus OpenAPI plugin as the Connect
+  API reference. The underlying source document was not reachable at any probed path on
+  assets.clever.gy, so this artifact is the webhook CATALOG captured from the published
+  reference, not a harvested spec. type: Webhooks is claimed; type: AsyncAPI is not.
+description: >-
+  Clevergy's outbound event surface. Webhooks are HTTP POST callbacks triggered by lifecycle
+  events on three entities. The design is deliberately notification-only: the payload identifies
+  what changed and the integrator must then read the full object back from the Connect API.
+
+transport:
+  protocol: https
+  method: POST
+  direction: outbound (Clevergy calls the integrator's endpoint)
+  endpoint_owner: integrator
+  registration: >-
+    Endpoint URLs are configured by Clevergy — the docs direct integrators to write to
+    soporte.clientes@clever.gy to request access. There is no self-service webhook management
+    operation in the Connect API.
+  authentication:
+    mechanism: query parameter on the integrator's own callback URL
+    documented_example: https://mywebhook.com/endpoint?auth_token=abcd1234
+    statement: >-
+      "Authentication can be provided through a query parameter if required by your webhook
+      endpoint."
+    note: >-
+      There is no HMAC request signature, no shared-secret signature header, and no mTLS option
+      documented. Verification of authenticity is left to a bearer-style token the integrator
+      embeds in its own URL, which is transmitted in the request line rather than a header.
+  retries:
+    documented: false
+    note: No retry, backoff, ordering or at-least-once/at-most-once semantics are published.
+  delivery_ordering:
+    documented: false
+
+design_rule:
+  statement: >-
+    "Webhooks are event notifications only. Sales opportunity data must always be retrieved via
+    the Connect API." The same sentence appears for tickets.
+  consequence: >-
+    An integrator cannot treat the webhook body as the source of truth. Every handler is a
+    two-step: receive the notification, then GET the entity by the identifier in the payload.
+
+events:
+- name: User
+  channel: user
+  docs: https://docs.clever.gy/webhooks/user
+  trigger: Notifies with a POST to the given URL when a user is modified.
+  event_types: []
+  event_types_note: >-
+    The user webhook reference does not enumerate discrete event types the way the sales
+    opportunity and ticket references do.
+  follow_up_operations: [getUser, getUsers]
+- name: SalesOpportunity
+  channel: sales-opportunity
+  docs: https://docs.clever.gy/webhooks/sales-opportunity
+  trigger: Notifies with a POST to the given URL when a SalesOpportunity is modified.
+  event_types:
+  - type: CREATE
+    meaning: A new sales opportunity is generated (e.g. a user starts a contracting flow from the app).
+  - type: UPDATE
+    meaning: A sales opportunity is updated (status change).
+  - type: DELETE
+    meaning: A sales opportunity is deleted.
+  payload_identifier: id
+  follow_up_operations: [getSalesOpportunities, getContractSalesOpportunity]
+  domain_enums:
+    product:
+      supported: [CONTRACT]
+      reserved: [SOLAR, HEATPUMP, BATTERY, DEVICES, EV, OTHER]
+      note: >-
+        The docs state only CONTRACT product opportunities are currently supported; the other
+        values are reserved for future use.
+    status:
+    - value: STARTED
+      meaning: >-
+        The user has initiated the opportunity by showing interest in a product (e.g. via a
+        recommender or banner in the app).
+    - value: POTENTIAL
+      meaning: >-
+        The opportunity was proactively suggested by Clevergy based on energy data and user
+        behavior, without direct user interaction.
+    - value: FORMALIZED
+      meaning: The user has accepted a contract or proposal.
+    - value: CONVERTED
+      meaning: >-
+        The payment has been received and the product or service is being delivered (e.g. the
+        contract has been signed).
+    - value: REJECTED
+      meaning: The opportunity was lost, either because the user declined or stopped responding.
+  guide: https://docs.clever.gy/developer/how-to-set-up/sales-opportunities
+- name: Ticket
+  channel: ticket
+  docs: https://docs.clever.gy/webhooks/ticket
+  trigger: Notifies with a POST to the given URL when a Ticket is modified.
+  event_types:
+  - type: CREATE
+    meaning: A new support ticket is created by a user from the app.
+  - type: UPDATE
+    meaning: A ticket changes (including reopening — status returns to PENDING).
+  payload_identifier: ticketId
+  follow_up_operations: [getTicketDetails, updateTicket, addCommentToTicket]
+  guide: https://docs.clever.gy/developer/how-to-set-up/ticket-integration
+
+coverage:
+  events: 3
+  event_types_enumerated: 5
+  asyncapi_document: false
+  signature_verification: false
+  self_service_registration: false
+
+probe_record:
+  note: >-
+    Paths probed for a machine-readable source document behind the webhooks reference, all 404:
+  attempts:
+  - url: https://assets.clever.gy/swagger/webhooks.yaml
+    status: 404
+  - url: https://assets.clever.gy/swagger/webhook.yaml
+    status: 404
+  - url: https://assets.clever.gy/swagger/clevergy-webhooks.yaml
+    status: 404
+  - url: https://assets.clever.gy/swagger/webhooks-api.yaml
+    status: 404
+  - url: https://assets.clever.gy/swagger/connect-webhooks.yaml
+    status: 404
+  checked: '2026-08-17'
+  contrast: >-
+    The Connect API's source document IS publicly reachable, at
+    https://assets.clever.gy/swagger/connect-api.yaml (200, application/yaml) — it is referenced
+    by the rendered reference page. The webhooks reference page carries no equivalent link.

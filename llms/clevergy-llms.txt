@@ -1,0 +1,496 @@
+# Clevergy Documentation
+
+> Complete reference documentation for Clevergy
+
+- [Clevergy Documentation](https://docs.clever.gy/index.md)
+
+## developer
+
+This reference is your key to a comprehensive understanding of the Clevergy integrations.
+
+- [Introduction](https://docs.clever.gy/developer.md): This reference is your key to a comprehensive understanding of the Clevergy integrations.
+
+### getting-started
+
+
+#### authentication
+
+Depending on the use case, there are three ways to authenticate:
+
+- [Authentication](https://docs.clever.gy/developer/getting-started/authentication.md): Depending on the use case, there are three ways to authenticate:
+
+#### entities
+
+These are the entities of Clevergy
+
+- [Entities](https://docs.clever.gy/developer/getting-started/entities.md): These are the entities of Clevergy
+
+### how-to-set-up
+
+
+#### battery-management
+
+The platform allows interacting with battery systems linked to a supply point through the Connect API.
+
+- [Battery management](https://docs.clever.gy/developer/how-to-set-up/battery-management.md): The platform allows interacting with battery systems linked to a supply point through the Connect API.
+
+#### contracts
+
+The platform allows managing energy contracts associated with a client through the Connect API. These contracts are visible to the client under their house contracts.
+
+- [Contracts](https://docs.clever.gy/developer/how-to-set-up/contracts.md): The platform allows managing energy contracts associated with a client through the Connect API. These contracts are visible to the client under their house contracts.
+
+#### create-client
+
+This guide explains the minimum required flow to onboard a customer in Clevergy under the Plan Starter.
+
+- [Create a new client](https://docs.clever.gy/developer/how-to-set-up/create-client.md): This guide explains the minimum required flow to onboard a customer in Clevergy under the Plan Starter.
+
+#### create-solar-client
+
+This guide explains the minimum required flow to onboard a customer in Clevergy under the Plan Pro.
+
+- [Create new solar client](https://docs.clever.gy/developer/how-to-set-up/create-solar-client.md): This guide explains the minimum required flow to onboard a customer in Clevergy under the Plan Pro.
+
+#### invoices
+
+This guide explains how to create and upload an invoice associated with an existing contract. It assumes that both the user and the contract (contractId) have already been created.
+
+- [Invoices](https://docs.clever.gy/developer/how-to-set-up/invoices.md): This guide explains how to create and upload an invoice associated with an existing contract. It assumes that both the user and the contract (contractId) have already been created.
+
+#### obtain-energy-data
+
+All steps needed to create a new client and obtain his energy data.
+
+- [Obtain energy data from my clients](https://docs.clever.gy/developer/how-to-set-up/obtain-energy-data.md): All steps needed to create a new client and obtain his energy data.
+
+#### sales-opportunities
+
+All steps needed to integrate sales opportunities with a client CRM or sales platform using the Connect API.
+
+- [Create sales opportunities integration via Connect](https://docs.clever.gy/developer/how-to-set-up/sales-opportunities.md): All steps needed to integrate sales opportunities with a client CRM or sales platform using the Connect API.
+
+#### solar-api-integration
+
+This guide explains the minimum required flow to onboard a client and connect a solar installation using Clevergy’s Solar API.
+
+- [Solar API integration](https://docs.clever.gy/developer/how-to-set-up/solar-api-integration.md): This guide explains the minimum required flow to onboard a client and connect a solar installation using Clevergy’s Solar API.
+
+#### ticket-integration
+
+All steps needed to integrate the ticket system with a client support platform (e.g: CRM) using Connect API.
+
+- [Create ticket integration via Connect](https://docs.clever.gy/developer/how-to-set-up/ticket-integration.md): All steps needed to integrate the ticket system with a client support platform (e.g: CRM) using Connect API.
+
+#### virtual-balance
+
+The platform allows managing the virtual balance from the Connect API.
+
+- [Virtual balance](https://docs.clever.gy/developer/how-to-set-up/virtual-balance.md): The platform allows managing the virtual balance from the Connect API.
+
+### microfrontends
+
+What is a microfrontend?
+
+- [Microfrontends](https://docs.clever.gy/developer/microfrontends.md): What is a microfrontend?
+
+#### include-prices
+
+This is a guide to help you integrate the prices microfrontend in your application.
+
+- [Include energy prices microfrontend](https://docs.clever.gy/developer/microfrontends/include-prices.md): This is a guide to help you integrate the prices microfrontend in your application.
+
+#### include-smart-meter
+
+This is a guide to help you integrate the microfrontend that authorizes the connection with Datadis.
+
+- [Include integration smartmeter microfrontend](https://docs.clever.gy/developer/microfrontends/include-smart-meter.md): This is a guide to help you integrate the microfrontend that authorizes the connection with Datadis.
+
+## helpdesk
+
+This reference is your key to a comprehensive understanding of the Clevergy functionality.
+
+- [Help desk](https://docs.clever.gy/helpdesk.md): This reference is your key to a comprehensive understanding of the Clevergy functionality.
+
+### app
+
+
+#### authorizations
+
+With this feature, any Clevergy user can authorize another user to access the information of one of their homes within the app. This makes it easier to share energy data with employees, family members or any trusted person.
+
+- [Authorizations](https://docs.clever.gy/helpdesk/app/authorizations.md): With this feature, any Clevergy user can authorize another user to access the information of one of their homes within the app. This makes it easier to share energy data with employees, family members or any trusted person.
+
+#### euros
+
+Description
+
+- [Convert kWh to Euros](https://docs.clever.gy/helpdesk/app/euros.md): Description
+
+#### exhibition-mode
+
+This feature allows users with photovoltaic installations to create a public-facing "exhibition view" showcasing key performance indicators, real-time data and positive impact of their system. This mode is specifically designed to meet the requirements of publicly displaying funded projects, making it ideal for sharing on a television or any public screen.
+
+- [Exhibition mode](https://docs.clever.gy/helpdesk/app/exhibition-mode.md): This feature allows users with photovoltaic installations to create a public-facing "exhibition view" showcasing key performance indicators, real-time data and positive impact of their system. This mode is specifically designed to meet the requirements of publicly displaying funded projects, making it ideal for sharing on a television or any public screen.
+
+#### global-vision
+
+Global view provides a consolidated overview of all your supply points, allowing you to monitor aggregated energy consumption and production at a glance. This feature is designed for both companies managing multiple installations and residential users with more than one home.
+
+- [Global view](https://docs.clever.gy/helpdesk/app/global-vision.md): Global view provides a consolidated overview of all your supply points, allowing you to monitor aggregated energy consumption and production at a glance. This feature is designed for both companies managing multiple installations and residential users with more than one home.
+
+#### help
+
+Through the Help module in the app, clients can send support tickets digitally. This simplifies the management of customer issues by avoiding phone calls and centralizing all communication in a single place, improving the relationship between the customer and the utility.
+
+- [Help (support tickets)](https://docs.clever.gy/helpdesk/app/help.md): Through the Help module in the app, clients can send support tickets digitally. This simplifies the management of customer issues by avoiding phone calls and centralizing all communication in a single place, improving the relationship between the customer and the utility.
+
+#### multi-language
+
+The application supports language management, allowing a localized experience for the client. Currently, the available languages are:
+
+- [Multi-language](https://docs.clever.gy/helpdesk/app/multi-language.md): The application supports language management, allowing a localized experience for the client. Currently, the available languages are:
+
+#### notifications
+
+A simple guide to our push notification system and when users will receive them
+
+- [Notifications](https://docs.clever.gy/helpdesk/app/notifications.md): A simple guide to our push notification system and when users will receive them
+
+#### onboarding
+
+Onboarding is the process of introducing new users to the app to ensure a smooth start. It helps users understand the app’s value proposition and configure some settings before using it.
+
+- [Onboarding](https://docs.clever.gy/helpdesk/app/onboarding.md): Onboarding is the process of introducing new users to the app to ensure a smooth start. It helps users understand the app’s value proposition and configure some settings before using it.
+
+#### optimize
+
+Find personalized recommendations for renewable energy solutions to optimize your home's energy consumption.
+
+- [Optimize](https://docs.clever.gy/helpdesk/app/optimize.md): Find personalized recommendations for renewable energy solutions to optimize your home's energy consumption.
+
+### integrations
+
+Users can access and monitor their energy data by connecting external platforms and devices. The following integrations are available:
+
+- [Integrations](https://docs.clever.gy/helpdesk/integrations.md): Users can access and monitor their energy data by connecting external platforms and devices. The following integrations are available:
+
+#### datadis
+
+The Datadis integration allows access to electricity consumption data, based on the supply points associated with the user.
+
+- [Datadis integration](https://docs.clever.gy/helpdesk/integrations/datadis.md): The Datadis integration allows access to electricity consumption data, based on the supply points associated with the user.
+
+#### distributors
+
+The distributors integration allows access to users' consumption data by connecting with the electricity distributor.
+
+- [Distributors integration](https://docs.clever.gy/helpdesk/integrations/distributors.md): The distributors integration allows access to users' consumption data by connecting with the electricity distributor.
+
+#### electric-vehicle
+
+The electric vehicle integration lets users connect their car account and manage charging from the app.
+
+- [Electric vehicle integration](https://docs.clever.gy/helpdesk/integrations/electric-vehicle.md): The electric vehicle integration lets users connect their car account and manage charging from the app.
+
+#### inverters
+
+Clevergy supports integration with various inverter brands to provide real-time and historical data.
+
+- [Inverters integration](https://docs.clever.gy/helpdesk/integrations/inverters.md): Clevergy supports integration with various inverter brands to provide real-time and historical data.
+
+##### enphase
+
+The Enphase integration allows administrators to connect and monitor Enphase inverters through Clevergy.
+
+- [Enphase integration](https://docs.clever.gy/helpdesk/integrations/inverters/enphase.md): The Enphase integration allows administrators to connect and monitor Enphase inverters through Clevergy.
+
+##### fronius
+
+The Fronius integration allows administrators and end users to monitor and manage inverter data through the platform.
+
+- [Fronius integration](https://docs.clever.gy/helpdesk/integrations/inverters/fronius.md): The Fronius integration allows administrators and end users to monitor and manage inverter data through the platform.
+
+##### goodwe
+
+The GoodWe integration allows administrators to connect and monitor GoodWe inverters through the platform.
+
+- [GoodWe integration](https://docs.clever.gy/helpdesk/integrations/inverters/goodwe.md): The GoodWe integration allows administrators to connect and monitor GoodWe inverters through the platform.
+
+##### growatt
+
+The Growatt integration allows administrators to connect and monitor Growatt inverters through the platform.
+
+- [Growatt integration](https://docs.clever.gy/helpdesk/integrations/inverters/growatt.md): The Growatt integration allows administrators to connect and monitor Growatt inverters through the platform.
+
+##### huawei
+
+The Huawei integration allows administrators and users to monitor and manage inverter data through the platform.
+
+- [Huawei integration](https://docs.clever.gy/helpdesk/integrations/inverters/huawei.md): The Huawei integration allows administrators and users to monitor and manage inverter data through the platform.
+
+##### saj
+
+The SAJ integration allows administrators and users to monitor and manage inverter data through the platform.
+
+- [SAJ integration](https://docs.clever.gy/helpdesk/integrations/inverters/saj.md): The SAJ integration allows administrators and users to monitor and manage inverter data through the platform.
+
+##### sma
+
+The SMA integration allows to connect and monitor SMA inverters through the end-user credentials.
+
+- [SMA integration (beta)](https://docs.clever.gy/helpdesk/integrations/inverters/sma.md): The SMA integration allows to connect and monitor SMA inverters through the end-user credentials.
+
+##### solaredge
+
+The SolarEdge integration allows administrators to connect and monitor SolarEdge inverters through the platform.
+
+- [SolarEdge integration](https://docs.clever.gy/helpdesk/integrations/inverters/solaredge.md): The SolarEdge integration allows administrators to connect and monitor SolarEdge inverters through the platform.
+
+##### sungrow
+
+The Sungrow integration allows to connect and monitor Sungrow inverters through the platform.
+
+- [Sungrow integration](https://docs.clever.gy/helpdesk/integrations/inverters/sungrow.md): The Sungrow integration allows to connect and monitor Sungrow inverters through the platform.
+
+##### wibeee
+
+The Wibeee integration allows users to connect and monitor Wibeee smart meters for solar energy monitoring through the platform.
+
+- [Wibeee integration](https://docs.clever.gy/helpdesk/integrations/inverters/wibeee.md): The Wibeee integration allows users to connect and monitor Wibeee smart meters for solar energy monitoring through the platform.
+
+#### shelly
+
+The Shelly integration allows to connect and manage smart devices for energy monitoring and control.
+
+- [Shelly integration](https://docs.clever.gy/helpdesk/integrations/shelly.md): The Shelly integration allows to connect and manage smart devices for energy monitoring and control.
+
+### microfrontends-catalog
+
+Account setup and integrations
+
+- [Microfrontends Catalog](https://docs.clever.gy/helpdesk/microfrontends-catalog.md): Account setup and integrations
+
+#### account-setup-integrations
+
+
+##### create-contract-opportunity
+
+The `` microfrontend allows users to complete the entire electricity contracting process from any digital touchpoint -your website, app, or landing page-.
+
+- [Create contract opportunity](https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/create-contract-opportunity.md): The `` microfrontend allows users to complete the entire electricity contracting process from any digital touchpoint -your website, app, or landing page-.
+
+##### house-contracts
+
+The `` microfrontend allows users to view and manage information related to their contracts.
+
+- [House contracts](https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/house-contracts.md): The `` microfrontend allows users to view and manage information related to their contracts.
+
+##### house-settings
+
+Description
+
+- [House settings](https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/house-settings.md): Description
+
+##### integration-electric-vehicle
+
+Description
+
+- [Integration electric vehicle](https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/integration-electric-vehicle.md): Description
+
+##### integration-smart-devices
+
+Description
+
+- [Integration smart devices](https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/integration-smart-devices.md): Description
+
+##### integration-smartmeter
+
+Description
+
+- [Integration smartmeter](https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/integration-smartmeter.md): Description
+
+##### integration-solar-inverter
+
+Description
+
+- [Integration solar inverters](https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/integration-solar-inverter.md): Description
+
+##### invoice-ocr
+
+Clevergy's invoice OCR is a microfrontend that extracts information from an electricity bill.
+
+- [Invoice OCR](https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/invoice-ocr.md): Clevergy's invoice OCR is a microfrontend that extracts information from an electricity bill.
+
+##### invoices
+
+This microfrontend is responsible for displaying customer invoice information. It provides two different visualization modes controlled by the data-visualization-mode parameter:
+
+- [Invoices](https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/invoices.md): This microfrontend is responsible for displaying customer invoice information. It provides two different visualization modes controlled by the data-visualization-mode parameter:
+
+##### smart-devices-settings
+
+Technical Documentation
+
+- [Smart devices settings](https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/smart-devices-settings.md): Technical Documentation
+
+##### virtual-battery
+
+Description
+
+- [Virtual battery](https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/virtual-battery.md): Description
+
+##### virtual-wallet
+
+Description
+
+- [Virtual wallet](https://docs.clever.gy/helpdesk/microfrontends-catalog/account-setup-integrations/virtual-wallet.md): Description
+
+#### energy-insights
+
+
+##### breakdown
+
+Description
+
+- [Breakdown](https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-insights/breakdown.md): Description
+
+##### consumption-cumulative
+
+- [Consumption cumulative](https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-insights/consumption-cumulative.md)
+
+##### energy-chart
+
+Description
+
+- [Energy chart](https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-insights/energy-chart.md): Description
+
+##### invoice-estimation
+
+Description
+
+- [Invoice estimation](https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-insights/invoice-estimation.md): Description
+
+##### solar-amortization
+
+Description
+
+- [Solar amortization](https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-insights/solar-amortization.md): Description
+
+##### solar-info
+
+- [Solar info](https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-insights/solar-info.md)
+
+##### solar-summary
+
+- [Solar summary](https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-insights/solar-summary.md)
+
+#### energy-optimization-recommendations
+
+
+##### alerts-settings
+
+- [Alerts settings](https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-optimization-recommendations/alerts-settings.md)
+
+##### energy-contract-tariffs
+
+Description
+
+- [Energy contract tariffs](https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-optimization-recommendations/energy-contract-tariffs.md): Description
+
+##### energy-prices
+
+- [Energy prices](https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-optimization-recommendations/energy-prices.md)
+
+##### house-comparison
+
+Description
+
+- [House comparison](https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-optimization-recommendations/house-comparison.md): Description
+
+##### recommendations
+
+- [Recommendations](https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-optimization-recommendations/recommendations.md)
+
+##### solar-recommender
+
+- [Solar recommender](https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-optimization-recommendations/solar-recommender.md)
+
+##### tips-panel
+
+- [Tips panel](https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-optimization-recommendations/tips-panel.md)
+
+#### real-time-monitoring-devices-control
+
+
+##### battery
+
+Description
+
+- [Battery monitoring](https://docs.clever.gy/helpdesk/microfrontends-catalog/real-time-monitoring-devices-control/battery.md): Description
+
+##### power-chart
+
+- [Power chart](https://docs.clever.gy/helpdesk/microfrontends-catalog/real-time-monitoring-devices-control/power-chart.md)
+
+##### smart-devices
+
+- [Smart devices](https://docs.clever.gy/helpdesk/microfrontends-catalog/real-time-monitoring-devices-control/smart-devices.md)
+
+##### solar-real-time
+
+- [Solar real-time](https://docs.clever.gy/helpdesk/microfrontends-catalog/real-time-monitoring-devices-control/solar-real-time.md)
+
+### portal
+
+Clevergy Operations Portal is the main interface for managing your users, installations, and operational activity across the platform.
+
+- [Portal](https://docs.clever.gy/helpdesk/portal.md): Clevergy Operations Portal is the main interface for managing your users, installations, and operational activity across the platform.
+
+#### my-data
+
+The My Data section provides access to all your core business information and management tools.
+
+- [My Data](https://docs.clever.gy/helpdesk/portal/my-data.md): The My Data section provides access to all your core business information and management tools.
+
+##### contracts
+
+Contracts store the energy contract information associated with a client, used to create their supply point and calculate energy costs shown to the client in the app.
+
+- [Contracts](https://docs.clever.gy/helpdesk/portal/my-data/contracts.md): Contracts store the energy contract information associated with a client, used to create their supply point and calculate energy costs shown to the client in the app.
+
+###### contract-details
+
+In the contract details page you will find all the information associated with the energy contract. The fields shown depend on whether it is an electricity or a gas contract.
+
+- [Contract details](https://docs.clever.gy/helpdesk/portal/my-data/contracts/contract-details.md): In the contract details page you will find all the information associated with the energy contract. The fields shown depend on whether it is an electricity or a gas contract.
+
+###### contract-list
+
+In this section, you can view the complete list of contracts registered in the system, along with the main indicators and available filters.
+
+- [Contract list](https://docs.clever.gy/helpdesk/portal/my-data/contracts/contract-list.md): In this section, you can view the complete list of contracts registered in the system, along with the main indicators and available filters.
+
+##### installations
+
+Solar installations manage the connection with all compatible inverters. In the overview of the Installations section, you can find:
+
+- [Installations](https://docs.clever.gy/helpdesk/portal/my-data/installations.md): Solar installations manage the connection with all compatible inverters. In the overview of the Installations section, you can find:
+
+###### installation-details
+
+In the installation details page you will find:
+
+- [Installation details](https://docs.clever.gy/helpdesk/portal/my-data/installations/installation-details.md): In the installation details page you will find:
+
+###### link-installation
+
+You can link an installation to a house so that the client can view their installation information. This allows the homeowner to monitor their solar installation data directly through the mobile app.
+
+- [Link installation](https://docs.clever.gy/helpdesk/portal/my-data/installations/link-installation.md): You can link an installation to a house so that the client can view their installation information. This allows the homeowner to monitor their solar installation data directly through the mobile app.
+
+###### smart-alerts
+
+Smart alerts complement native inverter alerts by adding additional logic to detect issues that may not trigger a direct inverter error. They are rule-based checks executed daily to analyze installation behavior and detect abnormal situations.
+
+- [Smart alerts for solar installations](https://docs.clever.gy/helpdesk/portal/my-data/installations/smart-alerts.md): Smart alerts complement native inverter alerts 

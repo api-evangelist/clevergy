@@ -1,0 +1,160 @@
+generated: '2026-08-17'
+method: derived
+source: >-
+  openapi/clevergy-connect-api-openapi.yml plus a documentation search of docs.clever.gy and
+  clever.gy for standards and compliance claims.
+description: >-
+  Which cross-cutting and sector standards the Clevergy Connect API conforms to. The finding is
+  that Clevergy's standards footprint is domain-specific rather than API-architectural: it
+  integrates deeply with the Spanish electricity data standards (CUPS supply-point codes, the
+  Datadis smart-meter hub, distributor feeds) but adopts none of the modern API interoperability
+  conventions (no OAuth/OIDC, no RFC 9457 problem details, no RFC 8594 deprecation signalling,
+  no RFC 9116 security.txt, no /.well-known/ surface).
+
+standards:
+- id: openapi-2.0
+  name: OpenAPI / Swagger 2.0
+  conforms: true
+  evidence: >-
+    Published at https://assets.clever.gy/swagger/connect-api.yaml — `swagger: '2.0'`, 62 paths,
+    83 operations, 102 definitions, all operations carrying an operationId.
+- id: openapi-3.x
+  name: OpenAPI 3.x
+  conforms: false
+  evidence: >-
+    The published document is Swagger 2.0, superseded in 2017. Consequence: no `servers[]`
+    (host/schemes only), no `components.securitySchemes` (securityDefinitions), no `requestBody`
+    object, no per-media-type examples, and no webhooks/callbacks section — which is why the
+    webhook surface has to be documented as a separate document rather than in the same spec.
+- id: oauth2
+  name: OAuth 2.0
+  conforms: false
+  evidence: >-
+    Sole securityDefinition is `key` — an apiKey in the clevergy-api-key header. The only OAuth
+    in the platform is outbound to third-party inverter vendors (Huawei OAuth is named as the
+    prerequisite for battery control actions), not inbound authorization of API callers.
+- id: oidc
+  name: OpenID Connect
+  conforms: false
+  evidence: >-
+    No /.well-known/openid-configuration on any Clevergy host (all probes 404 — see
+    well-known/clevergy-well-known.yml).
+- id: rfc7519-jwt
+  name: JSON Web Token (RFC 7519)
+  conforms: true
+  evidence: >-
+    User delegation to embedded microfrontends uses a JWT minted by retrieveUserAccessToken; the
+    docs cite RFC 7519 directly and publish an example RS256 token. 1 hour expiry.
+- id: rfc9457-problem-details
+  name: Problem Details for HTTP APIs (RFC 9457)
+  conforms: false
+  evidence: >-
+    No application/problem+json media type anywhere in the spec. Errors use a bespoke
+    {timestamp,status,error,path} envelope per status code, plus a different {code,message}
+    catch-all. See errors/clevergy-problem-types.yml.
+- id: rfc8594-sunset
+  name: Sunset HTTP Header (RFC 8594)
+  conforms: false
+  evidence: >-
+    Deprecation is signalled only inside the spec (a deprecated flag on getUserHouses plus two
+    "- Deprecated" tag groups). No Sunset or Deprecation response header and no published
+    deprecation policy. See lifecycle/clevergy-lifecycle.yml.
+- id: rfc9116-security-txt
+  name: security.txt (RFC 9116)
+  conforms: false
+  evidence: >-
+    /.well-known/security.txt returns 404 on clever.gy, connect.clever.gy, docs.clever.gy,
+    assets.clever.gy and api.clever.gy.
+- id: rfc8615-well-known
+  name: Well-Known URIs (RFC 8615)
+  conforms: false
+  evidence: All eight probed /.well-known/ paths 404 on all five hosts.
+- id: pagination
+  name: Consistent pagination convention
+  conforms: partial
+  evidence: >-
+    Two incompatible pagination models coexist: page/size/sort/direction with a
+    size/page/totalPages/totalElements/elements envelope (UsersPage, SalesOpportunitiesPage,
+    EquipmentsPage) and opaque cursor/limit with a cursor/elements envelope (HousesPage). A
+    client must branch per resource. See conventions/clevergy-conventions.yml.
+- id: idempotency
+  name: Idempotent request keys
+  conforms: false
+  evidence: >-
+    No Idempotency-Key header or equivalent on any of the 43 write operations. Duplicate creates
+    are surfaced after the fact as 409 Conflict on eight operations. Notably absent on
+    createInvoice, the virtual-balance transaction operations and scheduleStorageEquipmentAction.
+- id: asyncapi
+  name: AsyncAPI
+  conforms: false
+  evidence: >-
+    A real webhook surface exists and is documented (3 entities, 5 enumerated event types) but no
+    AsyncAPI document is published. See asyncapi/clevergy-webhooks.yml.
+- id: webhook-signatures
+  name: Signed webhook delivery
+  conforms: false
+  evidence: >-
+    The docs offer only "authentication can be provided through a query parameter if required by
+    your webhook endpoint" — no HMAC signature header, no shared secret, no mTLS.
+- id: json-schema
+  name: JSON Schema
+  conforms: partial
+  evidence: >-
+    Swagger 2.0 `definitions` are a JSON-Schema draft-4 subset. 102 definitions with descriptions
+    and examples on most properties, but no $schema, no 2020-12 constructs.
+- id: cups-supply-point
+  name: CUPS (Código Universal de Punto de Suministro)
+  conforms: true
+  domain: Spanish electricity market
+  evidence: >-
+    CUPS is a first-class identifier throughout — the house/supply-point key Clevergy uses to
+    connect to the electricity distributor, and the subject of dedicated 400 responses
+    ("Bad request (e.g., house cups not found)").
+- id: datadis
+  name: Datadis (Spanish distributor consumption data platform)
+  conforms: true
+  domain: Spanish electricity market
+  evidence: >-
+    A dedicated integration plus a dedicated microfrontend (clevergy-integration-smartmeter)
+    whose documented purpose is to authorize the Datadis connection, and an
+    UpdateDatadisIntegrationStatus schema in the spec.
+  docs: https://docs.clever.gy/helpdesk/integrations/datadis
+- id: energy-communities
+  name: Energy communities (autoconsumo colectivo)
+  conforms: true
+  domain: Spanish/EU renewable energy regulation
+  evidence: >-
+    Three dedicated operations manage community membership and per-house generation share
+    (assignHouseToEnergyCommunity, updateEnergyCommunityHouseShare,
+    removeEnergyCommunityHouseFromInstallation) plus an EnergyCommunityPower telemetry schema.
+- id: gdpr
+  name: GDPR / EU data protection
+  conforms: claimed-partial
+  evidence: >-
+    A published privacy policy and cookie policy in Spanish, and a cookie-consent banner
+    (WebToffee GDPR plugin) on clever.gy. The API also carries a hard-delete operation
+    (deleteUserAccount) which is the mechanism an erasure request would use. No DPA, subprocessor
+    list, or data-residency statement was found on the public site.
+  urls:
+  - https://clever.gy/en/politica-de-privacidad/
+  - https://clever.gy/en/politica-de-cookies/
+- id: soc2
+  name: SOC 2
+  conforms: false
+  evidence: No SOC 2 claim found on the public site, docs, or any trust page.
+- id: iso27001
+  name: ISO/IEC 27001
+  conforms: false
+  evidence: No ISO 27001 claim found on the public site, docs, or any trust page.
+
+compliance_program:
+  published: false
+  trust_center: null
+  certifications: []
+  note: >-
+    No trust center, no security page, no named certification. probe-security-programs.py
+    returned vdp=none trust=none on 2026-08-17. Deliberately NO `Compliance` pointer is claimed
+    in apis.yml — the only compliance material Clevergy publishes is a privacy/cookie policy,
+    which is already pointed at as PrivacyPolicy, and a domain-security posture that is probed
+    rather than claimed (see security/clevergy-domain-security.yml, which records no HSTS on
+    clever.gy, no DNSSEC, no CAA, and a DMARC policy of quarantine rather than reject).

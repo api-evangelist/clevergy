@@ -1,0 +1,68 @@
+generated: '2026-08-17'
+method: searched
+source: openapi/clevergy-connect-api-openapi.yml
+docs: https://docs.clever.gy/developer/getting-started/authentication
+description: >-
+  Clevergy documents three distinct authentication paths. Server-to-server calls to the Connect
+  API use a tenant API key in the clevergy-api-key header. Embedded microfrontends (web
+  components) authenticate with a short-lived user JWT that the integrator's own backend mints
+  by calling the Connect API with its API key. A third "login with token" path passes that same
+  JWT in a URL query string to open the full Clevergy webview on a tenant subdomain.
+summary:
+  types:
+  - apiKey
+  - bearer-jwt
+  api_key_in:
+  - header
+  oauth2_flows: []
+schemes:
+- name: key
+  type: apiKey
+  in: header
+  parameter: clevergy-api-key
+  audience: server-to-server
+  description: >-
+    Tenant API key for the Connect API. Issued per environment by Clevergy — the docs instruct
+    integrators to request it from their Customer Success Manager, and it is also revealed and
+    regenerable from the Operations Portal under Settings > API key management. Regenerating
+    immediately invalidates the previous key.
+  provisioning:
+    self_serve: false
+    channel: Customer Success Manager request, or Operations Portal > Settings > API key management
+    rotation: Self-service regenerate in the portal; regeneration revokes the prior key immediately
+    docs: https://docs.clever.gy/helpdesk/portal/settings/api-key-management
+  sources:
+  - openapi/clevergy-connect-api-openapi.yml
+  - https://docs.clever.gy/developer/getting-started/authentication
+- name: user-jwt
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  audience: browser / embedded microfrontend
+  description: >-
+    Per-user JWT (RFC 7519) minted by the Connect API operation retrieveUserAccessToken
+    (GET /auth/{userId}/token). Passed to a microfrontend via its data-token attribute. Expires
+    after 1 hour. The docs are explicit that the API key must never reach the end user: the
+    integrator's own API acts as a secure proxy that holds the key and hands out only the JWT.
+  minted_by: retrieveUserAccessToken
+  ttl: 3600
+  sources:
+  - https://docs.clever.gy/developer/getting-started/authentication
+- name: login-with-token
+  type: query-token
+  audience: hosted webview
+  description: >-
+    The same user JWT can be passed as a token query parameter to open the entire Clevergy
+    webview at https://{tenant_name}.clever.gy/login-with-token?token=... The tenant subdomain
+    is assigned by Clevergy on request. Same 1 hour expiry.
+  url_template: https://{tenant_name}.clever.gy/login-with-token?token={jwt}
+  sources:
+  - https://docs.clever.gy/developer/getting-started/authentication
+notes:
+- >-
+  No OAuth 2.0 or OpenID Connect surface is published for the Connect API itself; the only OAuth
+  in the platform is outbound, to third-party inverter vendors (Huawei OAuth is named as the
+  prerequisite for battery control actions). scopes/ is therefore not applicable.
+- >-
+  No /.well-known/openid-configuration or /.well-known/oauth-authorization-server document is
+  served on any Clevergy host — see well-known/clevergy-well-known.yml for the probe record.

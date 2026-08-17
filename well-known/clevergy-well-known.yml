@@ -1,0 +1,91 @@
+generated: '2026-08-17'
+method: probed
+source: live HTTP probes of every Clevergy host on 2026-08-17
+description: >-
+  Recorded ABSENCE. Clevergy serves no /.well-known/ discovery surface on any host: 40 probes
+  (8 paths x 5 hosts) all returned 404. No document was saved because none was served, and NO
+  WellKnown / SecurityTxt / APICatalog pointer is claimed in apis.yml — this file documents an
+  absence, and an absence must not be scored as a presence.
+result: none
+documents_found: 0
+
+hosts_probed:
+- host: clever.gy
+  role: corporate website (WordPress)
+  catchall_behavior: returns a 404 status with an HTML body — correct status, not a soft-200
+- host: connect.clever.gy
+  role: Connect API host (from OpenAPI `host`)
+  catchall_behavior: returns 404 with a JSON body {"message":"The current request is not defined by this API."}
+- host: docs.clever.gy
+  role: developer documentation
+  catchall_behavior: returns 404 with an XML NoSuchKey body (object storage origin)
+- host: assets.clever.gy
+  role: CDN bucket serving the OpenAPI and the microfrontend loader
+  catchall_behavior: returns 404 with a minimal HTML body
+- host: api.clever.gy
+  role: resolves and answers, but returns 404 for every probed path including /
+  catchall_behavior: returns 404 with the same JSON API-gateway body as connect.clever.gy
+
+paths_probed:
+- /.well-known/security.txt
+- /.well-known/openid-configuration
+- /.well-known/oauth-authorization-server
+- /.well-known/oauth-protected-resource
+- /.well-known/api-catalog
+- /.well-known/ai-plugin.json
+- /.well-known/agent-card.json
+- /.well-known/agent.json
+
+documents: []
+
+probes:
+- {host: clever.gy, path: /.well-known/security.txt, status: 404}
+- {host: clever.gy, path: /.well-known/openid-configuration, status: 404}
+- {host: clever.gy, path: /.well-known/oauth-authorization-server, status: 404}
+- {host: clever.gy, path: /.well-known/oauth-protected-resource, status: 404}
+- {host: clever.gy, path: /.well-known/api-catalog, status: 404}
+- {host: clever.gy, path: /.well-known/ai-plugin.json, status: 404}
+- {host: clever.gy, path: /.well-known/agent-card.json, status: 404}
+- {host: clever.gy, path: /.well-known/agent.json, status: 404}
+- {host: connect.clever.gy, path: /.well-known/security.txt, status: 404}
+- {host: connect.clever.gy, path: /.well-known/openid-configuration, status: 404}
+- {host: connect.clever.gy, path: /.well-known/oauth-authorization-server, status: 404}
+- {host: connect.clever.gy, path: /.well-known/oauth-protected-resource, status: 404}
+- {host: connect.clever.gy, path: /.well-known/api-catalog, status: 404}
+- {host: connect.clever.gy, path: /.well-known/ai-plugin.json, status: 404}
+- {host: connect.clever.gy, path: /.well-known/agent-card.json, status: 404}
+- {host: connect.clever.gy, path: /.well-known/agent.json, status: 404}
+- {host: docs.clever.gy, path: /.well-known/security.txt, status: 404}
+- {host: docs.clever.gy, path: /.well-known/openid-configuration, status: 404}
+- {host: docs.clever.gy, path: /.well-known/oauth-authorization-server, status: 404}
+- {host: docs.clever.gy, path: /.well-known/oauth-protected-resource, status: 404}
+- {host: docs.clever.gy, path: /.well-known/api-catalog, status: 404}
+- {host: docs.clever.gy, path: /.well-known/ai-plugin.json, status: 404}
+- {host: docs.clever.gy, path: /.well-known/agent-card.json, status: 404}
+- {host: docs.clever.gy, path: /.well-known/agent.json, status: 404}
+- {host: assets.clever.gy, path: /.well-known/security.txt, status: 404}
+- {host: assets.clever.gy, path: /.well-known/openid-configuration, status: 404}
+- {host: assets.clever.gy, path: /.well-known/oauth-authorization-server, status: 404}
+- {host: assets.clever.gy, path: /.well-known/oauth-protected-resource, status: 404}
+- {host: assets.clever.gy, path: /.well-known/api-catalog, status: 404}
+- {host: assets.clever.gy, path: /.well-known/ai-plugin.json, status: 404}
+- {host: assets.clever.gy, path: /.well-known/agent-card.json, status: 404}
+- {host: assets.clever.gy, path: /.well-known/agent.json, status: 404}
+- {host: api.clever.gy, path: /.well-known/security.txt, status: 404}
+- {host: api.clever.gy, path: /.well-known/openid-configuration, status: 404}
+- {host: api.clever.gy, path: /.well-known/oauth-authorization-server, status: 404}
+- {host: api.clever.gy, path: /.well-known/oauth-protected-resource, status: 404}
+- {host: api.clever.gy, path: /.well-known/api-catalog, status: 404}
+- {host: api.clever.gy, path: /.well-known/ai-plugin.json, status: 404}
+- {host: api.clever.gy, path: /.well-known/agent-card.json, status: 404}
+- {host: api.clever.gy, path: /.well-known/agent.json, status: 404}
+
+coverage:
+  probes: 40
+  hits: 0
+  hit_definition: an observed HTTP 200 whose body parses as a real document
+  false_positive_check: >-
+    No host answered any /.well-known/ path with a 200. There is therefore no SPA-catchall
+    false-positive to discount — the negative result is clean, and every origin returns a
+    genuinely correct 404 rather than a soft-200 HTML shell.
+  checked: '2026-08-17'

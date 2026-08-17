@@ -1,0 +1,125 @@
+generated: '2026-08-17'
+method: searched
+source: >-
+  https://docs.clever.gy/ (developer guide + Connect API reference) and
+  openapi/clevergy-connect-api-openapi.yml
+description: >-
+  Versioning, deprecation and operational-transparency posture of the Clevergy Connect API. The
+  honest headline: Clevergy signals deprecation inside the specification (a deprecated tag group
+  plus one flagged operation) but publishes no deprecation POLICY, no dated changelog, no status
+  page and no SLA. Absences below are recorded, not inferred.
+
+versioning:
+  scheme: none-in-path
+  current: 1.0.0
+  source: info.version in openapi/clevergy-connect-api-openapi.yml
+  policy_url: null
+  detail: >-
+    Paths are unversioned (https://connect.clever.gy/users). There is no version header, no date
+    pinning, and no documented version-negotiation mechanism. Breaking changes are instead
+    absorbed by publishing a replacement operation and marking the old one deprecated in the
+    spec.
+
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: null
+  sunset_header_documented: false
+  signalled_in_spec: true
+  mechanism: >-
+    Deprecation is communicated two ways in the spec: (1) tag groups literally named
+    "Contracts - Deprecated" and "Invoices - Deprecated" that hold the superseded house-scoped
+    operations, and (2) the OpenAPI `deprecated: true` flag on one operation. No timeline,
+    notice period, Sunset/Deprecation response header (RFC 8594), or removal date is published
+    for any of them.
+  note: >-
+    No `Deprecation` pointer is claimed in apis.yml: a deprecated tag group is evidence that
+    deprecations happen, not evidence of a published deprecation policy.
+
+deprecated_operations:
+- operationId: getUserHouses
+  path: GET /users/{userId}/houses
+  signal: openapi deprecated flag
+  replacement: getUserSupplies (GET /users/{userId}/supplies)
+  source: openapi/clevergy-connect-api-openapi.yml
+
+deprecated_groups:
+- tag: Contracts - Deprecated
+  operations: 7
+  operation_ids:
+  - createHouseContract
+  - getHouseContractById
+  - getHouseContractEnergyPrices
+  - addHouseContractEnergyPrices
+  - getHouseContractIdByExternalId
+  - getLastHouseContract
+  - assignExternalContractIdToContract
+  supersession: >-
+    House-scoped contract operations (/houses/{houseId}/contracts/...) superseded by the
+    user-scoped, fuel-typed operations under Contracts|Electricity and Contracts|Gas
+    (/users/{userId}/electricity-contracts, /users/{userId}/gas-contracts) plus the
+    user-scoped energy-prices pair under the Contracts tag.
+  source: openapi/clevergy-connect-api-openapi.yml
+- tag: Invoices - Deprecated
+  operations: 2
+  operation_ids:
+  - createHouseInvoice
+  - deleteHouseInvoice
+  supersession: >-
+    House-scoped invoice operations (/houses/{houseId}/invoices) superseded by the
+    contract-scoped invoice operations (/contracts/{contractId}/invoices) under the Invoices tag.
+  source: openapi/clevergy-connect-api-openapi.yml
+
+deprecated_components:
+- element: clevergy-consumption-cumulative
+  kind: microfrontend
+  replacement: clevergy-invoice-estimation
+  statement: >-
+    "It replaces the older Consumption cumulative module, which will be progressively deprecated
+    as clients migrate to this new module."
+  source: https://docs.clever.gy/helpdesk/microfrontends-catalog/energy-insights/invoice-estimation
+  detail: components/clevergy-components.yml
+
+status_page:
+  url: null
+  published: false
+  evidence:
+  - url: https://status.clever.gy/
+    result: NXDOMAIN — host does not resolve
+    checked: '2026-08-17'
+  note: >-
+    No status page found on any Clevergy host or on a third-party status provider under the
+    Clevergy name. No `StatusPage` pointer is claimed.
+
+sla:
+  url: null
+  uptime_target: null
+  published: false
+  note: >-
+    No SLA or uptime commitment is published on the public site or in the documentation. Access
+    to the Connect API itself is gated on a commercial relationship (the docs direct integrators
+    to their Customer Success Manager for a key), so any SLA is likely contractual and private.
+
+changelog:
+  url: null
+  published: false
+  evidence:
+  - url: https://docs.clever.gy/blog
+    status: 200
+    result: Docusaurus blog route renders with zero posts
+    checked: '2026-08-17'
+  note: >-
+    The documentation site has a blog route but publishes nothing to it, and no release-notes or
+    changelog page exists elsewhere in the docs. The marketing blog at https://clever.gy/en/blog/
+    is editorial content, not API release notes. No `ChangeLog` pointer is claimed and no
+    changelog/ artifact is written.
+
+support:
+  channel: soporte.clientes@clever.gy
+  access_request: >-
+    "To request access please write to soporte.clientes@clever.gy" — stated in both the developer
+    introduction and the Connect API spec description.
+  help_center: https://soporte.clever.gy/hc/es
+  help_center_note: >-
+    Linked from the corporate site footer. A direct TLS handshake to this host failed from the
+    probe environment (LibreSSL handshake failure), so its content was not read.

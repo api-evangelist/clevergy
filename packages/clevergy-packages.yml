@@ -1,0 +1,122 @@
+generated: '2026-08-17'
+method: searched
+source: >-
+  Registry searches of npm, PyPI, RubyGems, crates.io, Packagist, Maven Central, NuGet and
+  pkg.go.dev; the GitHub org https://github.com/Clevergy; and the Clevergy developer
+  documentation at https://docs.clever.gy/developer/microfrontends.
+description: >-
+  Clevergy publishes NO server-side API client library in any language registry. Its only
+  first-party distributed client code is a single browser ES module — the microfrontend loader —
+  served straight from its own CDN bucket with no version in the URL. An integrator calling the
+  Connect API writes raw HTTP.
+
+packages:
+- language: javascript
+  registry: cdn
+  name: clevergy-modules.js
+  url: https://assets.clever.gy/clevergy-modules.js
+  install: <script type="module" src="https://assets.clever.gy/clevergy-modules.js"></script>
+  official: true
+  kind: browser web-component bundle
+  purpose: >-
+    Defines all ~30 Clevergy microfrontend custom elements so they can be used anywhere in a web
+    page or webview. Not an API client SDK — it is the UI component distribution. See
+    components/clevergy-components.yml.
+  version: null
+  published: null
+  note: >-
+    Version is null because it is genuinely unknowable to a consumer, not because it was not
+    checked. The distribution URL carries no version segment and no query string, so it always
+    floats to whatever build is currently in the bucket; there is no CDN metadata API for a
+    private Google Cloud Storage bucket (this is not npm/unpkg/jsDelivr, so
+    data.jsdelivr.com/unpkg meta endpoints do not apply). The only currency signal available is
+    the HTTP response: Last-Modified 2026-08-17T10:12:50 GMT, ETag
+    c8e4a0032f9000dce016104cfc712b25, Content-Length 592093, Cache-Control max-age=60. So the
+    bundle is actively maintained (rebuilt the same day it was probed) but unpinnable — an
+    integrator cannot state which build their production page is loading, and neither can we.
+  probe:
+    url: https://assets.clever.gy/clevergy-modules.js
+    http_status: 200
+    content_type: text/javascript
+    size_bytes: 592093
+    last_modified: '2026-08-17T10:12:50Z'
+    fetched: '2026-08-17'
+
+sdks:
+  official_api_client_count: 0
+  languages: []
+  note: >-
+    Zero first-party API SDKs. NO `SDKs` pointer is claimed in apis.yml: the one official package
+    above is a browser UI bundle, and crediting it as an SDK would assert an SDK program Clevergy
+    does not run. The documentation's only code examples for the Connect API are raw cURL calls.
+    Integration is therefore hand-rolled HTTP in every language, against a Swagger 2.0 document
+    that a consumer can at least feed to a generator (openapi-generator / swagger-codegen) —
+    which is the practical mitigation and worth telling the provider.
+
+registry_search:
+  checked: '2026-08-17'
+  registries:
+  - registry: npm
+    query: clevergy
+    endpoint: https://registry.npmjs.org/-/v1/search?text=clevergy
+    total_hits: 2
+    first_party_hits: 0
+  - registry: pypi
+    queries: [clevergy, clever-gy]
+    result: 404 on both — no such project
+  - registry: rubygems
+    result: no first-party gem
+  - registry: crates.io
+    result: no first-party crate
+  - registry: packagist
+    result: no first-party package
+  - registry: maven-central
+    result: no first-party artifact
+  - registry: nuget
+    result: no first-party package
+  - registry: pkg.go.dev
+    result: no first-party module
+  - registry: github
+    endpoint: https://api.github.com/orgs/clevergy/repos
+    public_repos: 3
+    repos:
+    - name: gcloud-env-secrets
+      language: TypeScript
+      description: >-
+        Utility to generate .env files from a template by retrieving and inserting secrets from
+        Google Cloud Secret Manager
+      pushed_at: '2026-06-29'
+      is_sdk: false
+    - name: frontend-hiring-test
+      language: TypeScript
+      pushed_at: '2026-02-28'
+      is_sdk: false
+    - name: backend-hiring-test
+      language: Kotlin
+      pushed_at: '2025-10-28'
+      is_sdk: false
+    note: >-
+      The public GitHub org holds one internal utility and two hiring exercises. No SDK, no spec
+      mirror, no examples repo.
+
+not_first_party:
+- registry: npm
+  name: clevergy-sdk
+  url: https://www.npmjs.com/package/clevergy-sdk
+  version: 0.4.16
+  published: '2023-03-15'
+  official: false
+  exclusion_reason: >-
+    Repository is git+https://github.com/pcourpron/clevergy-api.git — a personal account
+    unaffiliated with the Clevergy GitHub org. Not linked from any Clevergy documentation.
+    Recorded here rather than in packages[] so it is never counted as a Clevergy SDK.
+- registry: npm
+  name: clv-jwt-validator
+  url: https://www.npmjs.com/package/clv-jwt-validator
+  version: 1.0.2
+  published: '2016-10-27'
+  official: false
+  exclusion_reason: >-
+    Published 2016, six years before The Clevergy Solution SL was founded (2022), from
+    bitbucket.org/clevergy/tokenvalidator. A name collision with an unrelated project, not an
+    abandoned Clevergy library.

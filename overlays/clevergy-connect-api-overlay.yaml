@@ -1,0 +1,134 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Clevergy Connect API
+  version: 1.0.0
+extends: openapi/clevergy-connect-api-openapi.yml
+x-generated: '2026-08-17'
+x-method: generated
+x-source: >-
+  Enhancements derived from the API Evangelist enrichment pass on all/clevergy/ — the harvested
+  Swagger 2.0 document at https://assets.clever.gy/swagger/connect-api.yaml is never mutated.
+  Every value below is either an observed fact about the published document or a pointer at
+  another artifact in this repo.
+actions:
+- target: $.info
+  description: >-
+    Record provenance, the artifact graph, and the two facts a consumer most needs and the
+    document does not state: where the spec is published and that it is Swagger 2.0.
+  update:
+    x-apievangelist-source: https://assets.clever.gy/swagger/connect-api.yaml
+    x-apievangelist-source-status: 200
+    x-apievangelist-source-content-type: application/yaml
+    x-apievangelist-harvested: '2026-08-17'
+    x-apievangelist-spec-version: swagger-2.0
+    x-apievangelist-docs: https://docs.clever.gy/connect-api/clevergy-connect-api
+    x-apievangelist-postman: https://www.postman.com/clevergy/clevergy-public-workspace
+    x-apievangelist-artifacts:
+      authentication: authentication/clevergy-authentication.yml
+      conventions: conventions/clevergy-conventions.yml
+      errors: errors/clevergy-problem-types.yml
+      lifecycle: lifecycle/clevergy-lifecycle.yml
+      data_model: data-model/clevergy-data-model.yml
+      conformance: conformance/clevergy-conformance.yml
+      webhooks: asyncapi/clevergy-webhooks.yml
+      components: components/clevergy-components.yml
+      agentic_access: agentic-access/clevergy-agentic-access.yml
+      skills: skills/_index.yml
+- target: $.info
+  description: >-
+    Add the contact and terms the document omits, sourced from the description Clevergy itself
+    wrote into info.description and from its published legal pages.
+  update:
+    contact:
+      name: Clevergy customer support
+      email: soporte.clientes@clever.gy
+      url: https://docs.clever.gy/developer
+    termsOfService: https://clever.gy/en/terms-conditions-web/
+- target: $.securityDefinitions.key
+  description: >-
+    Document how the API key is actually obtained and rotated — the spec declares the header but
+    not the lifecycle, which is the part an integrator gets stuck on.
+  update:
+    description: >-
+      Tenant API key, sent in the clevergy-api-key request header. Not self-service: issued per
+      environment on request to soporte.clientes@clever.gy or a Customer Success Manager, and
+      revealable/regenerable in the Operations Portal under Settings > API key management.
+      Regenerating revokes the previous key immediately. Must never be exposed to a browser —
+      mint a per-user JWT with retrieveUserAccessToken and pass that to microfrontends instead.
+    x-provisioning: sales-gated
+    x-rotation: self-service regenerate, immediate revocation of prior key
+    x-docs: https://docs.clever.gy/developer/getting-started/authentication
+- target: $.paths['/auth/{userId}/token'].get
+  description: >-
+    Flag this operation as the hinge of the whole integration: it is what turns a server-side API
+    key into a browser-safe, 1-hour user token for the microfrontend layer.
+  update:
+    x-apievangelist-role: token-exchange
+    x-token-ttl-seconds: 3600
+    x-consumed-by: microfrontend data-token attribute; login-with-token webview URL
+    x-docs: https://docs.clever.gy/developer/getting-started/authentication#authentication-with-jwt
+- target: $.paths['/contracts/{contractId}/invoices'].post
+  description: >-
+    Record the two-step upload contract. The 200 response is not the end of the operation: an
+    invoice whose PDF is never PUT to the returned signed URL is silently never processed.
+  update:
+    x-apievangelist-two-step: true
+    x-upload-url-field: fileUrl
+    x-upload-url-ttl-seconds: 900
+    x-failure-mode: >-
+      If the PDF is not uploaded to fileUrl within 15 minutes the invoice is not processed and
+      never becomes visible to the customer. There is no error — the caller must verify.
+    x-docs: https://docs.clever.gy/developer/how-to-set-up/invoices
+- target: $.paths['/equipments/{equipmentId}/storage/schedule'].post
+  description: >-
+    Mark the only operation in the API that actuates physical hardware, and record its
+    undocumented precondition.
+  update:
+    x-apievangelist-consequence: physical
+    x-precondition: >-
+      Battery information (capacity, SOC history) is readable for all users, but battery CONTROL
+      actions require the customer to have connected their system and granted permission via the
+      Huawei OAuth integration. Other inverter vendors are not yet supported for control.
+    x-human-in-the-loop: recommended
+    x-docs: https://docs.clever.gy/developer/how-to-set-up/battery-management
+- target: $.paths['/users/{userId}/houses'].get
+  description: Name the replacement for this deprecated operation, which the spec flags but does not redirect.
+  update:
+    x-apievangelist-superseded-by: getUserSupplies
+    x-apievangelist-superseded-path: /users/{userId}/supplies
+- target: $.paths['/users'].get
+  description: >-
+    Record the undocumented precondition behind this operation's 400 response — it rejects an
+    unfiltered call.
+  update:
+    x-apievangelist-requires-filter: true
+    x-filter-params: [userId, externalUserId, nif, email, status, product, name]
+    x-error-note: >-
+      Returns 400 "Incorrect sort criteria or no filter parameter provided" when called with no
+      filter parameter.
+- target: $.paths['/users/{userId}/virtual-wallet'].post
+  description: Flag the monetary write and the absence of any replay protection.
+  update:
+    x-apievangelist-consequence: monetary
+    x-unit: EUR
+    x-idempotency: none
+    x-retry-hazard: >-
+      No Idempotency-Key mechanism exists. A retried call posts a second balance delta. Callers
+      must deduplicate client-side.
+- target: $.paths['/users/{userId}/virtual-battery'].post
+  description: Flag the balance write and the absence of any replay protection.
+  update:
+    x-apievangelist-consequence: write
+    x-unit: kWh
+    x-idempotency: none
+    x-retry-hazard: >-
+      No Idempotency-Key mechanism exists. A retried call posts a second balance delta. Callers
+      must deduplicate client-side.
+- target: $.paths['/users/{userId}'].delete
+  description: Flag the irreversible personal-data deletion.
+  update:
+    x-apievangelist-consequence: irreversible
+    x-human-in-the-loop: required
+    x-note: >-
+      Hard delete of an end customer's account. This is the operation a GDPR erasure request would
+      run through; it should never be reachable by an unsupervised agent.

@@ -1,0 +1,151 @@
+generated: '2026-08-17'
+method: derived
+source: openapi/clevergy-connect-api-openapi.yml
+format: custom-json
+format_note: >-
+  NOT RFC 9457. No operation declares application/problem+json and no response carries a `type`
+  URI. Clevergy publishes a per-status error schema family instead, all sharing the same four
+  fields, plus a differently-shaped catch-all. Recorded here so a client knows to parse two
+  shapes, not one.
+description: >-
+  The error surface of the Clevergy Connect API, derived from the 4xx/5xx responses declared on
+  all 83 operations. There is no documented application-level error-code vocabulary — the
+  meaning of a failure is carried in the per-operation response `description`, which is why the
+  distinct descriptions are preserved verbatim below rather than collapsed.
+
+envelopes:
+- name: status-specific
+  schemas:
+  - HttpErrorBadRequest
+  - HttpErrorUnauthorized
+  - HttpErrorForbidden
+  - HttpErrorNotFound
+  - HttpErrorConflict
+  - HttpErrorUserExists
+  - HttpErrorUnprocessableEntity
+  fields:
+    timestamp: Request date and time (e.g. 2023-12-26T10:23:19.508+00:00)
+    status: HTTP error code, integer
+    error: HTTP error description, string
+    path: Request path (absent on HttpErrorConflict and HttpErrorUserExists)
+- name: default
+  schemas: [Error]
+  fields:
+    code: integer (required)
+    message: string (required)
+  note: >-
+    Declared as the `default` response on all 83 operations, i.e. the shape for any unexpected
+    error. Its two fields overlap with neither of the status-specific envelope's fields, so a
+    client that only parses one shape will fail to read the other.
+
+problems:
+- status: 400
+  title: Bad request
+  schema: HttpErrorBadRequest
+  operations: 29
+  variants:
+  - Bad request
+  - Bad Request
+  - Bad request (e.g., house cups not found)
+  - Bad request (user already exists)
+  - Incorrect sort criteria or no filter parameter provided
+  remediation: >-
+    Validate the request body against the operation schema. Three energy/house operations use
+    400 specifically when the supplied CUPS supply-point code cannot be resolved, and getUsers
+    returns 400 when no filter parameter is given or the sort criteria is invalid — that
+    operation requires at least one filter.
+- status: 401
+  title: Unauthorized
+  schema: HttpErrorUnauthorized
+  operations: 79
+  remediation: >-
+    Send a valid tenant key in the clevergy-api-key header (or, for user-delegated calls, a
+    non-expired user JWT). JWTs expire after one hour and must be re-minted with
+    retrieveUserAccessToken.
+  note: >-
+    Declared on 79 of 83 operations. Four operations do not declare a 401 at all even though the
+    whole API is behind a required `key` security scheme — a spec-completeness gap, not a public
+    endpoint.
+- status: 403
+  title: Forbidden
+  schema: HttpErrorForbidden
+  operations: 5
+  operation_ids:
+  - removeEnergyCommunityHouseFromInstallation
+  - updateEnergyCommunityHouseShare
+  - deleteHouse
+  - storeHouseEnergies
+  remediation: >-
+    The key authenticated but the tenant does not own the addressed resource. Confirm the house,
+    installation or energy community belongs to your tenant.
+- status: 404
+  title: Not found
+  schema: HttpErrorNotFound
+  operations: 63
+  variants:
+  - Not found
+  - Resource not found
+  - User not found
+  - House not found
+  - Installation not found
+  - Contract not found
+  - Electricity contract not found
+  - Gas contract not found
+  - Invoice not found
+  - House or Invoice Not found
+  remediation: >-
+    Check the path identifier. Because the resource graph is nested (user to house to contract
+    to invoice), a 404 on a deep path may mean any ancestor is missing — the response
+    description names which entity was not found for most operations.
+  note: >-
+    Two operations declare HttpErrorBadRequest as the schema for their 404 response rather than
+    HttpErrorNotFound. The wire shape is identical (same four fields), so this is a spec
+    inconsistency rather than a behavioural one.
+- status: 409
+  title: Conflict
+  schema: HttpErrorConflict
+  operations: 8
+  variants:
+  - Conflict. Tariff already exists
+  - User already exists with this email
+  - Contract already exists (only if contract number is provided)
+  - Invoice already exists for this user with the same external id (including on another contract of the same user)
+  remediation: >-
+    The resource already exists. This is the API's duplicate-detection mechanism and the closest
+    thing it offers to idempotency — there is no Idempotency-Key header, so a retried create
+    surfaces here rather than replaying the original response. For invoices the uniqueness scope
+    is the external id across the whole user, not just the contract. createUser returns the
+    dedicated HttpErrorUserExists schema, which omits the `path` field.
+  related: conventions/clevergy-conventions.yml
+- status: 422
+  title: Unprocessable entity
+  schema: HttpErrorUnprocessableEntity
+  operations: 2
+  operation_ids:
+  - createVirtualBatteryTransaction
+  - createVirtualWalletTransaction
+  remediation: >-
+    The virtual-balance transaction was syntactically valid but semantically rejected — check
+    date, amount and totalBalance consistency against the current balance.
+- status: default
+  title: Unexpected error
+  schema: Error
+  operations: 83
+  remediation: >-
+    Catch-all. Parse the two-field {code, message} shape here; it is not the four-field envelope
+    used by the named 4xx responses.
+
+coverage:
+  operations_total: 83
+  operations_with_4xx: 83
+  distinct_statuses: 6
+  statuses: [400, 401, 403, 404, 409, 422]
+  no_5xx_declared: true
+  no_5xx_note: >-
+    No operation declares an explicit 5xx response; server failures fall to the `default`
+    response.
+  error_code_vocabulary: false
+  error_code_note: >-
+    Clevergy publishes no application-level error-code registry (no numeric or symbolic codes
+    beyond the HTTP status). The `code` field on the Error schema is typed as an integer with no
+    documented value set.

@@ -1,0 +1,117 @@
+generated: '2026-08-17'
+method: derived
+source: openapi/clevergy-connect-api-openapi.yml
+status: candidate
+description: >-
+  Clevergy ships NO MCP server. This is a DERIVED CANDIDATE tool surface, computed from the 83
+  operations of the published Connect API OpenAPI so the shape of an agent-facing Clevergy is
+  visible and so the provider can see what it would take. Nothing here is deployed and no
+  endpoint exists — see deployment.mode: none.
+
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: api-key
+  auth_note: >-
+    Recorded as api-key because that is what a server WOULD have to carry (the Connect API's only
+    scheme is the clevergy-api-key header). It is not a claim that an authenticated MCP surface
+    exists.
+  verified: derived
+  evidence:
+  - {url: 'https://mcp.clever.gy', result: NXDOMAIN, checked: '2026-08-17'}
+  - {url: 'https://clever.gy/mcp', method: 'POST tools/list', status: 404, checked: '2026-08-17'}
+  - {url: 'https://connect.clever.gy/mcp', method: 'POST tools/list', status: 404, checked: '2026-08-17'}
+  - {url: 'https://docs.clever.gy/mcp', method: 'POST tools/list', status: 400, checked: '2026-08-17'}
+  - {url: 'https://registry.npmjs.org/-/v1/search?text=clevergy', result: 'no MCP package published under any Clevergy name', checked: '2026-08-17'}
+
+server:
+  name: clevergy
+  transport: null
+  url: null
+
+candidate_tool_groups:
+- group: users
+  description: Create, read, update and delete the utility's end customers.
+  operations: [createUser, getUser, getUsers, updateUser, deleteUserAccount, authorizeUser, getUserAppDevices]
+  agent_suitability: >-
+    Reads are safe. deleteUserAccount is a hard delete of a person's account and should never be
+    agent-callable without human confirmation.
+- group: houses
+  description: The hub entity — dwellings and their supply points.
+  operations: [createHouse, getTenantHouses, getHouseDetail, updateHouse, deleteHouse, getUserSupplies, getHouseSettings, updateHouseSettings]
+- group: contracts
+  description: Electricity and gas contracts and their energy price tables.
+  operations: [createElectricityContract, getElectricityContract, getUserElectricityContracts, updateElectricityContract, deleteElectricityContract, createGasContract, getGasContract, getUserGasContracts, updateGasContract, deleteGasContract, getContractEnergyPrices, addContractEnergyPrices]
+- group: invoices
+  description: Invoice upload, retrieval and OCR analysis.
+  operations: [createInvoice, getInvoiceById, getInvoicesByContract, getInvoicesByUser, updateInvoice, deleteInvoice, analyzeInvoice, getInvoiceAnalysisById, getInvoiceTariffs]
+  agent_suitability: >-
+    createInvoice is a two-step with a 15-minute signed upload URL and has no idempotency key —
+    a retrying agent can create duplicate invoices, caught only by a 409 on the external id.
+- group: tariffs
+  description: Custom tariff definitions and their price series.
+  operations: [createTariff, getTariff, getTariffs, updateTariff, deleteTariff, setTariffEnergyPrices]
+- group: energy-telemetry
+  description: Consumption, production, power, comparison and appliance-level disaggregation reads.
+  operations: [getEnergyByHouseId, getEnergyComparison, getPowerByHouseId, getDisaggregationByHouse, storeHouseEnergies]
+  agent_suitability: The strongest read-only agent surface in the API — time-windowed energy queries.
+- group: equipment-and-storage
+  description: Inverters, batteries and smart devices; battery state of charge and scheduling.
+  operations: [getTenantEquipments, getHouseEquipments, getStorageEquipment, getStorageEquipmentSoc, scheduleStorageEquipmentAction]
+  agent_suitability: >-
+    scheduleStorageEquipmentAction actuates physical battery hardware (charge/discharge to a
+    target SOC). It must be gated behind human confirmation and a short-lived, purpose-bound
+    token — see agentic-access/clevergy-agentic-access.yml.
+- group: integrations-and-installations
+  description: Connect and manage third-party inverter/smart-meter installations.
+  operations: [getConnection, getInstallations, connectInstallation, updateInstallation, getAssignedUsersOfIntegration, assignExternalUserIdToUser]
+- group: energy-communities
+  description: Collective self-consumption community membership and generation shares.
+  operations: [assignHouseToEnergyCommunity, updateEnergyCommunityHouseShare, removeEnergyCommunityHouseFromInstallation]
+- group: tickets
+  description: Customer support tickets and comment threads.
+  operations: [getTicketDetails, updateTicket, addCommentToTicket, createCommentAttachmentSignedUrl]
+- group: sales-opportunities
+  description: Leads generated from energy data and in-app behaviour.
+  operations: [getSalesOpportunities, getContractSalesOpportunity, patchContractSalesOpportunity, deleteSalesOpportunity]
+- group: virtual-balance
+  description: Wallet (EUR) and virtual battery (kWh) balance transactions.
+  operations: [createVirtualWalletTransaction, createVirtualBatteryTransaction]
+  agent_suitability: >-
+    Posts a monetary or energy balance delta with no idempotency key. Not agent-safe without
+    human-in-the-loop.
+- group: tips
+  description: Public energy-saving tips.
+  operations: [getPublicSavingTips]
+
+coverage:
+  candidate_tools: 83
+  rest_operations: 83
+  deprecated_operations_excluded: 0
+  note: >-
+    One candidate tool per operationId, with the 10 operations in the deprecated tag groups
+    retained but flagged in lifecycle/clevergy-lifecycle.yml — a real server should omit them.
+    Input schemas are NOT restated here: each candidate tool's real input contract is the
+    corresponding operation's `parameters` and body schema in
+    openapi/clevergy-connect-api-openapi.yml, which is the authoritative source and must not be
+    duplicated (or guessed) into this file.
+
+pointer_policy:
+  mcp_server_pointer_emitted: false
+  reason: >-
+    Deliberately NO `type: MCPServer` pointer is wired in apis.yml for this file. The
+    mcp_server_present ergonomics check (4 pts) and the agent-readiness mcp_server dimension
+    (12 pts) both assert that the PROVIDER ships a callable MCP surface. Clevergy does not — there
+    is no endpoint and no package, only this derived candidate. Pointing MCPServer at a candidate
+    would credit 16 points for something an agent cannot call. The artifact is kept because it is
+    genuinely useful (it is the shape of the work, and the safety classification of each group),
+    but it is not scored as a deployed server.
+
+tool_crosswalk: null
+tool_crosswalk_note: >-
+  No mcp/clevergy-tool-crosswalk.yml is written. The crosswalk artifact exists to record the
+  divergence between a real MCP tool surface and the REST contract; with no MCP server and no
+  GraphQL endpoint there is nothing to cross-walk — a crosswalk of derived candidates against the
+  operations they were derived from would be a tautology, not a finding.

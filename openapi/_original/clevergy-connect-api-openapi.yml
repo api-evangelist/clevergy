@@ -1,0 +1,5933 @@
+swagger: '2.0'
+info:
+  title: Clevergy Connect API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+host: connect.clever.gy
+schemes:
+  - https
+produces:
+  - application/json
+security:
+  - key: []
+paths:
+  /auth/{userId}/token:
+    get:
+      summary: Get user access token
+      description: |
+        Returns user jwt based on the email. The jwt can be used in some endpoints
+        of the API to obtain energy data from the user.
+      tags:
+        - Access control
+      operationId: retrieveUserAccessToken
+      parameters:
+        - name: userId
+          in: path
+          description: Clevergy ID from the user (also available with email)
+          required: true
+          type: string
+      responses:
+        '200':
+          description: User jwt
+          schema:
+            $ref: '#/definitions/AuthUser'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /connections:
+    get:
+      summary: Get all connections.
+      description: Get connections.
+      tags:
+        - Connections
+      operationId: getConnection
+      responses:
+        '200':
+          description: List of connections
+          schema:
+            $ref: '#/definitions/ConnectionResponse'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /energy-communities/{communityId}/remove-house:
+    post:
+      summary: Remove a house from an energy community
+      description: |
+        Removes a house from an energy community
+      tags:
+        - Energy communities
+      operationId: removeEnergyCommunityHouseFromInstallation
+      parameters:
+        - name: communityId
+          in: path
+          description: Alphanumeric id from energy community
+          required: true
+          type: string
+        - name: removeEnergyCommunityHouseRequest
+          in: body
+          schema:
+            $ref: '#/definitions/RemoveEnergyCommunityHouseRequest'
+      responses:
+        '200':
+          description: House successfully removed
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/HttpErrorForbidden'
+        '404':
+          description: Resource not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /energy-communities/{energyCommunityId}/houses:
+    post:
+      summary: Assign a house to an energy community
+      description: |
+        Assign a house to an energy community
+      tags:
+        - Energy communities
+      operationId: assignHouseToEnergyCommunity
+      parameters:
+        - name: energyCommunityId
+          in: path
+          description: Alphanumeric id from energy community
+          required: true
+          type: string
+        - name: energyCommunityHouse
+          in: body
+          schema:
+            $ref: '#/definitions/EnergyCommunityHouse'
+      responses:
+        '201':
+          description: House successfully assigned
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Resource not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /energy-communities/{energyCommunityId}/update-share:
+    post:
+      summary: Update share
+      description: |
+        Update share for an energy community house
+      tags:
+        - Energy communities
+      operationId: updateEnergyCommunityHouseShare
+      parameters:
+        - name: energyCommunityId
+          in: path
+          description: Alphanumeric id from energy community
+          required: true
+          type: string
+        - name: UpdateEnergyCommunityHouseRequest
+          in: body
+          schema:
+            $ref: '#/definitions/UpdateEnergyCommunityHouseRequest'
+      responses:
+        '200':
+          description: House successfully updated
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/HttpErrorForbidden'
+        '404':
+          description: Resource not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /equipments:
+    get:
+      summary: Get all the tenant equipments of a given type
+      description: |
+        Get tenant equipments of a given type.
+      tags:
+        - Equipments
+      operationId: getTenantEquipments
+      parameters:
+        - name: integrationType
+          in: query
+          description: Filter by integration type
+          required: true
+          type: string
+          enum:
+            - DISTRIBUTOR
+            - SOLAR
+            - SMART_DEVICE
+            - STORAGE
+        - name: cursor
+          in: query
+          description: Cursor for pagination (not inclusive)
+          required: false
+          type: string
+          format: uuid
+        - name: limit
+          in: query
+          description: Maximum number of equipments to return (max 100)
+          required: false
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: Page of equipments
+          schema:
+            $ref: '#/definitions/EquipmentsPage'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /equipments/{equipmentId}/storage:
+    get:
+      summary: Get storage equipment data
+      description: |
+        Returns the storage equipment information.
+      tags:
+        - Equipments
+      operationId: getStorageEquipment
+      parameters:
+        - name: equipmentId
+          in: path
+          description: Id of the equipment
+          required: true
+          type: string
+      responses:
+        '200':
+          description: StorageEquipment
+          schema:
+            $ref: '#/definitions/StorageEquipment'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /equipments/{equipmentId}/storage/schedule:
+    post:
+      summary: Schedule an action for a storage equipment
+      description: |
+        Schedules an action (charge or discharge) for a storage equipment.
+      tags:
+        - Equipments
+      operationId: scheduleStorageEquipmentAction
+      parameters:
+        - name: equipmentId
+          in: path
+          description: Id of the equipment
+          required: true
+          type: string
+        - name: scheduleStorageActionRequest
+          in: body
+          description: Request body to schedule an action
+          required: true
+          schema:
+            $ref: '#/definitions/ScheduleStorageActionRequest'
+      responses:
+        '201':
+          description: Action scheduled successfully
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /equipments/{equipmentId}/storage/soc:
+    get:
+      summary: Get storage equipment state of charge
+      description: |
+        Returns the storage equipment state of charge information.
+      tags:
+        - Equipments
+      operationId: getStorageEquipmentSoc
+      parameters:
+        - name: equipmentId
+          in: path
+          description: Id of the equipment
+          required: true
+          type: string
+        - name: startDate
+          in: query
+          description: Start date to filter by
+          required: true
+          type: string
+          format: date-time
+        - name: endDate
+          in: query
+          description: End date to filter by
+          required: true
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: StorageEquipmentSoc
+          schema:
+            $ref: '#/definitions/StorageEquipmentSoc'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses:
+    get:
+      summary: Get all the tenant houses
+      description: |
+        Get tenant houses
+      tags:
+        - Houses
+      operationId: getTenantHouses
+      parameters:
+        - name: cursor
+          in: query
+          description: Cursor for pagination (not inclusive)
+          required: false
+          type: string
+          format: uuid
+        - name: limit
+          in: query
+          description: Maximum number of houses to return (max 100)
+          required: false
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: Page of houses
+          schema:
+            $ref: '#/definitions/HousesPage'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses/{houseId}:
+    delete:
+      summary: Delete a house
+      description: |
+        Deletes a house
+      tags:
+        - Houses
+      operationId: deleteHouse
+      parameters:
+        - name: houseId
+          in: path
+          description: ID of house
+          required: true
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: House deleted successfully
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/HttpErrorForbidden'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses/{houseId}/contracts:
+    post:
+      summary: Create a contract
+      description: |
+        Creates a house contract
+      tags:
+        - Contracts - Deprecated
+      operationId: createHouseContract
+      parameters:
+        - name: houseId
+          in: path
+          description: Id of the house
+          required: true
+          type: string
+        - name: createHouseContract
+          in: body
+          schema:
+            $ref: '#/definitions/CreateHouseContract'
+      responses:
+        '200':
+          description: Contract created successfully
+          schema:
+            type: string
+            description: Id of the contract created
+        '400':
+          description: Bad request (e.g., house cups not found)
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: House not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses/{houseId}/contracts/{contractId}:
+    get:
+      summary: Get house contract by id
+      description: |
+        Gets a house contract by id
+      tags:
+        - Contracts - Deprecated
+      operationId: getHouseContractById
+      parameters:
+        - name: houseId
+          in: path
+          description: Id of the house
+          required: true
+          type: string
+        - name: contractId
+          in: path
+          description: Id of the contract
+          required: true
+          type: string
+      responses:
+        '200':
+          description: House contract
+          schema:
+            $ref: '#/definitions/HouseContractDetail'
+        '204':
+          description: No contract found for the house
+        '400':
+          description: Bad request (e.g., house cups not found)
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses/{houseId}/contracts/{contractId}/energy-prices:
+    get:
+      summary: Get energy prices from a contract
+      description: |
+        Gets the contract energy prices for specific dates. It allows to filter by start and end date, with a maximum of a year between them.
+      tags:
+        - Contracts - Deprecated
+      operationId: getHouseContractEnergyPrices
+      parameters:
+        - name: houseId
+          in: path
+          description: Id of the house
+          required: true
+          type: string
+        - name: contractId
+          in: path
+          description: Id of the contract
+          required: true
+          type: string
+        - name: startDate
+          in: query
+          description: Start date to filter by
+          required: true
+          type: string
+          format: date-time
+        - name: endDate
+          in: query
+          description: End date to filter by
+          required: true
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: Contract prices added successfully
+          schema:
+            $ref: '#/definitions/HouseContractEnergyPriceResponse'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Add energy prices to a contract
+      description: |
+        Adds the contract energy prices for specific dates.
+      tags:
+        - Contracts - Deprecated
+      operationId: addHouseContractEnergyPrices
+      parameters:
+        - name: houseId
+          in: path
+          description: Id of the house
+          required: true
+          type: string
+        - name: contractId
+          in: path
+          description: Id of the contract
+          required: true
+          type: string
+        - name: houseContractEnergyPriceRequest
+          in: body
+          description: Request containing contract energy prices and dates
+          required: true
+          schema:
+            $ref: '#/definitions/HouseContractEnergyPriceRequest'
+      responses:
+        '200':
+          description: Contract prices added successfully
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses/{houseId}/disaggregation:
+    get:
+      summary: Get house disaggregation
+      description: |
+        Returns the consumption disaggregation of a house.
+      tags:
+        - Disaggregation
+      operationId: getDisaggregationByHouse
+      parameters:
+        - name: houseId
+          in: path
+          description: Id of the house
+          required: true
+          type: string
+        - name: startDate
+          in: query
+          description: Start date to filter by. p.e. 2025-04-01T00:00:00Z
+          required: true
+          type: string
+          format: date-time
+        - name: endDate
+          in: query
+          description: End date to filter by. p.e. 2025-04-30T00:00:00Z
+          required: true
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: Disaggregation
+          schema:
+            $ref: '#/definitions/HouseDisaggregation'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses/{houseId}/energy-comparison:
+    get:
+      summary: Get energy comparison
+      description: |
+        Returns the energy of a house for a month and a comparison with different profiles
+      tags:
+        - Energy
+      operationId: getEnergyComparison
+      parameters:
+        - name: houseId
+          in: path
+          description: Id of the house
+          required: true
+          type: string
+        - name: month
+          in: query
+          description: Month to filter by
+          required: true
+          type: string
+          format: MM/yyyy
+      responses:
+        '200':
+          description: User house profile
+          schema:
+            $ref: '#/definitions/EnergyComparison'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses/{houseId}/energy:
+    get:
+      summary: Get house energy
+      description: |
+        Returns the energy of a house for a date period (from startDate to endDate)
+        grouped by date based on granularity
+      tags:
+        - Energy
+      operationId: getEnergyByHouseId
+      parameters:
+        - name: houseId
+          in: path
+          description: ID of a house
+          required: true
+          type: string
+        - name: startDate
+          in: query
+          description: Start date to filter by
+          required: true
+          type: string
+          format: date-time
+        - name: endDate
+          in: query
+          description: End date to filter by
+          required: true
+          type: string
+          format: date-time
+        - name: granularity
+          in: query
+          description: Granularity to group by
+          required: true
+          type: string
+          enum:
+            - YEARLY
+            - MONTHLY
+            - DAILY
+            - HOURLY
+        - name: includeTimeSpanStart
+          in: query
+          description: Time span start to filter within a day in hh:mm format (example 01:00)
+          required: false
+          type: string
+        - name: includeTimeSpanEnd
+          in: query
+          description: Time span end to filter within a day in hh:mm format (example 01:00)
+          required: false
+          type: string
+        - name: timeZone
+          in: query
+          description: Time zone for the dates requested and returned (example Europe/Madrid). By default, the time zone is UTC.
+          required: false
+          type: string
+      responses:
+        '200':
+          description: House consumption
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EnergyItem'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses/{houseId}/equipments:
+    get:
+      summary: Get equipments of a house
+      description: |
+        Returns the equipments of a house
+      tags:
+        - Equipments
+      operationId: getHouseEquipments
+      parameters:
+        - name: houseId
+          in: path
+          description: Id of the house
+          required: true
+          type: string
+      responses:
+        '200':
+          description: House equipments
+          schema:
+            $ref: '#/definitions/HouseEquipments'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: House Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses/{houseId}/external-contracts:
+    post:
+      summary: Link a contract with an external id
+      description: |
+        Links a contract with an external id
+      tags:
+        - Contracts - Deprecated
+      operationId: assignExternalContractIdToContract
+      parameters:
+        - name: houseId
+          in: path
+          description: Id of the house
+          required: true
+          type: string
+        - name: assignExternalContractToContractRequest
+          in: body
+          schema:
+            $ref: '#/definitions/AssignExternalContractToContractRequest'
+      responses:
+        '200':
+          description: Contract assigned successfully
+          schema:
+            type: string
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses/{houseId}/external-contracts/{externalContractId}:
+    get:
+      summary: Get contract id from external id
+      description: |
+        Gets contract id from the external id it is linked to
+      tags:
+        - Contracts - Deprecated
+      operationId: getHouseContractIdByExternalId
+      parameters:
+        - name: houseId
+          in: path
+          description: Id of the house
+          required: true
+          type: string
+        - name: externalContractId
+          in: path
+          description: External id of the contract
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Contract id
+          schema:
+            type: string
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses/{houseId}/house-detail:
+    get:
+      summary: Get house details
+      description: |
+        Returns house details.
+      tags:
+        - Houses
+      operationId: getHouseDetail
+      parameters:
+        - name: houseId
+          in: path
+          description: ID of the house
+          required: true
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: House details
+          schema:
+            $ref: '#/definitions/UserHouseWithIntegrations'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses/{houseId}/installations:
+    post:
+      summary: Link installation to a house
+      description: |
+        Link installation to a house
+      tags:
+        - Integrations
+      operationId: connectInstallation
+      parameters:
+        - name: houseId
+          in: path
+          required: true
+          type: string
+        - name: connectInstallationRequest
+          in: body
+          schema:
+            $ref: '#/definitions/ConnectInstallationRequest'
+      responses:
+        '200':
+          description: Assigned installation to house
+        '404':
+          description: House not found
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses/{houseId}/invoices:
+    post:
+      summary: Create an electricity invoice
+      description: |
+        This endpoint provides a signed URL for uploading a PDF invoice:
+        - Step 1: POST invoice metadata to obtain the upload URL.
+        - Step 2: PUT the PDF file to the returned URL (valid for 15 minutes).
+        :::warning
+        **Use only for electricity invoices.**<br />
+        This endpoint is being deprecated and its functionality will be replaced by a new endpoint.
+        Once the new endpoint is available, we will communicate it accordingly.
+        :::
+      tags:
+        - Invoices - Deprecated
+      operationId: createHouseInvoice
+      parameters:
+        - name: houseId
+          in: path
+          description: Id of the house
+          required: true
+          type: string
+        - name: createHouseInvoice
+          in: body
+          schema:
+            $ref: '#/definitions/CreateHouseInvoice'
+      responses:
+        '200':
+          description: Invoice created successfully
+          schema:
+            $ref: '#/definitions/SignedUrl'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: House Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses/{houseId}/invoices/{invoiceId}:
+    delete:
+      summary: Delete house invoice
+      description: Deletes a house invoice
+      tags:
+        - Invoices - Deprecated
+      operationId: deleteHouseInvoice
+      parameters:
+        - name: houseId
+          in: path
+          description: Id of the house
+          required: true
+          type: string
+        - name: invoiceId
+          in: path
+          description: Id of the invoice
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Invoice deleted successfully
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: House or Invoice Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses/{houseId}/last-contract:
+    get:
+      summary: Get the last contract of a house
+      description: |
+        Gets the last contract of a house
+      tags:
+        - Contracts - Deprecated
+      operationId: getLastHouseContract
+      parameters:
+        - name: houseId
+          in: path
+          description: Id of the house
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Last contract of the house
+          schema:
+            $ref: '#/definitions/HouseContractDetail'
+        '204':
+          description: No contract found for the house
+        '400':
+          description: Bad request (e.g., house cups not found)
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses/{houseId}/power:
+    get:
+      summary: Get house power
+      description: |
+        Returns the power of a house for a date period (from startDate to endDate)
+      tags:
+        - Power
+      operationId: getPowerByHouseId
+      parameters:
+        - name: houseId
+          in: path
+          description: ID of a house
+          required: true
+          type: string
+        - name: startDate
+          in: query
+          description: Start date to filter by
+          required: true
+          type: string
+          format: date-time
+        - name: endDate
+          in: query
+          description: End date to filter by
+          required: true
+          type: string
+          format: date-time
+        - name: timeZone
+          in: query
+          description: Time zone for the dates requested and returned (example Europe/Madrid). By default, the time zone is UTC.
+          required: false
+          type: string
+      responses:
+        '200':
+          description: House power
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PowerItem'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses/{houseId}/settings:
+    get:
+      summary: Get house settings
+      description: |
+        Returns house settings.
+      tags:
+        - Settings
+      operationId: getHouseSettings
+      parameters:
+        - name: houseId
+          in: path
+          description: ID of the house
+          required: true
+          type: string
+      responses:
+        '200':
+          description: House settings
+          schema:
+            $ref: '#/definitions/HouseSettings'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Update house settings
+      description: |
+        Updates house settings.
+      tags:
+        - Settings
+      operationId: updateHouseSettings
+      parameters:
+        - name: houseId
+          in: path
+          description: ID of the house
+          required: true
+          type: string
+        - name: houseSettings
+          in: body
+          schema:
+            $ref: '#/definitions/HouseSettings'
+      responses:
+        '200':
+          description: House settings
+          schema:
+            $ref: '#/definitions/HouseSettings'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses/{houseId}/smartmeter:
+    post:
+      summary: Store energies for a house
+      description: |
+        Stores a list of energies and dates for a specific house.
+        :::warning
+        This endpoint is experimental. Please, contact us if you want to use it.
+        :::
+      tags:
+        - Energy
+      operationId: storeHouseEnergies
+      parameters:
+        - name: houseId
+          in: path
+          description: Id of the house
+          required: true
+          type: string
+        - name: storeHouseEnergiesRequest
+          in: body
+          schema:
+            $ref: '#/definitions/StoreHouseEnergiesRequest'
+      responses:
+        '200':
+          description: Energies stored correctly
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/HttpErrorForbidden'
+        '404':
+          description: House Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /houses/{houseId}/update:
+    put:
+      summary: Update a house
+      description: |
+        Update a house
+      tags:
+        - Houses
+      operationId: updateHouse
+      parameters:
+        - name: houseId
+          in: path
+          description: Id of the house
+          required: true
+          type: string
+        - name: house
+          in: body
+          schema:
+            $ref: '#/definitions/UpdateHouse'
+      responses:
+        '200':
+          description: House updated successfully
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /installations:
+    get:
+      summary: Get all installations
+      description: |
+        Get all installations
+      tags:
+        - Integrations
+      operationId: getInstallations
+      parameters:
+        - name: page
+          in: query
+          description: Number of the page starting at 1
+          required: true
+          type: integer
+          format: int32
+        - name: size
+          in: query
+          description: Size of the page
+          required: true
+          type: integer
+          format: int32
+        - name: sort
+          in: query
+          description: |
+            Order by this param (ex:capacity, plantName, plantAddress,
+            plantCode...).
+          required: false
+          type: string
+          default: plantName
+        - name: direction
+          in: query
+          description: Direction of the order.
+          required: false
+          type: string
+          default: DESC
+          enum:
+            - ASC
+            - DESC
+        - name: integrationId
+          in: query
+          description: Filter by integration id
+          required: false
+          type: string
+          format: uuid
+        - name: name
+          in: query
+          description: Filter by installation name
+          required: false
+          type: string
+        - name: hasHouseLinked
+          in: query
+          description: Filter by installation linked with house
+          required: false
+          type: boolean
+      responses:
+        '200':
+          description: List of installations
+          schema:
+            $ref: '#/definitions/Installation'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /installations/{installationId}:
+    put:
+      summary: Update an installation
+      description: |
+        Update an installation
+      tags:
+        - Integrations
+      operationId: updateInstallation
+      parameters:
+        - name: installationId
+          in: path
+          description: Id of the installation to update
+          required: true
+          type: string
+        - name: updateInstallation
+          in: body
+          schema:
+            $ref: '#/definitions/UpdateInstallation'
+      responses:
+        '200':
+          description: Installation updated successfully
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Installation not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /integrations/users:
+    post:
+      summary: Assign an external user id to a user
+      description: |
+        Assign an external user id to a user for an integration
+      tags:
+        - Integrations
+      operationId: assignExternalUserIdToUser
+      parameters:
+        - name: assignExternalUserIdToUser
+          in: body
+          schema:
+            $ref: '#/definitions/AssignExternalUserIdToUser'
+      responses:
+        '200':
+          description: External user id successfully assigned to user.
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    get:
+      summary: Get assigned users for an integration
+      description: |
+        Get assigned users for an integration.
+      tags:
+        - Integrations
+      operationId: getAssignedUsersOfIntegration
+      parameters:
+        - name: userId
+          in: query
+          description: user id
+          type: string
+        - name: externalUserId
+          in: query
+          description: external user id
+          required: true
+          type: string
+        - name: vendor
+          in: query
+          description: integration vendor
+          required: true
+          type: string
+          enum:
+            - AUDINFOR
+            - GISCE
+      responses:
+        '200':
+          description: Assigned users successfully retrieved.
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /invoice-analysis:
+    post:
+      summary: Analyze invoice
+      description: |
+        Analizes an invoice from an url
+      tags:
+        - Invoices
+      operationId: analyzeInvoice
+      parameters:
+        - name: analyzeInvoice
+          in: body
+          description: Invoice url. (Should be a public url)
+          schema:
+            $ref: '#/definitions/AnalyzeInvoice'
+      responses:
+        '200':
+          description: Invoice analized and recorded.
+          schema:
+            $ref: '#/definitions/InvoiceAnalysisId'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /invoice-analysis/{invoiceAnalysisId}:
+    get:
+      summary: Get invoice analysis
+      description: |
+        Get latest available invoice analysis
+      tags:
+        - Invoices
+      operationId: getInvoiceAnalysisById
+      parameters:
+        - name: invoiceAnalysisId
+          in: path
+          description: ID of invoice analysis.
+          required: true
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: latest invoice analysis
+          schema:
+            $ref: '#/definitions/InvoiceAnalysis'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /invoice-analysis/{invoiceAnalysisId}/tariffs:
+    get:
+      summary: Get invoice analysis tariffs
+      description: |
+        Get all available tariffs based on the invoice with their monthly invoice saving
+      tags:
+        - Tariffs
+      operationId: getInvoiceTariffs
+      parameters:
+        - name: invoiceAnalysisId
+          in: path
+          description: ID of invoice analysis
+          required: true
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Tariffs with its monthly savings
+          schema:
+            $ref: '#/definitions/InvoiceTariffs'
+        '204':
+          description: No content. Returned when there are no defined tariffs.
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tariffs:
+    post:
+      summary: Create new tariff
+      description: Creates a new tariff and returns it
+      tags:
+        - Tariffs
+      operationId: createTariff
+      parameters:
+        - name: tariff
+          in: body
+          description: Tariff attributes
+          schema:
+            $ref: '#/definitions/CreateTariff'
+      responses:
+        '200':
+          description: Tariff successfully added.
+          schema:
+            $ref: '#/definitions/Tariff'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '409':
+          description: Conflict. Tariff already exists
+          schema:
+            $ref: '#/definitions/HttpErrorConflict'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    get:
+      summary: Get tariffs
+      description: |
+        Returns a list of tariffs
+      tags:
+        - Tariffs
+      operationId: getTariffs
+      responses:
+        '200':
+          description: list of tariffs
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Tariff'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tariffs/{tariffId}:
+    get:
+      summary: Get tariff details
+      description: |
+        Returns the details of a tariff
+      tags:
+        - Tariffs
+      operationId: getTariff
+      parameters:
+        - name: tariffId
+          in: path
+          description: ID of tariff
+          required: true
+          type: string
+      responses:
+        '200':
+          description: tariff details
+          schema:
+            $ref: '#/definitions/Tariff'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Update tariff
+      description: Updates a tariff and returns it
+      tags:
+        - Tariffs
+      operationId: updateTariff
+      parameters:
+        - name: tariffId
+          in: path
+          description: ID of tariff
+          required: true
+          type: string
+        - name: tariff
+          in: body
+          description: Tariff attributes
+          schema:
+            $ref: '#/definitions/CreateTariff'
+      responses:
+        '200':
+          description: Tariff successfully updated.
+          schema:
+            $ref: '#/definitions/Tariff'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Delete tariff
+      description: Deletes a tariff
+      tags:
+        - Tariffs
+      operationId: deleteTariff
+      parameters:
+        - name: tariffId
+          in: path
+          description: ID of tariff
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Tariff successfully deleted.
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tariffs/{tariffId}/energy-prices:
+    put:
+      summary: Set tariff energy prices
+      description: |
+        Sets the energy prices of a tariff, excluding taxes. The given dates should be in UTC, and sets the price (in €/kWh) for the given hour.
+        Eg.: if a price for 2025-03-12T10:00:00Z is provided, it sets the price for the energy from 10:00 to 11:00.
+      tags:
+        - Tariffs
+      operationId: setTariffEnergyPrices
+      parameters:
+        - name: tariffId
+          in: path
+          description: ID of tariff
+          required: true
+          type: string
+        - name: tariffEnergyPrices
+          in: body
+          description: tariff energy prices to set
+          required: true
+          schema:
+            $ref: '#/definitions/TariffEnergyPrices'
+      responses:
+        '200':
+          description: Record successfully set.
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tickets/{ticketId}:
+    get:
+      summary: Get ticket details
+      description: |
+        Returns the details of a ticket
+      tags:
+        - Tickets
+      operationId: getTicketDetails
+      parameters:
+        - name: ticketId
+          in: path
+          description: ID of ticket
+          required: true
+          type: string
+      responses:
+        '200':
+          description: ticket details
+          schema:
+            $ref: '#/definitions/Ticket'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Update ticket
+      description: Updates a ticket
+      tags:
+        - Tickets
+      operationId: updateTicket
+      parameters:
+        - name: ticketId
+          in: path
+          description: ID of ticket
+          required: true
+          type: string
+        - name: updateTicketRequest
+          in: body
+          description: Ticket attributes to be updated
+          schema:
+            $ref: '#/definitions/UpdateTicketRequest'
+      responses:
+        '200':
+          description: ticket details
+          schema:
+            $ref: '#/definitions/Ticket'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tickets/{ticketId}/comment:
+    post:
+      summary: Add comment
+      description: |
+        Add comment to ticket
+      tags:
+        - Tickets
+      operationId: addCommentToTicket
+      parameters:
+        - name: ticketId
+          in: path
+          description: ID of ticket
+          required: true
+          type: string
+        - name: commentRequest
+          in: body
+          description: message of the comment to add
+          required: true
+          schema:
+            $ref: '#/definitions/CommentRequest'
+      responses:
+        '201':
+          description: Comment successfully added to ticket
+          schema:
+            $ref: '#/definitions/Comment'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /comments/{commentId}/attachment-upload-url:
+    post:
+      description: Returns a signed, temporary bucket url to upload an file for a comment
+      tags:
+        - Tickets
+      operationId: createCommentAttachmentSignedUrl
+      parameters:
+        - name: commentId
+          in: path
+          description: ID of comment
+          required: true
+          type: string
+          format: uuid
+        - name: attachmentRequest
+          in: body
+          description: Comment attachment request
+          required: true
+          schema:
+            $ref: '#/definitions/CommentAttachmentRequest'
+      responses:
+        '200':
+          description: A signed, temporary bucket url to upload an file for a comment. Valid for 15 minutes. To upload a file send a PUT request adding the file as form data. The file will be uploaded to the bucket and the url will be returned in the response.
+          schema:
+            $ref: '#/definitions/CommentAttachmentUrl'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tips:
+    get:
+      summary: Get tips
+      description: Get all public tips
+      tags:
+        - Tips
+      operationId: getPublicSavingTips
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: List of public saving tips
+          schema:
+            type: array
+            items:
+              type: object
+              $ref: '#/definitions/PublicSavingTip'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security: []
+  /users:
+    get:
+      summary: Get users
+      description: |
+        Returns a paginated list of users filtered by a given criteria. If no filter
+        parameter is included (nif, email), all the tenant users shall be returned.
+      tags:
+        - Users
+      operationId: getUsers
+      parameters:
+        - name: page
+          in: query
+          description: Number of the page starting at 1
+          required: false
+          type: integer
+          format: int32
+        - name: size
+          in: query
+          description: Size of the page
+          required: false
+          type: integer
+          format: int32
+        - name: sort
+          in: query
+          description: Field to order by.
+          required: false
+          type: string
+          default: id
+          enum:
+            - id
+            - name
+            - surname
+            - email
+            - nif
+        - name: direction
+          in: query
+          description: Direction of the order.
+          required: false
+          type: string
+          default: ASC
+          enum:
+            - ASC
+            - DESC
+        - name: nif
+          in: query
+          description: Filter by nif
+          type: string
+        - name: email
+          in: query
+          description: Filter by email
+          type: string
+      responses:
+        '200':
+          description: paginated list of users
+          schema:
+            $ref: '#/definitions/UsersPage'
+        '400':
+          description: Incorrect sort criteria or no filter parameter provided
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Create new user
+      description: Creates a new user and returns the id and the status of the created user
+      tags:
+        - Users
+      operationId: createUser
+      parameters:
+        - name: userRegistration
+          in: body
+          description: User registration attributes
+          schema:
+            $ref: '#/definitions/UserRegistration'
+      responses:
+        '200':
+          description: Record successfully added.
+          schema:
+            $ref: '#/definitions/UserCreated'
+        '400':
+          description: Bad request (user already exists)
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '409':
+          description: User already exists with this email
+          schema:
+            $ref: '#/definitions/HttpErrorUserExists'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/{userId}:
+    put:
+      summary: Update an user
+      description: |
+        Updates user properties
+      tags:
+        - Users
+      operationId: updateUser
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          type: string
+        - name: updateUser
+          in: body
+          description: user properties to update
+          required: true
+          schema:
+            $ref: '#/definitions/UpdateUser'
+      responses:
+        '200':
+          description: Record successfully updated.
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Delete an user
+      description: |
+        Deletes the user's account and all its related information (meters, energy
+        data...).
+
+        **Please note that this action is irreversible.**
+
+        When the response is a 202, the process is not immediate and usually takes
+        several minutes until the user is permanently deleted.
+      tags:
+        - Users
+      operationId: deleteUserAccount
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          type: string
+      responses:
+        '202':
+          description: Record successfully deleted.
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/{userId}/app-devices:
+    get:
+      description: Retrieve a user app devices
+      summary: Retrieve a user app devices
+      tags:
+        - Users
+      operationId: getUserAppDevices
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: List of user app devices
+          schema:
+            $ref: '#/definitions/UserAppDevicesList'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/{userId}/authorize-user:
+    post:
+      description: Authorizes a user resource (a house) to another user
+      summary: Authorize a user
+      tags:
+        - Users
+      operationId: authorizeUser
+      parameters:
+        - name: userId
+          in: path
+          description: The ID of the owner user
+          required: true
+          type: string
+          format: uuid
+        - name: authorizeUserRequest
+          in: body
+          description: User authorization attributes
+          schema:
+            $ref: '#/definitions/AuthorizeUserRequest'
+      responses:
+        '201':
+          description: Authorized successfully
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/{userId}/houses:
+    get:
+      summary: Get user houses
+      description: |
+        Returns the user houses
+      deprecated: true
+      operationId: getUserHouses
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Houses of a given user
+          schema:
+            $ref: '#/definitions/UserHouses'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '403':
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/HttpErrorForbidden'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Create a house
+      description: |
+        Create a new house for the user
+      tags:
+        - Houses
+      operationId: createHouse
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          type: string
+        - name: createHouse
+          in: body
+          schema:
+            $ref: '#/definitions/CreateHouse'
+      responses:
+        '200':
+          description: Created house
+          schema:
+            $ref: '#/definitions/HouseCreated'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/{userId}/supplies:
+    get:
+      summary: Get user houses
+      description: |
+        Search a list of houses of the user.
+      tags:
+        - Houses
+      operationId: getUserSupplies
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Supplies of a given user
+          schema:
+            $ref: '#/definitions/UserHouses'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/{userId}/user-detail:
+    get:
+      summary: Get user details
+      description: |
+        Retrieves detailed information about a specific user.
+      tags:
+        - Users
+      operationId: getUser
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Record successfully retrieved.
+          schema:
+            $ref: '#/definitions/User'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/{userId}/virtual-battery:
+    post:
+      summary: Create virtual battery transaction
+      description: |
+        Creates a user virtual battery transaction
+      tags:
+        - Virtual battery
+      operationId: createVirtualBatteryTransaction
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          type: string
+        - name: virtualBatteryRequest
+          in: body
+          description: User virtual battery transaction request
+          schema:
+            $ref: '#/definitions/UserVirtualBatteryTransaction'
+      responses:
+        '201':
+          description: User virtual wallet transaction created
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '422':
+          description: Unprocessable entity
+          schema:
+            $ref: '#/definitions/HttpErrorUnprocessableEntity'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/{userId}/virtual-wallet:
+    post:
+      summary: Create virtual wallet transaction
+      description: |
+        Creates user virtual wallet transaction
+      tags:
+        - Virtual wallet
+      operationId: createVirtualWalletTransaction
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          type: string
+        - name: virtualWalletRequest
+          in: body
+          description: User virtual wallet transaction request
+          schema:
+            $ref: '#/definitions/UserVirtualWalletTransaction'
+      responses:
+        '201':
+          description: User virtual wallet transaction created
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '422':
+          description: Unprocessable entity
+          schema:
+            $ref: '#/definitions/HttpErrorUnprocessableEntity'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/{userId}/gas-contracts:
+    post:
+      summary: Create a new gas contract
+      description: |
+        Creates a new gas contract with the provided details
+
+        :::tip
+        **Recommended guide**
+        If you are unsure which parameters to include when creating a gas contract, refer to the [complete documentation](https://docs.clever.gy/developer/how-to-set-up/contracts).
+        :::
+      tags:
+        - Contracts|Gas
+      operationId: createGasContract
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          type: string
+        - name: createGasContractRequest
+          in: body
+          description: Gas contract details to create
+          required: true
+          schema:
+            $ref: '#/definitions/GasContractRequest'
+      responses:
+        '201':
+          description: Gas contract created successfully
+          schema:
+            $ref: '#/definitions/GasContract'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: User not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        '409':
+          description: Contract already exists (only if contract number is provided)
+          schema:
+            $ref: '#/definitions/HttpErrorConflict'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    get:
+      summary: Get user gas contracts
+      description: Retrieves the details of the user's gas contracts
+      tags:
+        - Contracts|Gas
+      operationId: getUserGasContracts
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful retrieval of user's gas contracts
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GasContract'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: User not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/{userId}/gas-contracts/{contractId}:
+    put:
+      summary: Update an existing gas contract
+      description: Updates the details of an existing gas contract
+      tags:
+        - Contracts|Gas
+      operationId: updateGasContract
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          type: string
+        - name: contractId
+          in: path
+          description: ID of gas contract
+          required: true
+          type: string
+        - name: updateGasContractRequest
+          in: body
+          description: Gas contract details to update
+          required: true
+          schema:
+            $ref: '#/definitions/GasContractRequest'
+      responses:
+        '200':
+          description: Gas contract updated successfully
+          schema:
+            $ref: '#/definitions/GasContract'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Gas contract not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        '409':
+          description: Contract already exists (only if contract number is provided)
+          schema:
+            $ref: '#/definitions/HttpErrorConflict'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Delete a gas contract
+      description: Deletes an existing gas contract
+      tags:
+        - Contracts|Gas
+      operationId: deleteGasContract
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          type: string
+        - name: contractId
+          in: path
+          description: ID of gas contract
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Gas contract deleted successfully
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Gas contract not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    get:
+      summary: Retrieve a gas contract
+      description: Retrieves the details of a specific gas contract
+      tags:
+        - Contracts|Gas
+      operationId: getGasContract
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          type: string
+        - name: contractId
+          in: path
+          description: ID of gas contract
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Gas contract retrieved successfully
+          schema:
+            $ref: '#/definitions/GasContract'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Gas contract not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/{userId}/electricity-contracts:
+    post:
+      summary: Create a new electricity contract
+      description: |
+        Creates a new electricity contract with the provided details
+
+        :::tip
+        **Recommended guide**
+        If you are unsure which parameters to include when creating an electricity contract, refer to the [complete documentation](https://docs.clever.gy/developer/how-to-set-up/contracts).
+        :::
+      tags:
+        - Contracts|Electricity
+      operationId: createElectricityContract
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          type: string
+        - name: createElectricityContractRequest
+          in: body
+          description: Electricity contract details to create
+          required: true
+          schema:
+            $ref: '#/definitions/ElectricityContractRequest'
+      responses:
+        '201':
+          description: Electricity contract created successfully
+          schema:
+            $ref: '#/definitions/ElectricityContract'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: User not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        '409':
+          description: Contract already exists (only if contract number is provided)
+          schema:
+            $ref: '#/definitions/HttpErrorConflict'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    get:
+      summary: Get user electricity contracts
+      description: Retrieves the details of the user electricity contracts
+      tags:
+        - Contracts|Electricity
+      operationId: getUserElectricityContracts
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful retrieval of electricity contracts
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ElectricityContract'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: User not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/{userId}/electricity-contracts/{contractId}:
+    put:
+      summary: Update an existing electricity contract
+      description: Updates the details of an existing electricity contract
+      tags:
+        - Contracts|Electricity
+      operationId: updateElectricityContract
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          type: string
+        - name: contractId
+          in: path
+          description: ID of electricity contract
+          required: true
+          type: string
+        - name: updateElectricityContractRequest
+          in: body
+          description: Electricity contract details to update
+          required: true
+          schema:
+            $ref: '#/definitions/ElectricityContractRequest'
+      responses:
+        '200':
+          description: Electricity contract updated successfully
+          schema:
+            $ref: '#/definitions/ElectricityContract'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Electricity contract not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        '409':
+          description: Contract already exists (only if contract number is provided)
+          schema:
+            $ref: '#/definitions/HttpErrorConflict'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Delete an electricity contract
+      description: Deletes an existing electricity contract
+      tags:
+        - Contracts|Electricity
+      operationId: deleteElectricityContract
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          type: string
+        - name: contractId
+          in: path
+          description: ID of electricity contract
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Electricity contract deleted successfully
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Electricity contract not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    get:
+      summary: Retrieves electricity contract
+      description: Retrieves the details of a specific electricity contract
+      tags:
+        - Contracts|Electricity
+      operationId: getElectricityContract
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          type: string
+        - name: contractId
+          in: path
+          description: ID of electricity contract
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Electricity contract retrieved successfully
+          schema:
+            $ref: '#/definitions/ElectricityContract'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Electricity contract not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/{userId}/electricity-contracts/{contractId}/energy-prices:
+    get:
+      summary: Get energy prices from a contract
+      description: |
+        Gets the contract energy prices for specific dates. It allows to filter by start and end date, with a maximum of a year between them.
+      tags:
+        - Contracts
+      operationId: getContractEnergyPrices
+      parameters:
+        - name: userId
+          in: path
+          description: Id of the user
+          required: true
+          type: string
+        - name: contractId
+          in: path
+          description: Id of the contract
+          required: true
+          type: string
+        - name: startDate
+          in: query
+          description: Start date to filter by
+          required: true
+          type: string
+          format: date-time
+        - name: endDate
+          in: query
+          description: End date to filter by
+          required: true
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: Contract prices added successfully
+          schema:
+            $ref: '#/definitions/ContractEnergyPriceResponse'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Add energy prices to a contract
+      description: |
+        Adds the contract energy prices for specific dates.
+      tags:
+        - Contracts
+      operationId: addContractEnergyPrices
+      parameters:
+        - name: userId
+          in: path
+          description: Id of the user
+          required: true
+          type: string
+        - name: contractId
+          in: path
+          description: Id of the contract
+          required: true
+          type: string
+        - name: contractEnergyPriceRequest
+          in: body
+          description: Request containing contract energy prices and dates
+          required: true
+          schema:
+            $ref: '#/definitions/ContractEnergyPriceRequest'
+      responses:
+        '200':
+          description: Contract prices added successfully
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /contracts/{contractId}/invoices/{id}:
+    get:
+      summary: Get invoice by ID
+      description: Retrieves the details of a specific invoice by its ID
+      tags:
+        - Invoices
+      operationId: getInvoiceById
+      parameters:
+        - name: contractId
+          in: path
+          description: ID of the contract for which to retrieve the invoice
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: ID of the invoice to retrieve
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Invoice details retrieved successfully
+          schema:
+            $ref: '#/definitions/Invoice'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Invoice not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Delete an invoice
+      description: Deletes a specific invoice by its ID
+      tags:
+        - Invoices
+      operationId: deleteInvoice
+      parameters:
+        - name: contractId
+          in: path
+          description: ID of the contract for which to delete the invoice
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: ID of the invoice to delete
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Invoice deleted successfully
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Invoice not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Update an invoice
+      description: Updates the details of a specific invoice by its ID
+      tags:
+        - Invoices
+      operationId: updateInvoice
+      parameters:
+        - name: contractId
+          in: path
+          description: ID of the contract for which to update the invoice
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: ID of the invoice to update
+          required: true
+          type: string
+        - name: updateInvoiceRequest
+          in: body
+          description: Updated invoice details
+          required: true
+          schema:
+            $ref: '#/definitions/CreateOrUpdateInvoiceRequest'
+      responses:
+        '200':
+          description: Invoice updated successfully
+          schema:
+            $ref: '#/definitions/Invoice'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Invoice not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        '409':
+          description: Invoice already exists for this user with the same external id (including on another contract of the same user)
+          schema:
+            $ref: '#/definitions/HttpErrorConflict'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/{userId}/invoices:
+    get:
+      summary: Get invoices by user ID
+      description: Retrieves all invoices associated with a specific user, including those without an uploaded PDF (`fileUrl` is null in that case).
+      tags:
+        - Invoices
+      operationId: getInvoicesByUser
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user whose invoices to retrieve
+          required: true
+          type: string
+      responses:
+        '200':
+          description: List of invoices retrieved successfully
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Invoice'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: User not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /contracts/{contractId}/invoices:
+    get:
+      summary: Get invoices by contract ID
+      description: Retrieves all invoices associated with a specific contract, including those without an uploaded PDF (`fileUrl` is null in that case).
+      tags:
+        - Invoices
+      operationId: getInvoicesByContract
+      parameters:
+        - name: contractId
+          in: path
+          description: ID of the contract whose invoices to retrieve
+          required: true
+          type: string
+      responses:
+        '200':
+          description: List of invoices retrieved successfully
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Invoice'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Contract not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Create a new invoice
+      description: |
+        Creates a new invoice with the provided details. This endpoint provides a signed URL for uploading a PDF invoice.
+
+        :::tip
+        **Recommended guide**
+        If you are unsure which parameters to include when creating a gas or electricity invoice, refer to the [complete documentation](https://docs.clever.gy/developer/how-to-set-up/invoices).
+        :::
+
+        ### Steps and considerations
+        1. POST invoice metadata to obtain the upload URL (`fileUrl` field).
+        2. PUT the PDF file to the returned URL (valid for 15 minutes).
+
+        > **Important:** After creating the invoice, the PDF must be uploaded to the `fileUrl` returned in the response. If the PDF is not uploaded, the invoice will not be processed and will not be available to the customer.
+      tags:
+        - Invoices
+      operationId: createInvoice
+      parameters:
+        - name: contractId
+          in: path
+          description: ID of the contract for which to create the invoice
+          required: true
+          type: string
+        - name: createInvoiceRequest
+          in: body
+          description: Invoice details to create
+          required: true
+          schema:
+            $ref: '#/definitions/CreateOrUpdateInvoiceRequest'
+      responses:
+        '200':
+          description: Invoice created successfully
+          schema:
+            $ref: '#/definitions/Invoice'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Contract not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        '409':
+          description: Invoice already exists for this user with the same external id (including on another contract of the same user)
+          schema:
+            $ref: '#/definitions/HttpErrorConflict'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /sales-opportunities:
+    get:
+      summary: List sales opportunities
+      description: |
+        Returns a paginated list of sales opportunities for the tenant.
+        Currently only CONTRACT opportunities are returned.
+        Results are sorted by createdAt descending.
+      tags:
+        - Sales Opportunities
+      operationId: getSalesOpportunities
+      parameters:
+        - name: page
+          in: query
+          description: Number of the page starting at 1
+          required: false
+          type: integer
+          format: int32
+          default: 1
+        - name: size
+          in: query
+          description: Size of the page (max 100)
+          required: false
+          type: integer
+          format: int32
+          default: 10
+        - name: status
+          in: query
+          description: Filter by status. Multiple values can be comma-separated.
+          required: false
+          type: string
+          enum:
+            - STARTED
+            - POTENTIAL
+            - FORMALIZED
+            - CONVERTED
+            - REJECTED
+        - name: product
+          in: query
+          description: |
+            Filter by product. Currently only CONTRACT is supported; other values return 400.
+          required: false
+          type: string
+          enum:
+            - CONTRACT
+      responses:
+        '200':
+          description: Paginated list of sales opportunities
+          schema:
+            $ref: '#/definitions/SalesOpportunitiesPage'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /sales-opportunities/contract/{id}:
+    get:
+      summary: Get contract sales opportunity details
+      description: |
+        Returns the details of a CONTRACT sales opportunity, including contracting
+        payload fields (contact data, CUPS, IBAN, invoice references, etc.).
+        Returns 404 if the opportunity does not exist or is not a CONTRACT product.
+      tags:
+        - Sales Opportunities
+      operationId: getContractSalesOpportunity
+      parameters:
+        - name: id
+          in: path
+          description: Sales opportunity ID
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Contract sales opportunity details
+          schema:
+            $ref: '#/definitions/ContractSalesOpportunity'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    patch:
+      summary: Update contract sales opportunity status
+      description: |
+        Partially updates a CONTRACT sales opportunity. Currently only the status
+        field is supported. Returns the updated opportunity.
+        Returns 404 if the opportunity does not exist or is not a CONTRACT product.
+      tags:
+        - Sales Opportunities
+      operationId: patchContractSalesOpportunity
+      parameters:
+        - name: id
+          in: path
+          description: Sales opportunity ID
+          required: true
+          type: string
+        - name: patchContractSalesOpportunityRequest
+          in: body
+          description: Fields to update
+          required: true
+          schema:
+            $ref: '#/definitions/PatchContractSalesOpportunityRequest'
+      responses:
+        '200':
+          description: Updated contract sales opportunity
+          schema:
+            $ref: '#/definitions/ContractSalesOpportunity'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /sales-opportunities/{id}:
+    delete:
+      summary: Delete a sales opportunity
+      description: |
+        Hard-deletes a sales opportunity. Currently only CONTRACT opportunities are
+        supported; other products return 404. Related notes are removed by cascade.
+        Emits a Pub/Sub DELETE event (tenant webhooks are not notified for DELETE).
+      tags:
+        - Sales Opportunities
+      operationId: deleteSalesOpportunity
+      parameters:
+        - name: id
+          in: path
+          description: Sales opportunity ID
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Deleted contract sales opportunity
+          schema:
+            $ref: '#/definitions/ContractSalesOpportunity'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  AuthUser:
+    type: object
+    properties:
+      jwt:
+        type: string
+        example: eyJhbGciOiJSJhdWQiOiJodHRwczopdC5nb29nbGVhcGlzLmNvbS9nb29nbGUuaWRlbnRpdHkuaWRlbnRpdHl0b29sa2l0LnYxLklkZW50aXRF0IjoxNzAzODU0NzY5LCJpc3MiOiJwdWJsaWMtZnJvbnQtYmFja0BjbGV2ZXJneS5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsInN1YiI6InB1YmxpYy1mcm9udC1iYWNrQGNXA
+      userId:
+        type: string
+        example: U7Q02aMJm9VokGsNIZmID3BK25p3
+  User:
+    type: object
+    properties:
+      id:
+        type: string
+        example: U4NW5zdmstUtRZW5Oi3S2CR5l0U2
+      name:
+        type: string
+        example: Pedro
+      surname:
+        type: string
+        example: García
+      email:
+        type: string
+        example: pedro.garcia@mail.com
+      nif:
+        type: string
+        example: 00000000T
+      language:
+        type: string
+        example: es-ES
+        description: User language in BCP 47 format
+      optOutCode:
+        type: string
+        example: 123456
+        description: Code to opt out of emails
+    required:
+      - id
+      - email
+      - optOutCode
+  UsersPage:
+    type: object
+    description: Paginated list of users
+    properties:
+      size:
+        type: integer
+        description: Number of elements in the page requested
+      page:
+        type: integer
+        description: Number of the page requested
+      totalPages:
+        type: integer
+        description: Number of total pages
+      totalElements:
+        type: integer
+        description: Number of total elements in the list
+      elements:
+        type: array
+        description: List of users
+        items:
+          type: object
+          $ref: '#/definitions/UsersPageElement'
+    required:
+      - size
+      - page
+      - totalPages
+      - totalElements
+      - elements
+  UsersPageElement:
+    type: object
+    properties:
+      id:
+        type: string
+        example: U4NW5zdmstUtRZW5Oi3S2CR5l0U2
+      name:
+        type: string
+        example: Pedro
+      surname:
+        type: string
+        example: García
+      email:
+        type: string
+        example: pedro.garcia@mail.com
+      nif:
+        type: string
+        example: 00000000T
+  UserCreated:
+    type: object
+    properties:
+      id:
+        type: string
+        example: U4NW5zdmstUtRZW5Oi3S2CR5l0U2
+      status:
+        type: string
+        example: INITIAL
+  UserRegistration:
+    type: object
+    properties:
+      name:
+        type: string
+        example: John
+      surname:
+        type: string
+        example: Doe
+      email:
+        type: string
+        format: email
+        example: john.doe@example.com
+      dni:
+        type: string
+        example: 12345678X
+      phoneNumber:
+        type: string
+        example: '600000000'
+      language:
+        type: string
+        example: es-ES
+        description: User language in BCP 47 format
+  UpdateUser:
+    type: object
+    properties:
+      name:
+        type: string
+        example: John
+      surname:
+        type: string
+        example: Doe
+      email:
+        type: string
+        format: email
+        example: john.doe@example.com
+      dni:
+        type: string
+        example: 12345678X
+      phoneNumber:
+        type: string
+        example: '600000000'
+  UserHouses:
+    type: array
+    items:
+      type: object
+      properties:
+        houseId:
+          type: string
+          example: 8ec307fc-3b4c-4f6f-b320-fa2587990a46
+        cups:
+          type: string
+          example: ES0022123456781234AB0F
+        address:
+          type: string
+          example: Leonardo da Vinci 7
+        postalCode:
+          type: string
+          example: '41092'
+        firstConsumptionDate:
+          type: string
+          format: date-time
+          example: '2022-12-31T23:00:00'
+        lastConsumptionDate:
+          type: string
+          format: date-time
+          example: '2023-12-31T22:00:00'
+  UserHouseWithIntegrations:
+    type: object
+    properties:
+      details:
+        type: object
+        properties:
+          houseId:
+            type: string
+            format: uuid
+          userId:
+            type: string
+          cups:
+            type: string
+          address:
+            type: string
+          postalCode:
+            type: string
+          timeZone:
+            type: string
+        required:
+          - houseId
+          - userId
+      houseMetadata:
+        type: object
+        properties:
+          firstDateEnergy:
+            type: string
+            format: date
+          lastDateEnergy:
+            type: string
+            format: date
+          firstDatePower:
+            type: string
+            format: date
+          lastDatePower:
+            type: string
+            format: date
+          firstDateCost:
+            type: string
+            format: date
+          lastDateCost:
+            type: string
+            format: date
+          isOwner:
+            type: boolean
+      houseIntegrations:
+        type: object
+        $ref: '#/definitions/HouseIntegrations'
+      supplyPoints:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/SupplyPoint'
+    required:
+      - details
+      - houseMetadata
+      - houseIntegrations
+      - supplyPoints
+  CreateHouse:
+    type: object
+    description: Create house request
+    properties:
+      address:
+        type: string
+        description: House address (should not exceed 124 characters)
+        example: Leonardo da Vinci 7
+      postalCode:
+        type: string
+        description: House postal code
+        example: '41092'
+      cups:
+        type: string
+        description: Deprecated. When filled, CUPS of the supply to connect. This field will be removed in a future version.
+        example: ES0022123456781234AB0F
+  HouseCreated:
+    type: object
+    description: Create house response
+    properties:
+      id:
+        type: string
+        description: House id
+        example: f8c3de3d-1fea-4d7c-a8b0-29f63c4c3454
+      address:
+        type: string
+        description: House address
+        example: Leonardo da Vinci 7
+      postalCode:
+        type: string
+        description: House postal code
+        example: '41092'
+  UpdateHouse:
+    type: object
+    properties:
+      address:
+        type: string
+        description: address (horizontal address. street, number, etc)
+      postalCode:
+        type: string
+        description: postal code
+      selfConsumptionTypeCode:
+        type: string
+        description: self consumption type code (2 digits). Deprecated, the API ignores this field.
+        x-deprecated: true
+  PowerItem:
+    type: object
+    properties:
+      date:
+        type: string
+        format: date-time
+      solar:
+        type: object
+        properties:
+          production:
+            type: number
+            format: float
+      grid:
+        type: object
+        properties:
+          power:
+            type: number
+            format: float
+      house:
+        type: object
+        properties:
+          power:
+            type: number
+            format: float
+      battery:
+        type: object
+        properties:
+          power:
+            type: number
+            format: float
+          chargePower:
+            type: number
+            format: float
+          dischargePower:
+            type: number
+            format: float
+      energyCommunities:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/EnergyCommunityPower'
+      smartDevices:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/SmartDevicesPower'
+  EnergyItem:
+    type: object
+    properties:
+      date:
+        type: string
+        format: date-time
+      solar:
+        type: object
+        properties:
+          production:
+            type: number
+            format: float
+      house:
+        type: object
+        properties:
+          consumption:
+            type: number
+            format: float
+          selfConsumption:
+            type: number
+            format: float
+      grid:
+        type: object
+        properties:
+          import:
+            type: number
+            format: float
+          export:
+            type: number
+            format: float
+      battery:
+        type: object
+        properties:
+          charge:
+            type: number
+            format: float
+          discharge:
+            type: number
+            format: float
+      energyCommunities:
+        type: array
+        items:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - SOLAR
+                - WIND
+                - HYDRO
+            production:
+              type: number
+              format: float
+          required:
+            - type
+            - production
+      smartDevices:
+        type: array
+        items:
+          type: object
+          properties:
+            subtype:
+              type: string
+            vendor:
+              type: string
+              enum:
+                - SHELLY
+            energy:
+              type: number
+              format: float
+          required:
+            - subtype
+            - vendor
+            - energy
+    required:
+      - date
+  EnergyComparison:
+    required:
+      - currentYear
+      - profile
+    properties:
+      consumption:
+        type: number
+        format: float
+        description: Energy consumption of the house
+      currentYear:
+        type: boolean
+        description: If the comparison is for the current year
+      profile:
+        type: string
+        enum:
+          - EFFICIENT,
+          - MEDIUM,
+          - INEFFICIENT
+          - NO_PROFILE
+        description: Current profile of the house
+      similarHomesConsumption:
+        type: number
+        format: float
+        description: Average consumption of similar homes. Can  be null (depends on configuration)
+      energyEfficientHomesConsumption:
+        type: number
+        format: float
+        description: Average consumption of energy efficient homes. Can be null (depends on configuration)
+      neighborhoodHomesConsumption:
+        type: number
+        format: float
+        description: Average consumption of homes in the neighborhood
+  EnergyCommunityPower:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - SOLAR
+          - WIND
+          - HYDRO
+      production:
+        type: number
+        format: float
+  CreateHouseContract:
+    type: object
+    description: Create house contract request
+    properties:
+      contractPower:
+        type: array
+        items:
+          type: number
+        description: Contracted power. One item per period (P1, P2)
+        example:
+          - 3.5
+          - 3.5
+      startDate:
+        type: string
+        format: date-time
+        example: '2022-12-31T23:00:00'
+        description: Contract start date
+      endDate:
+        type: string
+        format: date-time
+        example: '2022-12-31T23:00:00'
+        description: Contract end date
+      powerPrices:
+        type: array
+        items:
+          type: number
+        description: Price of power. One item per period (P1, P2)
+        example:
+          - 0.09
+          - 0.03
+      energyPrices:
+        type: array
+        items:
+          type: number
+        description: Price of energy. One item per period (P1, P2)
+        example:
+          - 0.13
+          - 0.12
+      provider:
+        type: string
+        example: EnergyProvider
+        description: Contract provider
+      codefare:
+        type: string
+        example: 2.0TD
+        description: Contract codefare
+      distributor:
+        type: string
+        example: '8'
+        description: Contract distributor
+      pvpc:
+        type: boolean
+        example: true
+        description: Contract flag for PVPC
+      socialBonus:
+        type: boolean
+        example: true
+        description: Contract flag for social bonus
+      tariffName:
+        type: string
+        example: Tariff name
+        description: Contract tariff name
+      status:
+        type: string
+        example: Active
+        description: Contract status
+      solarPrice:
+        type: number
+        format: float
+        example: '0.012'
+        description: Price of solar energy surplus
+      commercialName:
+        type: string
+        example: Commercial name
+        description: Contract commercial name
+      holderName:
+        type: string
+        example: John Doe
+        description: Bank account holder name
+      iban:
+        type: string
+        example: ES0000000000000000000000
+        description: International Bank Account Number (IBAN)
+  HouseContractDetail:
+    type: object
+    description: Detail of contract
+    properties:
+      id:
+        type: string
+        format: uuid
+      houseId:
+        type: string
+        format: uuid
+      cups:
+        type: string
+      contractedPower:
+        type: array
+        items:
+          type: number
+      startDate:
+        type: string
+        format: date-time
+      endDate:
+        type: string
+        format: date-time
+      powerPrices:
+        type: array
+        items:
+          type: number
+      energyPrices:
+        type: array
+        items:
+          type: number
+      provider:
+        type: string
+      codefare:
+        type: string
+        example: 2T
+        description: Contract codefare
+      tariffType:
+        type: string
+        enum:
+          - PVPC_2_0_TD
+          - MERCADO_LIBRE_2_0_TD_FIJA
+          - MERCADO_LIBRE_2_0_TD
+          - MERCADO_LIBRE_3_0_TD
+          - INDEXADA_2_0_TD
+          - MERCADO_LIBRE_6_1_TD
+          - OMIE_MARGEN
+        description: Contract tariff type
+      distributor:
+        type: string
+      pvpc:
+        type: boolean
+      socialBonus:
+        type: boolean
+      tariffName:
+        type: string
+      status:
+        type: string
+      solarPrice:
+        type: number
+        format: float
+      commercialName:
+        type: string
+      holderName:
+        type: string
+      iban:
+        type: string
+      margin:
+        type: number
+        format: float
+  SignedUrl:
+    type: object
+    description: Bucket url to put a file
+    properties:
+      url:
+        type: string
+        example: https://signed_url_to_put_the_object
+        description: Signed url to put the object
+  CreateHouseInvoice:
+    type: object
+    description: Create house invoice request
+    required:
+      - startDate
+      - endDate
+      - totalCost
+    properties:
+      startDate:
+        type: string
+        format: date
+        example: '2022-12-31'
+        description: Start of invoicing period
+      endDate:
+        type: string
+        format: date
+        example: '2022-12-31'
+        description: End of invoicing period
+      totalCost:
+        type: number
+        format: float
+        example: '0.883'
+        description: Total cost in €
+      energyConsumptionP1:
+        type: number
+        format: float
+        example: '0.883'
+        description: P1 consumptions in kWh
+      energyConsumptionP2:
+        type: number
+        format: float
+        example: '0.883'
+        description: P2 consumptions in kWh
+      energyConsumptionP3:
+        type: number
+        format: float
+        example: '0.883'
+        description: P3 consumptions in kWh
+      totalEnergyConsumption:
+        type: number
+        format: float
+        example: '0.883'
+        description: Total consumptions in kWh
+      energyCost:
+        type: number
+        format: float
+        example: '0.883'
+        description: Energy cost in €
+      powerCost:
+        type: number
+        format: float
+        example: '0.883'
+        description: Power cost in €
+      otherCost:
+        type: number
+        format: float
+        example: '0.883'
+        description: Sum of other costs in €
+      discountCost:
+        type: number
+        format: float
+        example: '0.883'
+        description: Total discounts in €
+      taxCost:
+        type: number
+        format: float
+        example: '0.883'
+        description: Total taxes in €
+      exportSaving:
+        type: number
+        format: float
+        example: '-0.25'
+        description: Total saving of export in €
+      serviceCost:
+        type: number
+        format: float
+        example: '0.25'
+        description: Cost of service in €
+      virtualWallet:
+        type: number
+        format: float
+        example: '0.25'
+        description: Virtual wallet balance €
+  IntegrateSmartmeter:
+    type: object
+    description: Smartmeter integration request
+    required:
+      - name
+      - nif
+      - termsAndConditions
+    properties:
+      name:
+        type: string
+      surname:
+        type: string
+      nif:
+        type: string
+      termsAndConditions:
+        type: boolean
+      manualValidation:
+        type: boolean
+        description: Flag to manually validate a user. By default it is false.
+  UpdateDatadisIntegrationStatus:
+    type: object
+    description: Update datadis integration status request
+    properties:
+      status:
+        type: string
+        example: CONNECTED
+        description: Supply contract start date
+        enum:
+          - CONNECTED
+          - DISCONNECTED
+      eventDate:
+        type: string
+        format: date-time
+        example: '2023-12-31T22:00:00'
+        description: Update status event date
+  HouseDataConsumption:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/HouseConsumption'
+      rateType:
+        type: string
+        example: REGULATED
+      total:
+        type: number
+        format: float
+        example: '0.883'
+  HouseConsumption:
+    type: object
+    properties:
+      date:
+        type: string
+        format: date-time
+        example: '2023-12-01T00:00:00Z'
+      categories:
+        type: array
+        items:
+          $ref: '#/definitions/UserConsumptionCategory'
+      kwh:
+        type: number
+        format: float
+        example: '0.883'
+  HouseDisaggregation:
+    properties:
+      devices:
+        type: array
+        items:
+          $ref: '#/definitions/DisaggregationDevice'
+  DisaggregationDevice:
+    properties:
+      device:
+        type: string
+        enum:
+          - AEROTHERMAL_BOILER
+          - AEROTHERMAL_HEATER
+          - AIR_CONDITIONING
+          - AUTOMATIC_IRRIGATION
+          - CERAMIC_HOB
+          - CHARGING_POINT
+          - DISHWASHER
+          - DRYER
+          - ELECTRIC_BOILER
+          - ELECTRIC_RADIATOR
+          - ELECTRIC_VEHICLE
+          - FILTER_PUMP
+          - FRIDGE
+          - FREEZER
+          - LIGHT
+          - OVEN
+          - OTHER
+          - STANDBY
+          - WASHING_MACHINE
+        example: FRIDGE
+      kwh:
+        type: number
+        format: float
+        example: '20.0'
+      percentage:
+        type: number
+        format: float
+        example: '14.6'
+  HouseSettings:
+    type: object
+    properties:
+      houseId:
+        type: string
+      houseType:
+        type: string
+        enum:
+          - FLAT
+          - HOME
+      meters:
+        type: number
+      housePeople:
+        type: number
+      devices:
+        type: array
+        items:
+          type: string
+          enum:
+            - AEROTHERMAL_BOILER
+            - AEROTHERMAL_HEATER
+            - AIR_CONDITIONING
+            - AUTOMATIC_IRRIGATION
+            - BATTERY
+            - CERAMIC_HOB
+            - CENTRAL_HEATER
+            - CHARGING_POINT
+            - DISHWASHER
+            - DRYER
+            - ELECTRIC_BOILER
+            - ELECTRIC_RADIATOR
+            - ELECTRIC_VEHICLE
+            - FILTER_PUMP
+            - FRIDGE
+            - FREEZER
+            - GAS_BOILER
+            - GAS_HEATER
+            - GAS_KITCHEN
+            - OVEN
+            - PHOTOVOLTAIC_SOLAR_PANEL
+            - SOLAR_THERMAL_PANEL
+            - WASHING_MACHINE
+  HouseIntegration:
+    type: object
+    properties:
+      status:
+        type: string
+        enum:
+          - NONE
+          - CONNECTED
+    required:
+      - status
+  HouseIntegrations:
+    type: object
+    properties:
+      huaweiB2C:
+        type: object
+        $ref: '#/definitions/HouseIntegration'
+      froniusB2C:
+        type: object
+        $ref: '#/definitions/HouseIntegration'
+      enodeB2C:
+        type: object
+        $ref: '#/definitions/HouseIntegration'
+      sungrowB2C:
+        type: object
+        $ref: '#/definitions/HouseIntegration'
+      smaB2C:
+        type: object
+        $ref: '#/definitions/HouseIntegration'
+      wibeeeSolar:
+        type: object
+        $ref: '#/definitions/HouseIntegration'
+      shelly:
+        type: object
+        $ref: '#/definitions/HouseIntegration'
+  UserConsumptionCategory:
+    type: object
+    properties:
+      label:
+        type: string
+        example: Valle
+      kwh:
+        type: number
+        format: float
+        example: 0.883
+  PublicSavingTip:
+    type: object
+    properties:
+      title:
+        type: string
+        example: Elige neveras con buena calificación energética
+      text:
+        type: string
+        example: Si tu nevera es antigua, plantéate comprar una nevera con  calificación energética alta. Podrás ahorrar un 20% en tu factura.
+  EnergyCommunityHouse:
+    type: object
+    description: Assign a house to an energy community
+    required:
+      - houseId
+      - share
+    properties:
+      houseId:
+        type: string
+        description: House Id
+      share:
+        type: number
+        description: Share (in percentage) in the energy community
+      installationId:
+        type: string
+        description: Installation Id
+  RemoveEnergyCommunityHouseRequest:
+    type: object
+    description: Remove energy community house
+    required:
+      - houseId
+    properties:
+      houseId:
+        type: string
+        description: House Id
+      installationId:
+        type: string
+        description: Installation Id
+  UpdateEnergyCommunityHouseRequest:
+    type: object
+    description: Update energy community house share
+    required:
+      - houseId
+      - share
+    properties:
+      houseId:
+        type: string
+        description: House Id
+      share:
+        type: number
+        description: Share (in percentage) in the energy community
+      installationId:
+        type: string
+        description: Installation Id
+  UpdateInstallation:
+    type: object
+    properties:
+      capacity:
+        type: number
+        format: float
+        description: Capacity of the installation
+        example: 10
+      plantAddress:
+        type: string
+        description: Address of the installation
+        example: Leonardo da Vinci 7
+      plantName:
+        type: string
+        description: Name of the installation
+        example: My installation
+  UserVirtualWalletTransaction:
+    type: object
+    required:
+      - date
+      - amount
+      - totalBalance
+    properties:
+      date:
+        type: string
+        format: date
+      amount:
+        type: number
+        format: float
+        description: Transaction amount (in Euros)
+      totalBalance:
+        type: number
+        format: float
+        description: Total balance after the transaction (in Euros)
+  UserVirtualBatteryTransaction:
+    type: object
+    required:
+      - date
+      - amount
+      - totalBalance
+    properties:
+      date:
+        type: string
+        format: date
+      amount:
+        type: number
+        format: float
+        description: Transaction amount (in kW)
+      totalBalance:
+        type: number
+        format: float
+        description: Total balance after the transaction (in kW)
+  HttpErrorUnauthorized:
+    type: object
+    properties:
+      timestamp:
+        description: Request date and time
+        type: string
+        example: '2023-12-26T10:23:19.508+00:00'
+      status:
+        description: Http error code
+        type: integer
+        format: int32
+        example: 401
+      error:
+        description: Http error description
+        type: string
+        example: Unauthorized
+      path:
+        description: Request path
+        type: string
+        example: /auth/john.doe@gmail.com/token
+  HttpErrorNotFound:
+    type: object
+    properties:
+      timestamp:
+        description: Request date and time
+        type: string
+        example: '2023-12-26T10:23:19.508+00:00'
+      status:
+        description: Http error code
+        type: integer
+        format: int32
+        example: 404
+      error:
+        description: Http error description
+        type: string
+        example: Not Found
+      path:
+        description: Request path
+        type: string
+        example: /auth/alice.smith@gmail.com/token
+  HttpErrorBadRequest:
+    type: object
+    properties:
+      timestamp:
+        description: Request date and time
+        type: string
+        example: '2023-12-26T10:23:19.508+00:00'
+      status:
+        description: Http error code
+        type: integer
+        format: int32
+        example: 400
+      error:
+        description: Http error description
+        type: string
+        example: Bad Request
+      path:
+        description: Request path
+        type: string
+        example: /users
+  HttpErrorConflict:
+    type: object
+    properties:
+      timestamp:
+        description: Request date and time
+        type: string
+        example: '2025-01-01T12:00:00.508+00:00'
+      status:
+        description: Http error code
+        type: integer
+        format: int32
+        example: 409
+      error:
+        description: Http error description
+        type: string
+        example: Conflict
+  HttpErrorUnprocessableEntity:
+    type: object
+    properties:
+      timestamp:
+        description: Request date and time
+        type: string
+        example: '2023-12-26T10:23:19.508+00:00'
+      status:
+        description: Http error code
+        type: integer
+        format: int32
+        example: 422
+      error:
+        description: Http error description
+        type: string
+        example: Unprocessable Entity
+      path:
+        description: Request path
+        type: string
+        example: /users
+  HttpErrorForbidden:
+    type: object
+    properties:
+      timestamp:
+        description: Request date and time
+        type: string
+        example: '2023-12-26T10:23:19.508+00:00'
+      status:
+        description: Http error code
+        type: integer
+        format: int32
+        example: 403
+      error:
+        description: Http error description
+        type: string
+        example: Forbidden
+      path:
+        description: Request path
+        type: string
+        example: /users/U4NW5zdmstUtRZW5Oi3S2CR5l0U2/houses
+  HttpErrorUserExists:
+    type: object
+    properties:
+      timestamp:
+        description: Request date and time
+        type: string
+        example: '2023-12-26T10:23:19.508+00:00'
+      status:
+        description: Http error code
+        type: integer
+        format: int32
+        example: 409
+      error:
+        description: Http error description
+        type: string
+        example: User exists
+  Error:
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+  ConnectInstallationRequest:
+    type: object
+    properties:
+      installationId:
+        type: string
+    required:
+      - installationId
+  ContractEnergyPriceResponse:
+    type: object
+    description: Energy prices and surplus prices for a contract
+    properties:
+      prices:
+        type: array
+        description: List of energy prices and dates
+        items:
+          type: object
+          $ref: '#/definitions/ContractEnergyPriceItem'
+  ContractEnergyPriceRequest:
+    type: object
+    description: Request to put energy prices for a contract
+    properties:
+      prices:
+        type: array
+        description: List of energy prices and dates
+        items:
+          type: object
+          $ref: '#/definitions/ContractEnergyPriceItem'
+  ContractEnergyPriceItem:
+    type: object
+    description: Energy price and surplus price for an specific date
+    properties:
+      date:
+        type: string
+        format: date-time
+        example: '2022-12-31T23:00:00'
+        description: Date for the energy
+      price:
+        type: number
+        description: Price of the energy
+      surplusPrice:
+        type: number
+        description: Price of the surplus energy
+  InstallationList:
+    type: object
+    description: List of installations
+    properties:
+      size:
+        type: integer
+        description: Number of elements in the page requested
+      page:
+        type: integer
+        description: Number of the page requested
+      totalPages:
+        type: integer
+        description: Number of total pages
+      totalElements:
+        type: integer
+        description: Number of total elements in the list
+      elements:
+        type: array
+        description: List of installations
+        items:
+          type: object
+          $ref: '#/definitions/Installation'
+    required:
+      - size
+      - page
+      - totalPages
+      - totalElements
+      - elements
+  Installation:
+    type: object
+    required:
+      - installationId
+      - integrationId
+      - name
+      - vendor
+      - vendorId
+      - status
+    properties:
+      installationId:
+        type: string
+        format: uuid
+      integrationId:
+        type: string
+        format: uuid
+      name:
+        type: string
+      address:
+        type: string
+      capacity:
+        type: number
+        format: float
+      vendor:
+        type: string
+        enum:
+          - HUAWEI
+          - HUAWEI_OAUTH
+          - SOLAR_EDGE
+          - FRONIUS_B2C
+          - FRONIUS
+          - GOODWE
+          - GOODWE_B2B
+          - GROWATT
+          - SAJ
+          - SUNGROW
+          - SUNGROW_OAUTH
+          - SMA_OAUTH
+          - WIBEEE_SOLAR
+      connectionDate:
+        type: string
+        format: date-time
+      vendorId:
+        type: string
+      status:
+        type: string
+        enum:
+          - ACTIVE
+          - DISCONNECTED
+          - FAULTY
+          - SESSION_EXPIRED
+  ConnectionResponse:
+    type: array
+    items:
+      type: object
+      $ref: '#/definitions/Connection'
+  Connection:
+    type: object
+    properties:
+      connectionId:
+        type: string
+        format: uuid
+        example: 1253a9ca-2b85-14f1-b93d-42010aeb51df
+      name:
+        type: string
+        example: Audinfor
+      vendor:
+        type: string
+        enum:
+          - AUDINFOR
+          - GISCE
+          - ENEXPA
+        example: AUDINFOR
+      type:
+        type: string
+        enum:
+          - ERP
+        example: ERP
+    required:
+      - connectionId
+      - name
+      - type
+      - vendor
+  AssignExternalUserIdToUser:
+    type: object
+    description: External user  assignation request
+    required:
+      - userId
+      - externalUserId
+      - vendor
+    properties:
+      userId:
+        type: string
+      externalUserId:
+        type: string
+      vendor:
+        type: string
+        enum:
+          - AUDINFOR
+          - GISCE
+      connectionId:
+        type: string
+  AssignedUsersList:
+    type: object
+    description: List of users assigned to an integration
+    properties:
+      assignedUsers:
+        type: array
+        description: List of users assigned
+        items:
+          type: object
+          $ref: '#/definitions/AssignedUser'
+    required:
+      - assignedUsers
+  AssignedUser:
+    type: object
+    properties:
+      userId:
+        type: string
+      externalUserId:
+        type: string
+    required:
+      - userId
+      - externalUserId
+  Tariff:
+    type: object
+    description: Tariff
+    required:
+      - id
+      - internalName
+      - commercialName
+      - type
+    properties:
+      id:
+        type: string
+      internalName:
+        type: string
+      commercialName:
+        type: string
+      commercialDescription:
+        type: string
+      powerPrices:
+        type: array
+        items:
+          type: number
+      energyPrices:
+        type: array
+        items:
+          type: number
+      provider:
+        type: string
+      type:
+        type: string
+        enum:
+          - PVPC_2_0_TD
+          - MERCADO_LIBRE_2_0_TD_FIJA
+          - MERCADO_LIBRE_2_0_TD
+          - MERCADO_LIBRE_3_0_TD
+          - INDEXADA_2_0_TD
+          - MERCADO_LIBRE_6_1_TD
+          - OMIE_MARGEN
+      solarPrice:
+        type: number
+        format: float
+      margin:
+        type: number
+        format: float
+  CreateTariff:
+    type: object
+    description: Tariff
+    required:
+      - internalName
+      - commercialName
+      - type
+    properties:
+      internalName:
+        type: string
+      commercialName:
+        type: string
+      commercialDescription:
+        type: string
+      powerPrices:
+        type: array
+        items:
+          type: number
+      energyPrices:
+        type: array
+        items:
+          type: number
+      provider:
+        type: string
+      type:
+        type: string
+        enum:
+          - PVPC_2_0_TD
+          - MERCADO_LIBRE_2_0_TD_FIJA
+          - MERCADO_LIBRE_2_0_TD
+          - MERCADO_LIBRE_3_0_TD
+          - INDEXADA_2_0_TD
+          - MERCADO_LIBRE_6_1_TD
+          - OMIE_MARGEN
+      solarPrice:
+        type: number
+        format: float
+      margin:
+        type: number
+        format: float
+  TariffEnergyPrices:
+    type: object
+    description: Tariff energy prices
+    properties:
+      prices:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/TariffEnergyPrice'
+    required:
+      - prices
+  TariffEnergyPrice:
+    type: object
+    description: Tariff energy price
+    properties:
+      date:
+        type: string
+        format: date-time
+        description: UTC date and hour of the price. Will be truncated to hours
+        example: '2025-01-11T10:00:00Z'
+      price:
+        type: number
+        format: float
+        description: Price in €/kWh
+        example: 0.11
+    required:
+      - date
+      - price
+  HouseContractEnergyPriceRequest:
+    type: object
+    description: Request to put energy prices for a contract
+    properties:
+      prices:
+        type: array
+        description: List of energy prices and dates
+        items:
+          type: object
+          $ref: '#/definitions/HouseContractEnergyPriceItem'
+  HouseContractEnergyPriceResponse:
+    type: object
+    description: Energy prices and surplus prices for a contract
+    properties:
+      prices:
+        type: array
+        description: List of energy prices and dates
+        items:
+          type: object
+          $ref: '#/definitions/HouseContractEnergyPriceItem'
+  HouseContractEnergyPriceItem:
+    type: object
+    description: Energy price and surplus price for an specific date
+    properties:
+      date:
+        type: string
+        format: date-time
+        example: '2022-12-31T23:00:00'
+        description: Date for the energy
+      price:
+        type: number
+        description: Price of the energy
+      surplusPrice:
+        type: number
+        description: Price of the surplus energy
+  AssignExternalContractToContractRequest:
+    type: object
+    description: Request to link a contract with an eternal id
+    required:
+      - contractId
+      - externalContractId
+    properties:
+      contractId:
+        type: string
+      externalContractId:
+        type: string
+  SmartDevicesPower:
+    type: object
+    properties:
+      subtype:
+        type: string
+      vendor:
+        type: string
+      power:
+        type: number
+        format: float
+  SupplyPoint:
+    type: object
+    properties:
+      id:
+        type: string
+      type:
+        type: string
+        enum:
+          - GAS
+          - ELECTRICITY
+      houseId:
+        type: string
+      cups:
+        type: string
+    required:
+      - id
+      - type
+      - houseId
+  StoreHouseEnergiesRequest:
+    type: object
+    required:
+      - energies
+    properties:
+      energies:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/EnergyEntry'
+  EnergyEntry:
+    type: object
+    properties:
+      wh:
+        type: number
+        format: float
+      date:
+        type: string
+        format: date-time
+      dateTo:
+        type: string
+        format: date-time
+        description: Not mandatory, if not provided, dateTo is one hour more than date.
+    required:
+      - date
+      - wh
+  InvoiceAnalysis:
+    type: object
+    properties:
+      dni:
+        type: string
+        example: 1111111A
+      name:
+        type: string
+        example: John
+      surname:
+        type: string
+        example: Doe
+      houseCity:
+        type: string
+        example: Madrid
+      houseStreet:
+        type: string
+        example: Avenida
+      houseNumber:
+        type: string
+        example: '53'
+      houseProvince:
+        type: string
+        example: Madrid
+      postalCode:
+        type: string
+        example: '28005'
+      cups:
+        type: string
+        example: ES0000000000000000EYOF
+      marketer:
+        type: string
+        example: Iberdrola
+      contractedPowerP1:
+        type: number
+        format: float
+        example: '4.6'
+      contractedPowerP2:
+        type: number
+        format: float
+        example: '4.6'
+      maxPowerDemandedP1:
+        type: number
+        format: float
+        example: '3.4'
+      maxPowerDemandedP2:
+        type: number
+        format: float
+        example: '3.5'
+      energyConsumptionP1:
+        type: number
+        format: float
+        example: '50.0'
+      energyConsumptionP2:
+        type: number
+        format: float
+        example: '152.0'
+      energyConsumptionP3:
+        type: number
+        format: float
+        example: '108.0'
+      totalEnergyConsumption:
+        type: number
+        format: float
+        example: '210.0'
+      totalCost:
+        type: number
+        format: float
+        example: '78.77'
+      startDate:
+        type: string
+        format: date
+        example: '2024-01-01'
+      endDate:
+        type: string
+        format: date
+        example: '2024-01-31'
+      renovationDate:
+        type: string
+        format: date
+        example: '2026-03-05'
+  AnalyzeInvoice:
+    type: object
+    properties:
+      invoiceUrl:
+        type: string
+        example: https://example/invoice-123
+  InvoiceAnalysisId:
+    type: object
+    properties:
+      invoiceAnalysisId:
+        type: string
+        format: uuid
+        example: 044b7fef-4a80-42ac-a8c6-addd9c9d86a4
+  InvoiceTariffs:
+    type: array
+    items:
+      $ref: '#/definitions/InvoiceTariff'
+  CreateOrUpdateInvoiceRequest:
+    type: object
+    description: Request to create a new invoice
+    required:
+      - issueDate
+      - invoicePeriodFrom
+      - invoicePeriodTo
+      - type
+      - cost
+      - externalId
+      - obtainMethod
+    properties:
+      issueDate:
+        type: string
+        format: date-time
+        example: '2023-01-15T12:00:00Z'
+        description: Date when the invoice was issued
+      invoicePeriodFrom:
+        type: string
+        format: date-time
+        example: '2023-01-01T00:00:00Z'
+        description: Start of the invoice period
+      invoicePeriodTo:
+        type: string
+        format: date-time
+        example: '2023-01-31T23:59:59Z'
+        description: End of the invoice period
+      type:
+        type: string
+        enum:
+          - ELECTRICITY
+          - GAS
+          - WATER
+          - OTHER
+        example: ELECTRICITY
+        description: Type of the contract
+      cost:
+        type: number
+        format: double
+        example: 125.5
+        description: Total cost of the invoice
+      externalId:
+        type: string
+        example: ext-456
+        description: External identifier for the invoice, used for integration with third-party systems. Must be unique per Clevergy user (cannot be reused across that user's contracts); may be reused for different users.
+      concepts:
+        type: object
+        properties:
+          energyCost:
+            type: number
+            format: double
+            example: 75.2
+            description: Cost of energy consumption in the invoice
+          powerCost:
+            type: number
+            format: double
+            example: 35
+            description: Cost of power in the invoice
+          otherCost:
+            type: number
+            format: double
+            example: 15.3
+            description: Cost of other concepts in the invoice (e.g., taxes, fees)
+          totalEnergySurplus:
+            type: number
+            format: double
+            example: 10.5
+            description: Total energy surplus in the invoice in kWh
+          surplusSaving:
+            type: number
+            format: double
+            example: 5
+            description: Savings from energy surplus in the invoice
+          discountSaving:
+            type: number
+            format: double
+            example: 20
+            description: Savings from discounts applied in the invoice
+          virtualWallet:
+            type: number
+            format: double
+            example: 15
+            description: Amount credited to the virtual wallet from the invoice. This can be positive (credit) or negative (debit)
+          excessPowerCost:
+            type: number
+            format: double
+            example: 10
+            description: Cost of excess power consumption in the invoice
+          reactiveEnergyCost:
+            type: number
+            format: double
+            example: 8
+            description: Cost of reactive energy consumption in the invoice
+        additionalProperties: false
+        description: Additional invoice concepts as key-value pairs
+      obtainMethod:
+        type: string
+        enum:
+          - REAL
+          - ESTIMATED
+        example: REAL
+        description: Method in which the invoice is obtained
+      totalEnergyConsumption:
+        type: number
+        format: double
+        example: 350.75
+        description: Total energy consumption recorded in the invoice in kWh
+  Invoice:
+    type: object
+    description: Invoice information
+    required:
+      - id
+      - issueDate
+      - invoicePeriodFrom
+      - invoicePeriodTo
+      - type
+      - cost
+      - contractId
+    properties:
+      id:
+        type: string
+        example: invoice-123
+        description: Unique identifier of the invoice
+      issueDate:
+        type: string
+        format: date
+        example: '2023-01-15'
+        description: Date when the invoice was issued
+      invoicePeriodFrom:
+        type: string
+        format: date
+        example: '2023-01-01'
+        description: Start of the invoice period
+      invoicePeriodTo:
+        type: string
+        format: date
+        example: '2023-01-31'
+        description: End of the invoice period
+      type:
+        type: string
+        enum:
+          - ELECTRICITY
+          - GAS
+          - WATER
+          - OTHER
+        example: ELECTRICITY
+        description: Type of the contract
+      cost:
+        type: number
+        format: double
+        example: 125.5
+        description: Total cost of the invoice
+      contractId:
+        type: string
+        example: contract-123
+        description: ID of the contract associated with this invoice
+      externalId:
+        type: string
+        example: ext-456
+        description: External identifier for the invoice, used for integration with third-party systems. Unique per Clevergy user; may be reused across different users.
+      concepts:
+        type: object
+        additionalProperties:
+          type: string
+        example:
+          energy: '75.20'
+          taxes: '15.30'
+          fixed: '35.00'
+        description: Additional invoice concepts as key-value pairs
+      fileUrl:
+        type: string
+        example: https://example.com/invoices/detail/123
+        description: Signed URL to access the invoice PDF when available. Null when no file has been uploaded for this invoice.
+        x-nullable: true
+      obtainMethod:
+        type: string
+        enum:
+          - REAL
+          - ESTIMATED
+        example: REAL
+        description: Method in which the invoice is obtained
+      totalEnergyConsumption:
+        type: number
+        format: double
+        example: 350.75
+        description: Total energy consumption recorded in the invoice in kWh
+      paymentDate:
+        type: string
+        format: date
+        example: '2023-02-01'
+        description: Date when the invoice was paid
+      paymentStatus:
+        type: string
+        enum:
+          - PENDING
+          - PAID
+          - OVERDUE
+        example: PAID
+        description: Payment status of the invoice
+  InvoiceTariff:
+    type: object
+    required:
+      - tariff
+    properties:
+      invoiceSaving:
+        type: number
+      tariff:
+        $ref: '#/definitions/Tariff'
+  Ticket:
+    type: object
+    description: Ticket
+    properties:
+      id:
+        type: string
+      tenantId:
+        type: string
+      userId:
+        type: string
+      houseId:
+        type: string
+      contractId:
+        type: string
+      equipmentId:
+        type: string
+      alertId:
+        type: string
+      status:
+        type: string
+        enum:
+          - NEW
+          - OPEN
+          - PENDING
+          - SOLVED
+          - CLOSED
+      title:
+        type: string
+      description:
+        type: string
+      comments:
+        type: array
+        items:
+          $ref: '#/definitions/Comment'
+      createdAt:
+        type: string
+        format: date-time
+      updatedAt:
+        type: string
+        format: date-time
+    required:
+      - id
+      - tenantId
+      - status
+      - title
+      - description
+      - createdAt
+      - updatedAt
+  Comment:
+    type: object
+    properties:
+      id:
+        type: number
+      ticketId:
+        type: string
+      message:
+        type: string
+      author:
+        type: string
+        enum:
+          - USER
+          - SUPPORT
+      attachments:
+        type: array
+        items:
+          type: string
+      createdAt:
+        type: string
+        format: date-time
+      updatedAt:
+        type: string
+        format: date-time
+    required:
+      - id
+      - ticketId
+      - message
+      - author
+      - attachments
+      - createdAt
+      - updatedAt
+  CommentAttachmentRequest:
+    type: object
+    description: Request to get a signed url to upload a file for a comment
+    properties:
+      fileName:
+        type: string
+        description: The name of the file to upload. It should include the extension. If this file already exists, it will be overwritten.
+    required:
+      - fileName
+  CommentAttachmentUrl:
+    type: object
+    description: Signed url to attach a file to a comment
+    properties:
+      url:
+        type: string
+        description: The signed url to upload the file. Valid for 15 minutes. Send a PUT request to this url with the file as form data.
+    required:
+      - url
+  UpdateTicketRequest:
+    type: object
+    properties:
+      status:
+        type: string
+        enum:
+          - NEW
+          - OPEN
+          - PENDING
+          - SOLVED
+          - CLOSED
+    required:
+      - status
+  CommentRequest:
+    type: object
+    properties:
+      message:
+        type: string
+    required:
+      - message
+  HouseEquipment:
+    type: object
+    properties:
+      equipmentId:
+        type: string
+      integrationType:
+        type: string
+        enum:
+          - SOLAR
+          - DISTRIBUTOR
+          - HYDRO
+          - SMART_DEVICE
+          - ERP
+          - DATADIS
+          - COMMUNITY
+          - STORAGE
+      vendor:
+        type: string
+    required:
+      - equipmentId
+      - integrationType
+  HouseEquipments:
+    type: object
+    properties:
+      equipments:
+        type: array
+        items:
+          $ref: '#/definitions/HouseEquipment'
+  StorageEquipment:
+    type: object
+    description: Storage equipment data
+    required:
+      - status
+    properties:
+      status:
+        type: string
+        description: Equipment status
+        enum:
+          - ACTIVE
+          - INACTIVE
+      maxChargePower:
+        type: number
+        format: float
+        description: Maximum charge power in W
+        example: 100
+      maxDischargePower:
+        type: number
+        format: float
+        description: Maximum discharge power in W
+        example: 100
+      ratedCapacity:
+        type: number
+        format: float
+        description: Rated capacity in kWh
+        example: 50
+  StorageEquipmentSoc:
+    type: object
+    description: Storage equipment state of charge
+    required:
+      - time
+      - soc
+    properties:
+      time:
+        type: string
+        format: date-time
+        description: Time of measurement
+      soc:
+        type: number
+        format: float
+        description: State of charge in percentage
+  ScheduleStorageActionRequest:
+    type: object
+    description: Request to create a set of scheduled actions for a storage equipment
+    properties:
+      actions:
+        type: array
+        description: List of actions to be scheduled
+        items:
+          type: object
+          $ref: '#/definitions/ScheduleStorageActionItem'
+  ScheduleStorageActionItem:
+    type: object
+    properties:
+      date:
+        type: string
+        format: date-time
+        description: Date of the action in UTC format (e.g., 2023-10-01T12:00:00Z)
+      action:
+        type: string
+        description: Action to be performed on the storage equipment
+        enum:
+          - CHARGE
+          - DISCHARGE
+          - PAUSE
+      targetSOC:
+        type: number
+        format: float
+        description: Target state of charge in percentage
+      dispatchTimeMins:
+        type: number
+        format: integer
+        description: Dispatch time in minutes
+      powerKWDispatch:
+        type: number
+        format: float
+        description: Dispatch power in kW
+    required:
+      - date
+      - action
+  EquipmentsPage:
+    type: object
+    description: Page of equipments
+    properties:
+      cursor:
+        type: string
+        format: uuid
+        description: Cursor for next page request
+      elements:
+        type: array
+        description: List of equipments
+        items:
+          type: object
+          $ref: '#/definitions/Equipment'
+    required:
+      - elements
+  Equipment:
+    type: object
+    required:
+      - equipmentId
+      - integrationId
+      - vendor
+    properties:
+      equipmentId:
+        type: string
+        format: uuid
+      integrationId:
+        type: string
+        format: uuid
+      vendor:
+        type: string
+  HousesPage:
+    type: object
+    description: Page of houses
+    properties:
+      cursor:
+        type: string
+        format: uuid
+        description: Cursor for next page request
+      elements:
+        type: array
+        description: List of houses
+        items:
+          type: object
+          $ref: '#/definitions/House'
+    required:
+      - elements
+  House:
+    type: object
+    required:
+      - houseId
+    properties:
+      houseId:
+        type: string
+        format: uuid
+      cups:
+        type: string
+      address:
+        type: string
+      postalCode:
+        type: string
+  AuthorizeUserRequest:
+    type: object
+    properties:
+      cups:
+        description: The ID of the supply point to authorize
+        type: string
+      authorizedUserId:
+        description: The ID of the user to authorize
+        type: string
+      status:
+        description: The authorization status
+        type: string
+        enum:
+          - AUTHORIZED
+          - REVOKED
+    required:
+      - cups
+      - authorizedUserId
+      - status
+  UserAppDevice:
+    type: object
+    description: User app device
+    properties:
+      userId:
+        type: string
+        format: uuid
+      deviceToken:
+        type: string
+    required:
+      - userId
+      - deviceToken
+  UserAppDevicesList:
+    type: array
+    items:
+      type: object
+      $ref: '#/definitions/UserAppDevice'
+  GasContract:
+    type: object
+    description: Gas contract details
+    required:
+      - id
+      - startDate
+      - status
+      - address
+      - cups
+      - tariffAccess
+      - tariffName
+      - fileUrl
+    properties:
+      id:
+        type: string
+        example: contract-123
+        description: Unique identifier of the gas contract
+      startDate:
+        type: string
+        format: date
+        example: '2023-02-01'
+        description: Start date of the gas contract
+      endDate:
+        type: string
+        format: date
+        example: '2024-02-01'
+        description: End date of the gas contract
+      status:
+        type: string
+        enum:
+          - ACTIVE
+          - INACTIVE
+        example: ACTIVE
+        description: Status of the gas contract
+      address:
+        type: string
+        example: 123 Main St, Springfield
+        description: Address associated with the gas contract
+      postalCode:
+        type: string
+        example: '12345'
+        description: Postal code associated with the gas contract
+      connectionId:
+        type: string
+        example: conn-456
+        description: UUID of the gas connection
+      connectionContractId:
+        type: string
+        example: contract-789
+        description: ID of the connection contract
+      cups:
+        type: string
+        example: ES1234567890123456AB
+        description: Universal Point of Supply Code (CUPS)
+      tariffAccess:
+        type: string
+        enum:
+          - RL01
+          - RL02
+          - RL03
+          - RL04
+          - RL05
+          - RL06
+          - RL07
+          - RL08
+          - RL09
+          - RL10
+          - RL11
+        example: RL01
+        description: Tariff access code
+      tariffName:
+        type: string
+        example: Standard Gas Tariff
+        description: Name of the tariff applied to the contract
+      iban:
+        type: string
+        example: ES7620770024003102575766
+        description: IBAN for billing purposes
+      distributorName:
+        type: string
+        example: Gas Distributor S.A.
+        description: Name of the gas distributor company
+      holderName:
+        type: string
+        example: John Doe
+        description: Name of the contract holder
+      commercialName:
+        type: string
+        example: Gas Commercial S.L.
+        description: Name of the commercial gas company
+      fixedPrice:
+        type: number
+        format: number
+        example: 20.5
+        description: Fixed price component of the gas contract (€/day)
+      energyPrice:
+        type: number
+        format: number
+        example: 0.065
+        description: Energy price component of the gas contract (€/kWh)
+      pressure:
+        type: number
+        example: 0.5
+        description: Supply pressure in bar
+      fileUrl:
+        type: string
+        example: https://example.com/contracts/gas/contract-123.pdf
+        description: URL to access the gas contract file. Also used to upload a new contract file as response in POST and PUT methods.
+      contractNumber:
+        type: string
+        description: Contract number
+        example: GC-12345
+  GasContractRequest:
+    type: object
+    description: Request to create a new gas contract
+    required:
+      - startDate
+      - status
+      - address
+      - cups
+      - tariffAccess
+      - tariffName
+    properties:
+      startDate:
+        type: string
+        format: date
+        example: '2023-02-01'
+        description: Start date of the gas contract
+      endDate:
+        type: string
+        format: date
+        example: '2024-02-01'
+        description: End date of the gas contract
+      status:
+        type: string
+        enum:
+          - ACTIVE
+          - INACTIVE
+        example: ACTIVE
+        description: Status of the gas contract
+      address:
+        type: string
+        example: 123 Main St, Springfield
+        description: Address associated with the gas contract
+      postalCode:
+        type: string
+        example: '12345'
+        description: Postal code associated with the gas contract
+      cups:
+        type: string
+        example: ES1234567890123456AB
+        description: Universal Point of Supply Code (CUPS)
+      tariffAccess:
+        type: string
+        enum:
+          - RL01
+          - RL02
+          - RL03
+          - RL04
+          - RL05
+          - RL06
+          - RL07
+          - RL08
+          - RL09
+          - RL10
+          - RL11
+        example: RL01
+        description: Tariff access code
+      tariffName:
+        type: string
+        example: Standard Gas Tariff
+        description: Name of the tariff applied to the contract
+      iban:
+        type: string
+        example: ES7620770024003102575766
+        description: IBAN for billing purposes
+      distributorName:
+        type: string
+        example: Gas Distributor S.A.
+        description: Name of the gas distributor company
+      holderName:
+        type: string
+        example: John Doe
+        description: Name of the contract holder
+      commercialName:
+        type: string
+        example: Gas Commercial S.L.
+        description: Name of the commercial gas company
+      fixedPrice:
+        type: number
+        format: number
+        example: 20.5
+        description: Fixed price component of the gas contract (€/day)
+      energyPrice:
+        type: number
+        format: number
+        example: 0.065
+        description: Energy price component of the gas contract (€/kWh)
+      pressure:
+        type: number
+        example: 0.5
+        description: Supply pressure in bar
+      contractNumber:
+        type: string
+        description: Contract number
+        example: GC-12345
+  ElectricityContract:
+    type: object
+    description: Electricity contract details
+    required:
+      - id
+      - startDate
+      - status
+      - address
+      - cups
+      - importTariffType
+      - tariffName
+      - tariffAccess
+      - contractPower
+      - fileUrl
+    properties:
+      id:
+        type: string
+        example: contract-123
+        description: Unique identifier of the electricity contract
+      startDate:
+        type: string
+        format: date
+        example: '2023-02-01'
+        description: Start date of the electricity contract
+      endDate:
+        type: string
+        format: date
+        example: '2024-02-01'
+        description: End date of the electricity contract
+      status:
+        type: string
+        enum:
+          - ACTIVE
+          - INACTIVE
+        example: ACTIVE
+        description: Status of the electricity contract
+      address:
+        type: string
+        example: 123 Main St, Springfield
+        description: Address associated with the electricity contract
+      postalCode:
+        type: string
+        example: '12345'
+        description: Postal code associated with the electricity contract
+      connectionId:
+        type: string
+        example: conn-456
+        description: UUID of the electricity connection
+      connectionContractId:
+        type: string
+        example: contract-789
+        description: ID of the connection contract
+      cups:
+        type: string
+        example: ES1234567890123456AB
+        description: Universal Point of Supply Code (CUPS)
+      importTariffType:
+        type: string
+        enum:
+          - FIXED
+          - PVPC
+          - INDEXED
+          - PERIOD
+          - CUSTOM
+        example: 2.0TD
+        description: Import tariff access code
+      surplusTariffType:
+        type: string
+        enum:
+          - FIXED
+          - PVPC
+          - INDEXED
+          - PERIOD
+          - CUSTOM
+        example: FIXED
+        description: Surplus tariff access code
+      tariffAccess:
+        type: string
+        enum:
+          - 2.0TD
+          - 3.0TD
+          - 6.1TD
+        example: 2.0TD
+        description: Tariff access code
+      tariffName:
+        type: string
+        example: Standard Electricity Tariff
+        description: Name of the tariff applied to the contract
+      iban:
+        type: string
+        example: ES7620770024003102575766
+        description: IBAN for billing purposes
+      distributorName:
+        type: string
+        example: Electricity Distributor S.A.
+        description: Name of the electricity distributor company
+      holderName:
+        type: string
+        example: John Doe
+        description: Name of the contract holder
+      commercialName:
+        type: string
+        example: Electricity Commercial S.L.
+        description: Name of the commercial electricity company
+      contractPower:
+        type: array
+        items:
+          type: number
+          format: double
+        example:
+          - 3.45
+          - 3.45
+        description: Contracted power for each period (kW). The array should contain up to 6 periods.
+      powerPrices:
+        type: array
+        items:
+          type: number
+          format: double
+        example:
+          - 0.1
+          - 0.05
+        description: Power prices for each period (€/kW). The array should contain up to 6 periods.
+      energyPrices:
+        type: array
+        items:
+          type: number
+          format: double
+        example:
+          - 0.15
+          - 0.1
+          - 0.05
+        description: Energy prices for each period (€/kWh). The array should contain up to 6 periods.
+      surplusPrices:
+        type: array
+        items:
+          type: number
+          format: double
+        example:
+          - 0.05
+        description: Surplus prices for each period (€/kWh). The array should contain up to 6 periods.
+      fileUrl:
+        type: string
+        example: https://example.com/contracts/electricity/contract-123.pdf
+        description: URL to access the electricity contract file. Also used to upload a new contract file as response in POST and PUT methods.
+      contractNumber:
+        type: string
+        description: Contract number
+        example: EC-12345
+  ElectricityContractRequest:
+    type: object
+    description: Request to create or update an electricity contract
+    required:
+      - startDate
+      - status
+      - address
+      - cups
+      - importTariffType
+      - tariffName
+      - tariffAccess
+      - contractPower
+    properties:
+      startDate:
+        type: string
+        format: date
+        example: '2023-02-01'
+        description: Start date of the electricity contract
+      endDate:
+        type: string
+        format: date
+        example: '2024-02-01'
+        description: End date of the electricity contract
+      status:
+        type: string
+        enum:
+          - ACTIVE
+          - INACTIVE
+        example: ACTIVE
+        description: Status of the electricity contract
+      address:
+        type: string
+        example: 123 Main St, Springfield
+        description: Address associated with the electricity contract
+      postalCode:
+        type: string
+        example: '12345'
+        description: Postal code associated with the electricity contract
+      cups:
+        type: string
+        example: ES1234567890123456AB
+        description: Universal Point of Supply Code (CUPS)
+      importTariffType:
+        type: string
+        enum:
+          - FIXED
+          - PVPC
+          - INDEXED
+          - PERIOD
+          - CUSTOM
+        example: FIXED
+        description: Import tariff type
+      surplusTariffType:
+        type: string
+        enum:
+          - FIXED
+          - PVPC
+          - INDEXED
+          - PERIOD
+          - CUSTOM
+        example: FIXED
+        description: Surplus tariff type
+      tariffAccess:
+        type: string
+        enum:
+          - 2.0TD
+          - 3.0TD
+          - 6.1TD
+        example: 2.0TD
+        description: Tariff access code
+      tariffName:
+        type: string
+        example: Standard Electricity Tariff
+        description: Name of the tariff applied to the contract
+      iban:
+        type: string
+        example: ES7620770024003102575766
+        description: IBAN for billing purposes
+      distributorName:
+        type: string
+        example: Electricity Distributor S.A.
+        description: Name of the electricity distributor company
+      holderName:
+        type: string
+        example: John Doe
+        description: Name of the contract holder
+      commercialName:
+        type: string
+        example: Electricity Commercial S.L.
+        description: Name of the commercial electricity company
+      contractPower:
+        type: array
+        items:
+          type: number
+          format: double
+        example:
+          - 3.45
+          - 3.45
+        description: Contracted power for each period (kW). The array should contain up to 6 periods.
+      powerPrices:
+        type: array
+        items:
+          type: number
+          format: double
+        example:
+          - 0.1
+          - 0.05
+        description: Power prices for each period (€/kW). The array should contain up to 6 periods.
+      energyPrices:
+        type: array
+        items:
+          type: number
+          format: double
+        example:
+          - 0.15
+        description: Energy prices for each period (€/kWh). The array should contain up to 6 periods.
+      surplusPrices:
+        type: array
+        items:
+          type: number
+          format: double
+        example:
+          - 0.05
+        description: Surplus prices for each period (€/kWh). The array should contain up to 6 periods.
+      contractNumber:
+        type: string
+        description: Contract number
+        example: EC-12345
+  SalesOpportunitiesPage:
+    type: object
+    description: Paginated list of sales opportunities
+    properties:
+      size:
+        type: integer
+        description: Number of elements in the page requested
+      page:
+        type: integer
+        description: Number of the page requested
+      totalPages:
+        type: integer
+        description: Number of total pages
+      totalElements:
+        type: integer
+        description: Number of total elements in the list
+      elements:
+        type: array
+        description: List of sales opportunities
+        items:
+          $ref: '#/definitions/SalesOpportunitySummary'
+    required:
+      - size
+      - page
+      - totalPages
+      - totalElements
+      - elements
+  SalesOpportunitySummary:
+    type: object
+    description: Summary of a sales opportunity
+    properties:
+      id:
+        type: string
+      product:
+        type: string
+        enum:
+          - CONTRACT
+          - SOLAR
+          - HEATPUMP
+          - BATTERY
+          - DEVICES
+          - EV
+          - OTHER
+      status:
+        type: string
+        enum:
+          - STARTED
+          - POTENTIAL
+          - FORMALIZED
+          - CONVERTED
+          - REJECTED
+      userId:
+        type: string
+      holder:
+        type: string
+      email:
+        type: string
+      phoneNumber:
+        type: string
+      nif:
+        type: string
+      houseId:
+        type: string
+      address:
+        type: string
+      createdAt:
+        type: string
+        format: date-time
+      updatedAt:
+        type: string
+        format: date-time
+    required:
+      - id
+      - product
+      - status
+      - createdAt
+      - updatedAt
+  ContractSalesOpportunity:
+    type: object
+    description: CONTRACT sales opportunity details including contracting payload fields
+    properties:
+      id:
+        type: string
+      product:
+        type: string
+        enum:
+          - CONTRACT
+      status:
+        type: string
+        enum:
+          - STARTED
+          - POTENTIAL
+          - FORMALIZED
+          - CONVERTED
+          - REJECTED
+      userId:
+        type: string
+      holder:
+        type: string
+      nif:
+        type: string
+      email:
+        type: string
+      phoneNumber:
+        type: string
+      houseId:
+        type: string
+      address:
+        type: string
+      tariffId:
+        type: string
+      createdAt:
+        type: string
+        format: date-time
+      updatedAt:
+        type: string
+        format: date-time
+      referralCode:
+        type: string
+      invoiceId:
+        type: string
+      invoiceAnalysisId:
+        type: string
+      contractedPower:
+        type: array
+        items:
+          type: number
+          format: double
+      contactEmail:
+        type: string
+      contactName:
+        type: string
+      contactSurname:
+        type: string
+      contactPhone:
+        type: string
+      contactNif:
+        type: string
+      cups:
+        type: string
+      addressBlockNumber:
+        type: string
+      addressFloor:
+        type: string
+      addressStaircase:
+        type: string
+      addressDoor:
+        type: string
+      addressPostalCode:
+        type: string
+      addressAdditionalInfo:
+        type: string
+      bankAccountHolder:
+        type: string
+      iban:
+        type: string
+      submitted:
+        type: boolean
+    required:
+      - id
+      - product
+      - status
+      - createdAt
+      - updatedAt
+  PatchContractSalesOpportunityRequest:
+    type: object
+    description: Partial update for a CONTRACT sales opportunity
+    properties:
+      status:
+        type: string
+        enum:
+          - STARTED
+          - POTENTIAL
+          - FORMALIZED
+          - CONVERTED
+          - REJECTED
+    required:
+      - status
+securityDefinitions:
+  key:
+    type: apiKey
+    in: header
+    name: clevergy-api-key
+x-google-endpoints:
+  - name: connect.clever.gy
+    allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

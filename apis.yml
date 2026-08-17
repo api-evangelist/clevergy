@@ -1,20 +1,148 @@
 aid: clevergy
 name: Clevergy
-description: 'Clevergy is a company surfaced as a portfolio company of serena and added to the API Evangelist
-  network as a stub for enrichment. Sector: climate-tech. This profile is a lead awaiting the enrichment
-  pipeline.'
+description: >-
+  Clevergy (The Clevergy Solution, SL) is a Madrid-based climate-tech SaaS company, founded in 2022,
+  that sells white-label energy-management software to electricity and gas retailers, solar
+  installers and energy advisors. Its platform ingests household consumption data — pulled directly
+  from Spanish distributors and the Datadis smart-meter hub via the CUPS supply-point code, or from
+  connected solar inverters and smart devices — and turns it into consumption analytics, invoice
+  breakdowns, savings recommendations, appliance-level disaggregation, virtual battery and wallet
+  balances, energy-community shares, and sales leads the retailer can act on. Integrators consume it
+  two ways: the Connect API, a Swagger 2.0 REST API on connect.clever.gy with 83 operations spanning
+  users, houses, contracts, invoices, tariffs, equipment, energy telemetry, tickets and sales
+  opportunities; and a catalog of roughly thirty embeddable "microfrontend" web components that drop
+  Clevergy's end-user experiences straight into the retailer's own app or webview, authenticated with
+  a short-lived per-user JWT. Clevergy raised a €3.2M round in October 2025 co-led by Racine² (Serena
+  and Makesense) and Axon Partners Group, with Satgana, Wayra and Angels participating.
+image: https://clever.gy/wp-content/uploads/2024/09/cropped-favicon-isotipo-clevergy.png
 url: https://raw.githubusercontent.com/api-evangelist/clevergy/refs/heads/main/apis.yml
 x-type: company
 x-source: serena-portfolio
-x-tier: stub
-x-tier-reason: portfolio-lead
-specificationVersion: '0.20'
+specificationVersion: '0.21'
 created: '2026-08-17'
 modified: '2026-08-17'
 tags:
 - Company
 - Climate Tech
-apis: []
+- Energy
+- Energy Management
+- Utilities
+- Smart Meter
+- Solar
+- Home Energy
+- Battery Storage
+- Electric Vehicle Charging
+- Smart Home
+- Sustainability
+- Spain
+- White Label
+- Embedded Components
+- Webhooks
+apis:
+- name: Clevergy Connect API
+  description: >-
+    REST API that lets Clevergy customers build integrations with the Clevergy platform: manage end
+    users and their houses, create and maintain electricity and gas contracts with their energy price
+    tables, upload and OCR-analyse invoices, define custom tariffs, discover and link solar inverter
+    installations, read energy, power, comparison and appliance-disaggregation telemetry, monitor and
+    schedule home batteries, manage energy-community membership and shares, post virtual wallet (EUR)
+    and virtual battery (kWh) balances, and work support tickets and sales opportunities. Published as
+    a Swagger 2.0 document with 62 paths, 83 operations, 102 definitions and an operationId on every
+    operation. Authentication is a tenant API key in the clevergy-api-key header; a separate operation
+    exchanges it for a 1-hour per-user JWT for browser use. Access is sales-gated — keys are issued
+    per environment on request.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Energy
+  - Energy Management
+  - Utilities
+  - Smart Meter
+  - Solar
+  - Battery Storage
+  - Home Energy
+  - Spain
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-connect-api-openapi.yml
+  - type: OpenAPI
+    url: https://assets.clever.gy/swagger/connect-api.yaml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Overlay
+    url: overlays/clevergy-connect-api-overlay.yaml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- name: Clevergy Webhooks
+  description: >-
+    Outbound HTTP callbacks that notify an integrator in real time when a Clevergy lifecycle entity
+    changes. Three event surfaces are documented — User, SalesOpportunity and Ticket — with CREATE,
+    UPDATE and DELETE event types on sales opportunities and CREATE/UPDATE on tickets. Delivery is
+    notification-only by design: the payload carries an identifier and the full object must then be
+    read back from the Connect API. Endpoints are registered by Clevergy on request; the only
+    authentication mechanism offered is a token in a query parameter on the integrator's own callback
+    URL, with no signature header. No AsyncAPI document is published.
+  humanURL: https://docs.clever.gy/webhooks/clevergy-webhooks
+  baseURL: https://connect.clever.gy
+  tags:
+  - Webhooks
+  - Energy
+  - Utilities
+  properties:
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Documentation
+    url: https://docs.clever.gy/webhooks/clevergy-webhooks
+  - type: APIReference
+    url: https://docs.clever.gy/webhooks/clevergy-webhooks
+- name: Clevergy Microfrontends
+  description: >-
+    Roughly thirty embeddable UI components — custom elements (web components) rendering a React tree
+    in an isolated container — that bring Clevergy's end-user energy experiences into an integrator's
+    own website, app or webview. Grouped into four families: account setup and integrations (contract
+    opportunity, invoices, invoice OCR, smart-meter/Datadis authorization, inverter and EV connection,
+    virtual battery and wallet), energy insights (consumption breakdown, energy chart, invoice
+    estimation, solar amortization and summary), optimization and recommendations (energy prices,
+    tariff comparison, house comparison, recommendations, solar recommender, tips, alerts), and
+    real-time monitoring and device control (power chart, battery, smart devices, solar real-time).
+    Distributed as a single unpinned ES module from assets.clever.gy and authenticated with a
+    short-lived per-user JWT passed on the element's data-token attribute.
+  humanURL: https://docs.clever.gy/helpdesk/microfrontends-catalog
+  baseURL: https://assets.clever.gy
+  tags:
+  - Embedded Components
+  - Energy
+  - Home Energy
+  - White Label
+  properties:
+  - type: Components
+    url: components/clevergy-components.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer/microfrontends
+  - type: APIReference
+    url: https://docs.clever.gy/helpdesk/microfrontends-catalog
+  - type: GettingStarted
+    url: https://docs.clever.gy/developer/microfrontends
+  - type: Packages
+    url: packages/clevergy-packages.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -22,4 +150,71 @@ maintainers:
   email: info@apis.io
 common:
 - type: Website
-  url: https://clever.gy/fr/
+  url: https://clever.gy/en/
+- type: DeveloperPortal
+  url: https://docs.clever.gy/developer
+- type: Documentation
+  url: https://docs.clever.gy/
+- type: APIReference
+  url: https://docs.clever.gy/connect-api/clevergy-connect-api
+- type: GettingStarted
+  url: https://docs.clever.gy/developer/getting-started/authentication
+- type: Support
+  url: https://clever.gy/en/contacto/
+- type: HelpCenter
+  url: https://docs.clever.gy/helpdesk
+- type: Blog
+  url: https://clever.gy/en/blog/
+- type: GitHubOrganization
+  url: https://github.com/Clevergy
+- type: Login
+  url: https://portal.clever.gy/
+- type: SignUp
+  url: https://clever.gy/en/demo/
+- type: TermsOfService
+  url: https://clever.gy/en/terms-conditions-web/
+- type: PrivacyPolicy
+  url: https://clever.gy/en/politica-de-privacidad/
+- type: LegalNotice
+  url: https://clever.gy/en/aviso-legal/
+- type: FAQ
+  url: https://clever.gy/en/faq/
+- type: Postman
+  url: https://www.postman.com/clevergy/clevergy-public-workspace
+- type: LLMsTxt
+  url: https://docs.clever.gy/llms.txt
+- type: LLMsTxt
+  url: llms/clevergy-llms.txt
+- type: Authentication
+  url: authentication/clevergy-authentication.yml
+- type: Conventions
+  url: conventions/clevergy-conventions.yml
+- type: ErrorCatalog
+  url: errors/clevergy-problem-types.yml
+- type: DataModel
+  url: data-model/clevergy-data-model.yml
+- type: Lifecycle
+  url: lifecycle/clevergy-lifecycle.yml
+- type: RateLimits
+  url: rate-limits/clevergy-rate-limits.yml
+- type: Plans
+  url: plans/clevergy-plans-pricing.yml
+- type: Conformance
+  url: conformance/clevergy-conformance.yml
+- type: Components
+  url: components/clevergy-components.yml
+- type: Packages
+  url: packages/clevergy-packages.yml
+- type: Webhooks
+  url: asyncapi/clevergy-webhooks.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: AgenticAccess
+  url: agentic-access/clevergy-agentic-access.yml
+- type: DomainSecurity
+  url: security/clevergy-domain-security.yml
+x-enrichment:
+  date: '2026-08-17'
+  status: enriched
+  artifacts_added: 27
+  pass: local-v1

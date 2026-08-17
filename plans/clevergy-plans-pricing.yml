@@ -1,0 +1,83 @@
+generated: '2026-08-17'
+method: searched
+source: >-
+  https://docs.clever.gy/developer/how-to-set-up/create-client and
+  https://docs.clever.gy/developer/how-to-set-up/create-solar-client (the only public documents
+  that name Clevergy's commercial plans), plus a search of clever.gy for a pricing page.
+description: >-
+  Clevergy publishes NO prices. Two commercial plan NAMES are visible in the developer
+  documentation — Plan Starter and Plan Pro — because the onboarding guides are written per plan,
+  but no rate card, quota, overage or currency is published anywhere on clever.gy or
+  docs.clever.gy. Acquisition runs through a demo request form and a Customer Success Manager.
+plan_count: 2
+prices_published: false
+pricing_page: null
+currency: null
+billing_period: null
+
+plans:
+- name: Plan Starter
+  price: null
+  currency: null
+  billing_period: null
+  included_quota: null
+  overage: null
+  capabilities_documented:
+  - Onboard a customer (createUser)
+  - Create at least one electricity or gas contract (createElectricityContract / createGasContract)
+  - Upload invoices against a contract (createInvoice)
+  - >-
+    Retrieve consumption data via a distributor/Datadis integration keyed on the CUPS supply-point
+    code
+  source: https://docs.clever.gy/developer/how-to-set-up/create-client
+  evidence_quote: >-
+    "This guide explains the minimum required flow to onboard a customer in Clevergy under the
+    Plan Starter."
+- name: Plan Pro
+  price: null
+  currency: null
+  billing_period: null
+  included_quota: null
+  overage: null
+  capabilities_documented:
+  - Everything in Plan Starter
+  - >-
+    Solar API integration — connect a solar inverter installation with either user credentials
+    (customer completes it in the app) or installer credentials (set up from the Operations
+    Portal)
+  - >-
+    Discover installations and link them to a house (getInstallations, getUserSupplies,
+    connectInstallation) to expose production, consumption, real-time power and solar savings
+  source: https://docs.clever.gy/developer/how-to-set-up/create-solar-client
+  evidence_quote: >-
+    "This guide explains the minimum required flow to onboard a customer in Clevergy under the
+    Plan Pro."
+
+acquisition:
+  model: sales-led
+  api_access: >-
+    "To request access please write to soporte.clientes@clever.gy" — stated in the developer
+    introduction and in the OpenAPI info.description. API keys are issued per environment by a
+    Customer Success Manager, not self-service.
+  demo_request: https://clever.gy/en/demo/
+  self_serve_signup: false
+  free_tier: false
+  trial: null
+
+evidence:
+- {url: 'https://clever.gy/en/pricing/', status: 404, note: no pricing page at the conventional path}
+- {url: 'https://clever.gy/en/', status: 200, note: 'site navigation carries product, solutions, blog, FAQ, about, contact and demo — no pricing entry'}
+- {url: 'https://clever.gy/en/demo/', status: 200, note: the commercial entry point in place of a rate card}
+- {url: 'https://docs.clever.gy/developer/how-to-set-up/create-client', status: 200, note: names Plan Starter}
+- {url: 'https://docs.clever.gy/developer/how-to-set-up/create-solar-client', status: 200, note: names Plan Pro}
+checked: '2026-08-17'
+
+note: >-
+  Recorded as two plans with null prices rather than plan_count 0, because the tier structure
+  itself IS published — Clevergy documents different onboarding flows per plan, so an integrator
+  can tell which capabilities sit behind which tier. What is missing is the money. Third-party
+  pricing quotes were deliberately not used: only what Clevergy publishes about itself counts.
+  A related third-party plan dependency is worth noting for buyers: the Enphase inverter
+  integration's data freshness depends on the CUSTOMER's own Enphase plan (Clevergy syncs weekly
+  by default and states that higher-frequency updates require an Enphase plan with higher request
+  limits) — that is Enphase's rate card, not Clevergy's.

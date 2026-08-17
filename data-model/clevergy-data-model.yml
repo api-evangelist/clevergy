@@ -1,0 +1,313 @@
+generated: '2026-08-17'
+method: derived
+source: >-
+  openapi/clevergy-connect-api-openapi.yml (102 definitions, $ref links and id-reference fields)
+  enriched from https://docs.clever.gy/developer/getting-started/entities, which publishes the
+  canonical entity/cardinality table.
+description: >-
+  The Clevergy domain graph. Clevergy's own documentation names six core entities and their
+  cardinalities; the spec's 102 definitions resolve into those plus the energy/telemetry,
+  tariff, ticketing and sales-opportunity satellites. The organising fact is that a HOUSE (a
+  dwelling, addressed by a Spanish CUPS supply-point code) is the hub — energy data, contracts,
+  equipment, settings and community membership all hang off houseId, while the USER is the
+  identity that owns houses.
+
+published_entity_table:
+  source: https://docs.clever.gy/developer/getting-started/entities
+  rows:
+  - entity: User
+    relation: 1 User ↔ n Houses
+    features: Manages houses, receives notifications, and accesses support
+  - entity: House
+    relation: n Houses ↔ 1 Contract
+    features: Controls energy, configures alerts, and generates leads
+  - entity: Contract
+    relation: 1 Contract ↔ 1 House
+    features: Defines management terms for the house
+  - entity: Invoices
+    relation: n Invoices ↔ 1 House
+    features: Tracks financial transactions related to the house
+  - entity: Integrations
+    relation: 1 Integration ↔ n Installations
+    features: Connects external systems for monitoring and control
+  - entity: Installation
+    relation: 1 Installation ↔ 1 House
+    features: Connects installation with house to show your user the energy data
+
+entities:
+- name: User
+  schemas: [User, UserCreated, UserRegistration, UpdateUser, UsersPageElement, AuthUser]
+  identifier: userId
+  alternate_identifiers:
+  - externalUserId (the integrator's own id, assignable via assignExternalUserIdToUser)
+  - email
+  - nif (Spanish tax id)
+  operations: [createUser, getUser, getUsers, updateUser, deleteUserAccount, authorizeUser]
+- name: House
+  schemas: [House, HouseCreated, UpdateHouse, HouseDetail, HousesPage, UserHouseWithIntegrations]
+  identifier: houseId
+  domain_key: CUPS (supply-point code) via SupplyPoint
+  operations: [createHouse, getTenantHouses, getHouseDetail, updateHouse, deleteHouse, getUserSupplies]
+  note: The hub entity — energy, power, equipment, settings and disaggregation are all house-scoped.
+- name: SupplyPoint
+  schemas: [SupplyPoint]
+  identifier: cups
+  belongs_to: House
+- name: ElectricityContract
+  schemas: [ElectricityContract, ElectricityContractRequest]
+  identifier: contractId
+  alternate_identifiers: [externalContractId, connectionContractId]
+  operations:
+  - createElectricityContract
+  - getElectricityContract
+  - getUserElectricityContracts
+  - updateElectricityContract
+  - deleteElectricityContract
+- name: GasContract
+  schemas: [GasContract, GasContractRequest]
+  identifier: contractId
+  operations: [createGasContract, getGasContract, getUserGasContracts, updateGasContract, deleteGasContract]
+- name: HouseContract
+  schemas: [HouseContractDetail, CreateHouseContract]
+  status: deprecated
+  note: >-
+    The house-scoped contract model, superseded by the user-scoped electricity/gas split. See
+    lifecycle/clevergy-lifecycle.yml.
+- name: Invoice
+  schemas: [Invoice, CreateOrUpdateInvoiceRequest, CreateHouseInvoice]
+  identifier: id
+  types: [ELECTRICITY, GAS, OTHER]
+  operations: [createInvoice, getInvoiceById, getInvoicesByContract, getInvoicesByUser, updateInvoice, deleteInvoice]
+  upload: >-
+    createInvoice returns a signed fileUrl valid 15 minutes; the PDF must be PUT to it or the
+    invoice is never processed.
+- name: InvoiceAnalysis
+  schemas: [InvoiceAnalysis, InvoiceAnalysisId, AnalyzeInvoice]
+  identifier: invoiceAnalysisId
+  operations: [analyzeInvoice, getInvoiceAnalysisById, getInvoiceTariffs]
+  note: OCR extraction of a bill; yields candidate tariffs.
+- name: Tariff
+  schemas: [Tariff, CreateTariff, TariffEnergyPrice, TariffEnergyPrices, InvoiceTariff, InvoiceTariffs]
+  identifier: tariffId
+  operations: [createTariff, getTariff, getTariffs, updateTariff, deleteTariff, setTariffEnergyPrices]
+- name: Integration
+  schemas: [HouseIntegration, HouseIntegrations, UpdateDatadisIntegrationStatus, IntegrateSmartmeter]
+  identifier: integrationId
+  vendors_in_schema: [enodeB2C, froniusB2C, huaweiB2C, shelly, smaB2C, sungrowB2C, wibeeeSolar]
+  note: >-
+    The HouseIntegrations schema enumerates the connected-vendor slots as named properties rather
+    than a list, so the set of supported vendors is baked into the contract shape.
+- name: Installation
+  schemas: [Installation, InstallationList, UpdateInstallation, ConnectInstallationRequest]
+  identifier: installationId
+  alternate_identifiers: [plantCode, name, vendorId]
+  operations: [getInstallations, connectInstallation, updateInstallation]
+- name: Equipment
+  schemas: [Equipment, EquipmentsPage, HouseEquipment, HouseEquipments, StorageEquipment, StorageEquipmentSoc]
+  identifier: equipmentId
+  operations:
+  - getTenantEquipments
+  - getHouseEquipments
+  - getStorageEquipment
+  - getStorageEquipmentSoc
+  - scheduleStorageEquipmentAction
+- name: EnergyCommunity
+  schemas: [EnergyCommunityHouse, EnergyCommunityPower]
+  identifier: energyCommunityId
+  operations: [assignHouseToEnergyCommunity, updateEnergyCommunityHouseShare, removeEnergyCommunityHouseFromInstallation]
+- name: Ticket
+  schemas: [Ticket, UpdateTicketRequest, Comment, CommentRequest, CommentAttachmentRequest, CommentAttachmentUrl]
+  identifier: ticketId
+  operations: [getTicketDetails, updateTicket, addCommentToTicket, createCommentAttachmentSignedUrl]
+- name: SalesOpportunity
+  schemas: [SalesOpportunitySummary, SalesOpportunitiesPage, ContractSalesOpportunity, PatchContractSalesOpportunityRequest]
+  identifier: id
+  operations: [getSalesOpportunities, getContractSalesOpportunity, patchContractSalesOpportunity, deleteSalesOpportunity]
+- name: VirtualBalance
+  schemas: [UserVirtualWalletTransaction, UserVirtualBatteryTransaction]
+  operations: [createVirtualWalletTransaction, createVirtualBatteryTransaction]
+  units: {wallet: EUR, battery: kWh}
+- name: Energy
+  schemas: [EnergyItem, EnergyEntry, HouseConsumption, HouseDataConsumption, UserConsumptionCategory, EnergyComparison, StoreHouseEnergiesRequest]
+  operations: [getEnergyByHouseId, getEnergyComparison, storeHouseEnergies]
+- name: Power
+  schemas: [PowerItem, SmartDevicesPower]
+  operations: [getPowerByHouseId]
+- name: Disaggregation
+  schemas: [HouseDisaggregation, DisaggregationDevice]
+  operations: [getDisaggregationByHouse]
+- name: Connection
+  schemas: [Connection, ConnectionResponse]
+  identifier: connectionId
+  operations: [getConnection]
+  note: The tenant's own connection record; contracts carry connectionId + connectionContractId.
+
+relationships:
+- from: User
+  to: House
+  kind: has_many
+  via: userId
+  evidence: getUserSupplies / getUserHouses; published entity table (1 User ↔ n Houses)
+- from: House
+  to: SupplyPoint
+  kind: has_many
+  via: houseId
+  evidence: SupplyPoint.houseId; UserHouseWithIntegrations.supplyPoints[]
+- from: User
+  to: ElectricityContract
+  kind: has_many
+  via: userId
+  evidence: /users/{userId}/electricity-contracts
+- from: User
+  to: GasContract
+  kind: has_many
+  via: userId
+  evidence: /users/{userId}/gas-contracts
+- from: House
+  to: HouseContract
+  kind: has_one
+  via: houseId
+  evidence: HouseContractDetail.houseId; published entity table (1 Contract ↔ 1 House)
+  status: deprecated
+- from: ElectricityContract
+  to: Invoice
+  kind: has_many
+  via: contractId
+  evidence: Invoice.contractId; /contracts/{contractId}/invoices
+- from: Invoice
+  to: InvoiceAnalysis
+  kind: has_one
+  via: invoiceAnalysisId
+  evidence: ContractSalesOpportunity.invoiceAnalysisId + analyzeInvoice
+- from: InvoiceAnalysis
+  to: Tariff
+  kind: has_many
+  via: invoiceAnalysisId
+  evidence: getInvoiceTariffs; InvoiceTariff.tariff -> Tariff
+- from: Tariff
+  to: TariffEnergyPrice
+  kind: has_many
+  via: tariffId
+  evidence: TariffEnergyPrices.prices[] -> TariffEnergyPrice
+- from: Integration
+  to: Installation
+  kind: has_many
+  via: integrationId
+  evidence: Installation.integrationId; published entity table (1 Integration ↔ n Installations)
+- from: Installation
+  to: House
+  kind: has_one
+  via: houseId
+  evidence: connectInstallation (POST /houses/{houseId}/installations); published entity table
+- from: House
+  to: HouseIntegrations
+  kind: has_one
+  via: houseId
+  evidence: UserHouseWithIntegrations.houseIntegrations -> HouseIntegrations
+- from: Integration
+  to: Equipment
+  kind: has_many
+  via: integrationId
+  evidence: Equipment.integrationId
+- from: House
+  to: Equipment
+  kind: has_many
+  via: houseId
+  evidence: getHouseEquipments; HouseEquipments.equipments[] -> HouseEquipment
+- from: Equipment
+  to: StorageEquipment
+  kind: has_one
+  via: equipmentId
+  evidence: /equipments/{equipmentId}/storage
+- from: House
+  to: HouseSettings
+  kind: has_one
+  via: houseId
+  evidence: HouseSettings.houseId; /houses/{houseId}/settings
+- from: EnergyCommunity
+  to: House
+  kind: has_many
+  via: energyCommunityId
+  evidence: EnergyCommunityHouse.houseId; assignHouseToEnergyCommunity
+- from: House
+  to: Energy
+  kind: has_many
+  via: houseId
+  evidence: /houses/{houseId}/energy; HouseDataConsumption.data[] -> HouseConsumption
+- from: House
+  to: Power
+  kind: has_many
+  via: houseId
+  evidence: /houses/{houseId}/power; PowerItem
+- from: House
+  to: Disaggregation
+  kind: has_one
+  via: houseId
+  evidence: HouseDisaggregation.devices[] -> DisaggregationDevice
+- from: Ticket
+  to: Comment
+  kind: has_many
+  via: ticketId
+  evidence: Ticket.comments[] -> Comment; Comment.ticketId
+- from: Ticket
+  to: User
+  kind: belongs_to
+  via: userId
+  evidence: Ticket.userId
+- from: Ticket
+  to: House
+  kind: belongs_to
+  via: houseId
+  evidence: Ticket.houseId
+- from: Ticket
+  to: Equipment
+  kind: belongs_to
+  via: equipmentId
+  evidence: Ticket.equipmentId
+- from: SalesOpportunity
+  to: User
+  kind: belongs_to
+  via: userId
+  evidence: SalesOpportunitySummary.userId
+- from: SalesOpportunity
+  to: House
+  kind: belongs_to
+  via: houseId
+  evidence: SalesOpportunitySummary.houseId
+- from: SalesOpportunity
+  to: Tariff
+  kind: belongs_to
+  via: tariffId
+  evidence: ContractSalesOpportunity.tariffId
+- from: User
+  to: VirtualBalance
+  kind: has_many
+  via: userId
+  evidence: /users/{userId}/virtual-wallet, /users/{userId}/virtual-battery
+- from: User
+  to: UserAppDevice
+  kind: has_many
+  via: userId
+  evidence: UserAppDevice.userId; getUserAppDevices
+
+multi_tenancy:
+  model: tenant
+  evidence:
+  - Ticket.tenantId is a first-class field on the ticket schema.
+  - getTenantHouses and getTenantEquipments are tenant-wide collection reads.
+  - The API key is scoped per tenant/environment.
+  - >-
+    The hosted webview is served on a per-tenant subdomain
+    (https://{tenant_name}.clever.gy/login-with-token).
+
+coverage:
+  definitions: 102
+  entities: 19
+  relationships: 30
+  ref_links_derived: 30
+  id_reference_fields_derived: 26
+  note: >-
+    Cardinalities are taken from Clevergy's own published entity table where it covers the pair,
+    and otherwise inferred from the path shape and the id-reference direction in the schema. No
+    id_prefix scheme is published (identifiers are opaque strings and UUIDs, not prefixed like
+    Stripe's cus_/inv_), so no prefix table is recorded.

@@ -1,0 +1,79 @@
+generated: '2026-08-17'
+method: generated
+source: >-
+  Authored from openapi/clevergy-connect-api-openapi.yml (83 operations, every operationId
+  referenced below grepped and verified present) plus the Clevergy developer guides at
+  https://docs.clever.gy/developer. Clevergy publishes no AGENTS.md or skill files of its own —
+  probed and absent — so these are API Evangelist generated skills, not harvested ones.
+description: >-
+  Seven packaged Agent Skills covering the marquee Clevergy Connect API flows: customer onboarding,
+  solar installation linking, energy data retrieval, microfrontend embedding, battery control, and
+  the two webhook-driven back-office integrations (sales opportunities and support tickets).
+skills:
+- file: clevergy-onboard-client.md
+  name: Onboard a Clevergy client with contracts and invoices
+  api: openapi/clevergy-connect-api-openapi.yml
+  plan: Plan Starter
+  operations: [createUser, createElectricityContract, createGasContract, createInvoice, assignExternalUserIdToUser, assignExternalContractIdToContract]
+- file: clevergy-onboard-solar-client.md
+  name: Onboard a Clevergy client with a solar installation
+  api: openapi/clevergy-connect-api-openapi.yml
+  plan: Plan Pro
+  operations: [createUser, createElectricityContract, getInstallations, getUserSupplies, connectInstallation, updateInstallation, getHouseEquipments]
+- file: clevergy-retrieve-energy-data.md
+  name: Retrieve a Clevergy customer's energy data
+  api: openapi/clevergy-connect-api-openapi.yml
+  operations: [getUserSupplies, getEnergyByHouseId, getPowerByHouseId, getEnergyComparison, getDisaggregationByHouse, getHouseDetail, storeHouseEnergies]
+  agent_safe: true
+  agent_safe_note: Read-only apart from storeHouseEnergies; the safest surface to expose to an agent.
+- file: clevergy-embed-microfrontend.md
+  name: Embed a Clevergy microfrontend with a user JWT
+  api: openapi/clevergy-connect-api-openapi.yml
+  operations: [retrieveUserAccessToken]
+  related: components/clevergy-components.yml
+- file: clevergy-schedule-battery.md
+  name: Monitor and schedule a Clevergy-connected battery
+  api: openapi/clevergy-connect-api-openapi.yml
+  operations: [getHouseEquipments, getTenantEquipments, getStorageEquipment, getStorageEquipmentSoc, scheduleStorageEquipmentAction, getPowerByHouseId]
+  agent_safe: false
+  agent_safe_note: >-
+    scheduleStorageEquipmentAction actuates physical battery hardware and has no idempotency key.
+    Human-in-the-loop required. Control also requires the customer's Huawei OAuth grant.
+- file: clevergy-sync-sales-opportunities.md
+  name: Sync Clevergy sales opportunities into a CRM
+  api: openapi/clevergy-connect-api-openapi.yml
+  operations: [getSalesOpportunities, getContractSalesOpportunity, patchContractSalesOpportunity, deleteSalesOpportunity]
+  related: asyncapi/clevergy-webhooks.yml
+- file: clevergy-integrate-support-tickets.md
+  name: Integrate Clevergy support tickets with a helpdesk or CRM
+  api: openapi/clevergy-connect-api-openapi.yml
+  operations: [getTicketDetails, updateTicket, addCommentToTicket, createCommentAttachmentSignedUrl]
+  related: asyncapi/clevergy-webhooks.yml
+
+cross_cutting_rules_every_skill_repeats:
+- >-
+  Auth is a tenant API key in the clevergy-api-key header, server-side only. Browser surfaces get a
+  1-hour user JWT minted by retrieveUserAccessToken instead.
+- >-
+  There is NO idempotency mechanism. Duplicate creates surface as 409 Conflict on eight operations
+  and are undetectable on the rest. Every skill that writes says so at the point of the write.
+- >-
+  Two error envelope shapes must both be parsed: {timestamp,status,error,path} on named 4xx and
+  {code,message} on the default catch-all.
+- >-
+  Two pagination models coexist (page/size vs cursor/limit) and differ per resource.
+- >-
+  No 429 is declared and no rate limits are published, so callers must self-throttle.
+- >-
+  Signed-URL uploads (invoices, ticket attachments) fail silently if the file is never PUT — always
+  verify.
+
+coverage:
+  skills: 7
+  operations_referenced: 33
+  operations_total: 83
+  note: >-
+    Skills deliberately cover the flows Clevergy itself documents as guides, plus the microfrontend
+    token exchange. Tariff management, energy communities, virtual balance, invoice OCR and the
+    deprecated house-scoped operations are catalogued in the other artifacts but have no
+    provider-published flow to ground a skill in, so none was invented for them.
