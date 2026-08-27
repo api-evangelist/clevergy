@@ -56,67 +56,15 @@ tags_raw:
 - Embedded Components
 - Webhooks
 apis:
-- name: Clevergy Connect API
-  description: >-
-    REST API that lets Clevergy customers build integrations with the Clevergy platform: manage end
-    users and their houses, create and maintain electricity and gas contracts with their energy price
-    tables, upload and OCR-analyse invoices, define custom tariffs, discover and link solar inverter
-    installations, read energy, power, comparison and appliance-disaggregation telemetry, monitor and
-    schedule home batteries, manage energy-community membership and shares, post virtual wallet (EUR)
-    and virtual battery (kWh) balances, and work support tickets and sales opportunities. Published as
-    a Swagger 2.0 document with 62 paths, 83 operations, 102 definitions and an operationId on every
-    operation. Authentication is a tenant API key in the clevergy-api-key header; a separate operation
-    exchanges it for a 1-hour per-user JWT for browser use. Access is sales-gated — keys are issued
-    per environment on request.
-  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
-  baseURL: https://connect.clever.gy
-  tags:
-  - Energy
-  - Energy Management
-  - Utilities
-  - Smart Meter
-  - Solar
-  - Battery Storage
-  - Home Energy
-  - Spain
-  properties:
-  - type: OpenAPI
-    url: openapi/clevergy-connect-api-openapi.yml
-  - type: OpenAPI
-    url: https://assets.clever.gy/swagger/connect-api.yaml
-  - type: Documentation
-    url: https://docs.clever.gy/developer
-  - type: APIReference
-    url: https://docs.clever.gy/connect-api/clevergy-connect-api
-  - type: Authentication
-    url: authentication/clevergy-authentication.yml
-  - type: Conventions
-    url: conventions/clevergy-conventions.yml
-  - type: ErrorCatalog
-    url: errors/clevergy-problem-types.yml
-  - type: DataModel
-    url: data-model/clevergy-data-model.yml
-  - type: Lifecycle
-    url: lifecycle/clevergy-lifecycle.yml
-  - type: RateLimits
-    url: rate-limits/clevergy-rate-limits.yml
-  - type: Conformance
-    url: conformance/clevergy-conformance.yml
-  - type: Overlay
-    url: overlays/clevergy-connect-api-overlay.yaml
-  - type: Webhooks
-    url: asyncapi/clevergy-webhooks.yml
-  - type: Postman
-    url: https://www.postman.com/clevergy/clevergy-public-workspace
 - name: Clevergy Webhooks
   description: >-
-    Outbound HTTP callbacks that notify an integrator in real time when a Clevergy lifecycle entity
-    changes. Three event surfaces are documented — User, SalesOpportunity and Ticket — with CREATE,
-    UPDATE and DELETE event types on sales opportunities and CREATE/UPDATE on tickets. Delivery is
-    notification-only by design: the payload carries an identifier and the full object must then be
-    read back from the Connect API. Endpoints are registered by Clevergy on request; the only
-    authentication mechanism offered is a token in a query parameter on the integrator's own callback
-    URL, with no signature header. No AsyncAPI document is published.
+    Outbound HTTP callbacks that notify an integrator in real time when a Clevergy lifecycle entity changes.
+    Three event surfaces are documented — User, SalesOpportunity and Ticket — with CREATE, UPDATE and
+    DELETE event types on sales opportunities and CREATE/UPDATE on tickets. Delivery is notification-only
+    by design: the payload carries an identifier and the full object must then be read back from the Connect
+    API. Endpoints are registered by Clevergy on request; the only authentication mechanism offered is
+    a token in a query parameter on the integrator's own callback URL, with no signature header. No AsyncAPI
+    document is published.
   humanURL: https://docs.clever.gy/webhooks/clevergy-webhooks
   baseURL: https://connect.clever.gy
   tags:
@@ -140,12 +88,12 @@ apis:
     in an isolated container — that bring Clevergy's end-user energy experiences into an integrator's
     own website, app or webview. Grouped into four families: account setup and integrations (contract
     opportunity, invoices, invoice OCR, smart-meter/Datadis authorization, inverter and EV connection,
-    virtual battery and wallet), energy insights (consumption breakdown, energy chart, invoice
-    estimation, solar amortization and summary), optimization and recommendations (energy prices,
-    tariff comparison, house comparison, recommendations, solar recommender, tips, alerts), and
-    real-time monitoring and device control (power chart, battery, smart devices, solar real-time).
-    Distributed as a single unpinned ES module from assets.clever.gy and authenticated with a
-    short-lived per-user JWT passed on the element's data-token attribute.
+    virtual battery and wallet), energy insights (consumption breakdown, energy chart, invoice estimation,
+    solar amortization and summary), optimization and recommendations (energy prices, tariff comparison,
+    house comparison, recommendations, solar recommender, tips, alerts), and real-time monitoring and
+    device control (power chart, battery, smart devices, solar real-time). Distributed as a single unpinned
+    ES module from assets.clever.gy and authenticated with a short-lived per-user JWT passed on the element's
+    data-token attribute.
   humanURL: https://docs.clever.gy/helpdesk/microfrontends-catalog
   baseURL: https://assets.clever.gy
   tags:
@@ -164,12 +112,751 @@ apis:
     url: https://docs.clever.gy/developer/microfrontends
   - type: Packages
     url: packages/clevergy-packages.yml
+- aid: clevergy:clevergy-access-control-api
+  name: Clevergy Access control API
+  description: The Access control API from Clevergy — 1 operation(s) for access control.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Access control
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-access-control-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-connections-api
+  name: Clevergy Connections API
+  description: The Connections API from Clevergy — 1 operation(s) for connections.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Connections
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-connections-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-contracts-api
+  name: Clevergy Contracts API
+  description: The Contracts API from Clevergy — 1 operation(s) for contracts.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Contracts
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-contracts-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-contracts-deprecated-api
+  name: Clevergy Contracts - Deprecated API
+  description: >-
+    The Contracts - Deprecated API from Clevergy — 6 operation(s) for contracts - deprecated.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Contracts - Deprecated
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-contracts-deprecated-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-contracts-electricity-api
+  name: Clevergy Contracts|Electricity API
+  description: The Contracts|Electricity API from Clevergy — 2 operation(s) for contracts|electricity.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Contracts|Electricity
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-contracts-electricity-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-contracts-gas-api
+  name: Clevergy Contracts|Gas API
+  description: The Contracts|Gas API from Clevergy — 2 operation(s) for contracts|gas.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Contracts|Gas
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-contracts-gas-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-disaggregation-api
+  name: Clevergy Disaggregation API
+  description: The Disaggregation API from Clevergy — 1 operation(s) for disaggregation.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Disaggregation
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-disaggregation-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-energy-api
+  name: Clevergy Energy API
+  description: The Energy API from Clevergy — 3 operation(s) for energy.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Energy
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-energy-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-energy-communities-api
+  name: Clevergy Energy communities API
+  description: The Energy communities API from Clevergy — 3 operation(s) for energy communities.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Energy communities
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-energy-communities-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-equipments-api
+  name: Clevergy Equipments API
+  description: The Equipments API from Clevergy — 5 operation(s) for equipments.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Equipments
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-equipments-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-houses-api
+  name: Clevergy Houses API
+  description: The Houses API from Clevergy — 6 operation(s) for houses.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Houses
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-houses-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-integrations-api
+  name: Clevergy Integrations API
+  description: The Integrations API from Clevergy — 4 operation(s) for integrations.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Integrations
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-integrations-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-invoices-api
+  name: Clevergy Invoices API
+  description: The Invoices API from Clevergy — 5 operation(s) for invoices.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Invoices
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-invoices-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-invoices-deprecated-api
+  name: Clevergy Invoices - Deprecated API
+  description: The Invoices - Deprecated API from Clevergy — 2 operation(s) for invoices - deprecated.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Invoices - Deprecated
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-invoices-deprecated-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-power-api
+  name: Clevergy Power API
+  description: The Power API from Clevergy — 1 operation(s) for power.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Power
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-power-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-sales-opportunities-api
+  name: Clevergy Sales Opportunities API
+  description: The Sales Opportunities API from Clevergy — 3 operation(s) for sales opportunities.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Sales Opportunities
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-sales-opportunities-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-settings-api
+  name: Clevergy Settings API
+  description: The Settings API from Clevergy — 1 operation(s) for settings.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Settings
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-settings-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-tariffs-api
+  name: Clevergy Tariffs API
+  description: The Tariffs API from Clevergy — 4 operation(s) for tariffs.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Tariffs
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-tariffs-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-tickets-api
+  name: Clevergy Tickets API
+  description: The Tickets API from Clevergy — 3 operation(s) for tickets.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Tickets
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-tickets-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-tips-api
+  name: Clevergy Tips API
+  description: The Tips API from Clevergy — 1 operation(s) for tips.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Tips
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-tips-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-users-api
+  name: Clevergy Users API
+  description: The Users API from Clevergy — 6 operation(s) for users.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Users
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-users-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-virtual-battery-api
+  name: Clevergy Virtual battery API
+  description: The Virtual battery API from Clevergy — 1 operation(s) for virtual battery.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Virtual battery
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-virtual-battery-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
+- aid: clevergy:clevergy-virtual-wallet-api
+  name: Clevergy Virtual wallet API
+  description: The Virtual wallet API from Clevergy — 1 operation(s) for virtual wallet.
+  humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
+  baseURL: https://connect.clever.gy
+  tags:
+  - Virtual wallet
+  properties:
+  - type: OpenAPI
+    url: openapi/clevergy-virtual-wallet-api-openapi.yml
+  - type: Documentation
+    url: https://docs.clever.gy/developer
+  - type: APIReference
+    url: https://docs.clever.gy/connect-api/clevergy-connect-api
+  - type: Authentication
+    url: authentication/clevergy-authentication.yml
+  - type: Conventions
+    url: conventions/clevergy-conventions.yml
+  - type: ErrorCatalog
+    url: errors/clevergy-problem-types.yml
+  - type: DataModel
+    url: data-model/clevergy-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/clevergy-lifecycle.yml
+  - type: RateLimits
+    url: rate-limits/clevergy-rate-limits.yml
+  - type: Conformance
+    url: conformance/clevergy-conformance.yml
+  - type: Webhooks
+    url: asyncapi/clevergy-webhooks.yml
+  - type: Postman
+    url: https://www.postman.com/clevergy/clevergy-public-workspace
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/clevergy-connect-api-overlay.yaml
 - type: Website
   url: https://clever.gy/en/
 - type: DeveloperPortal
