@@ -130,6 +130,8 @@ apis:
   humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
   baseURL: https://connect.clever.gy
   tags:
+  - Access Control
+  tags_raw:
   - Access control
   properties:
   - type: OpenAPI
@@ -483,6 +485,8 @@ apis:
   humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
   baseURL: https://connect.clever.gy
   tags:
+  - Integration
+  tags_raw:
   - Integrations
   properties:
   - type: OpenAPI
@@ -771,6 +775,8 @@ apis:
   humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
   baseURL: https://connect.clever.gy
   tags:
+  - User
+  tags_raw:
   - Users
   properties:
   - type: OpenAPI
