@@ -1,0 +1,220 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Contracts API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Contracts
+paths:
+  /users/{userId}/electricity-contracts/{contractId}/energy-prices:
+    get:
+      summary: Get energy prices from a contract
+      description: 'Gets the contract energy prices for specific dates. It allows to filter by start and end date, with a maximum of a year between them.
+
+        '
+      tags:
+      - Contracts
+      operationId: getContractEnergyPrices
+      parameters:
+      - name: userId
+        in: path
+        description: Id of the user
+        required: true
+        schema:
+          type: string
+      - name: contractId
+        in: path
+        description: Id of the contract
+        required: true
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        description: Start date to filter by
+        required: true
+        schema:
+          type: string
+          format: date-time
+      - name: endDate
+        in: query
+        description: End date to filter by
+        required: true
+        schema:
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: Contract prices added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractEnergyPriceResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Add energy prices to a contract
+      description: 'Adds the contract energy prices for specific dates.
+
+        '
+      tags:
+      - Contracts
+      operationId: addContractEnergyPrices
+      parameters:
+      - name: userId
+        in: path
+        description: Id of the user
+        required: true
+        schema:
+          type: string
+      - name: contractId
+        in: path
+        description: Id of the contract
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Contract prices added successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContractEnergyPriceRequest'
+        description: Request containing contract energy prices and dates
+        required: true
+components:
+  schemas:
+    ContractEnergyPriceResponse:
+      type: object
+      description: Energy prices and surplus prices for a contract
+      properties:
+        prices:
+          type: array
+          description: List of energy prices and dates
+          items:
+            type: object
+            $ref: '#/components/schemas/ContractEnergyPriceItem'
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    ContractEnergyPriceItem:
+      type: object
+      description: Energy price and surplus price for an specific date
+      properties:
+        date:
+          type: string
+          format: date-time
+          example: '2022-12-31T23:00:00'
+          description: Date for the energy
+        price:
+          type: number
+          description: Price of the energy
+        surplusPrice:
+          type: number
+          description: Price of the surplus energy
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    ContractEnergyPriceRequest:
+      type: object
+      description: Request to put energy prices for a contract
+      properties:
+        prices:
+          type: array
+          description: List of energy prices and dates
+          items:
+            type: object
+            $ref: '#/components/schemas/ContractEnergyPriceItem'
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

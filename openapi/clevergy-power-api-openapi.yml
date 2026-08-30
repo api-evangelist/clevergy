@@ -1,0 +1,206 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Power API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Power
+paths:
+  /houses/{houseId}/power:
+    get:
+      summary: Get house power
+      description: 'Returns the power of a house for a date period (from startDate to endDate)
+
+        '
+      tags:
+      - Power
+      operationId: getPowerByHouseId
+      parameters:
+      - name: houseId
+        in: path
+        description: ID of a house
+        required: true
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        description: Start date to filter by
+        required: true
+        schema:
+          type: string
+          format: date-time
+      - name: endDate
+        in: query
+        description: End date to filter by
+        required: true
+        schema:
+          type: string
+          format: date-time
+      - name: timeZone
+        in: query
+        description: Time zone for the dates requested and returned (example Europe/Madrid). By default, the time zone is UTC.
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: House power
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PowerItem'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    PowerItem:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        solar:
+          type: object
+          properties:
+            production:
+              type: number
+              format: float
+        grid:
+          type: object
+          properties:
+            power:
+              type: number
+              format: float
+        house:
+          type: object
+          properties:
+            power:
+              type: number
+              format: float
+        battery:
+          type: object
+          properties:
+            power:
+              type: number
+              format: float
+            chargePower:
+              type: number
+              format: float
+            dischargePower:
+              type: number
+              format: float
+        energyCommunities:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/EnergyCommunityPower'
+        smartDevices:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/SmartDevicesPower'
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    EnergyCommunityPower:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - SOLAR
+          - WIND
+          - HYDRO
+        production:
+          type: number
+          format: float
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    SmartDevicesPower:
+      type: object
+      properties:
+        subtype:
+          type: string
+        vendor:
+          type: string
+        power:
+          type: number
+          format: float
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

@@ -1,0 +1,641 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Contracts - Deprecated API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Contracts - Deprecated
+paths:
+  /houses/{houseId}/contracts:
+    post:
+      summary: Create a contract
+      description: 'Creates a house contract
+
+        '
+      tags:
+      - Contracts - Deprecated
+      operationId: createHouseContract
+      parameters:
+      - name: houseId
+        in: path
+        description: Id of the house
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Contract created successfully
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Id of the contract created
+        '400':
+          description: Bad request (e.g., house cups not found)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: House not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateHouseContract'
+  /houses/{houseId}/contracts/{contractId}:
+    get:
+      summary: Get house contract by id
+      description: 'Gets a house contract by id
+
+        '
+      tags:
+      - Contracts - Deprecated
+      operationId: getHouseContractById
+      parameters:
+      - name: houseId
+        in: path
+        description: Id of the house
+        required: true
+        schema:
+          type: string
+      - name: contractId
+        in: path
+        description: Id of the contract
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: House contract
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HouseContractDetail'
+        '204':
+          description: No contract found for the house
+        '400':
+          description: Bad request (e.g., house cups not found)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /houses/{houseId}/contracts/{contractId}/energy-prices:
+    get:
+      summary: Get energy prices from a contract
+      description: 'Gets the contract energy prices for specific dates. It allows to filter by start and end date, with a maximum of a year between them.
+
+        '
+      tags:
+      - Contracts - Deprecated
+      operationId: getHouseContractEnergyPrices
+      parameters:
+      - name: houseId
+        in: path
+        description: Id of the house
+        required: true
+        schema:
+          type: string
+      - name: contractId
+        in: path
+        description: Id of the contract
+        required: true
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        description: Start date to filter by
+        required: true
+        schema:
+          type: string
+          format: date-time
+      - name: endDate
+        in: query
+        description: End date to filter by
+        required: true
+        schema:
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: Contract prices added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HouseContractEnergyPriceResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Add energy prices to a contract
+      description: 'Adds the contract energy prices for specific dates.
+
+        '
+      tags:
+      - Contracts - Deprecated
+      operationId: addHouseContractEnergyPrices
+      parameters:
+      - name: houseId
+        in: path
+        description: Id of the house
+        required: true
+        schema:
+          type: string
+      - name: contractId
+        in: path
+        description: Id of the contract
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Contract prices added successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HouseContractEnergyPriceRequest'
+        description: Request containing contract energy prices and dates
+        required: true
+  /houses/{houseId}/external-contracts:
+    post:
+      summary: Link a contract with an external id
+      description: 'Links a contract with an external id
+
+        '
+      tags:
+      - Contracts - Deprecated
+      operationId: assignExternalContractIdToContract
+      parameters:
+      - name: houseId
+        in: path
+        description: Id of the house
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Contract assigned successfully
+          content:
+            application/json:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignExternalContractToContractRequest'
+  /houses/{houseId}/external-contracts/{externalContractId}:
+    get:
+      summary: Get contract id from external id
+      description: 'Gets contract id from the external id it is linked to
+
+        '
+      tags:
+      - Contracts - Deprecated
+      operationId: getHouseContractIdByExternalId
+      parameters:
+      - name: houseId
+        in: path
+        description: Id of the house
+        required: true
+        schema:
+          type: string
+      - name: externalContractId
+        in: path
+        description: External id of the contract
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Contract id
+          content:
+            application/json:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /houses/{houseId}/last-contract:
+    get:
+      summary: Get the last contract of a house
+      description: 'Gets the last contract of a house
+
+        '
+      tags:
+      - Contracts - Deprecated
+      operationId: getLastHouseContract
+      parameters:
+      - name: houseId
+        in: path
+        description: Id of the house
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Last contract of the house
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HouseContractDetail'
+        '204':
+          description: No contract found for the house
+        '400':
+          description: Bad request (e.g., house cups not found)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    HouseContractEnergyPriceResponse:
+      type: object
+      description: Energy prices and surplus prices for a contract
+      properties:
+        prices:
+          type: array
+          description: List of energy prices and dates
+          items:
+            type: object
+            $ref: '#/components/schemas/HouseContractEnergyPriceItem'
+    HouseContractEnergyPriceItem:
+      type: object
+      description: Energy price and surplus price for an specific date
+      properties:
+        date:
+          type: string
+          format: date-time
+          example: '2022-12-31T23:00:00'
+          description: Date for the energy
+        price:
+          type: number
+          description: Price of the energy
+        surplusPrice:
+          type: number
+          description: Price of the surplus energy
+    CreateHouseContract:
+      type: object
+      description: Create house contract request
+      properties:
+        contractPower:
+          type: array
+          items:
+            type: number
+          description: Contracted power. One item per period (P1, P2)
+          example:
+          - 3.5
+          - 3.5
+        startDate:
+          type: string
+          format: date-time
+          example: '2022-12-31T23:00:00'
+          description: Contract start date
+        endDate:
+          type: string
+          format: date-time
+          example: '2022-12-31T23:00:00'
+          description: Contract end date
+        powerPrices:
+          type: array
+          items:
+            type: number
+          description: Price of power. One item per period (P1, P2)
+          example:
+          - 0.09
+          - 0.03
+        energyPrices:
+          type: array
+          items:
+            type: number
+          description: Price of energy. One item per period (P1, P2)
+          example:
+          - 0.13
+          - 0.12
+        provider:
+          type: string
+          example: EnergyProvider
+          description: Contract provider
+        codefare:
+          type: string
+          example: 2.0TD
+          description: Contract codefare
+        distributor:
+          type: string
+          example: '8'
+          description: Contract distributor
+        pvpc:
+          type: boolean
+          example: true
+          description: Contract flag for PVPC
+        socialBonus:
+          type: boolean
+          example: true
+          description: Contract flag for social bonus
+        tariffName:
+          type: string
+          example: Tariff name
+          description: Contract tariff name
+        status:
+          type: string
+          example: Active
+          description: Contract status
+        solarPrice:
+          type: number
+          format: float
+          example: '0.012'
+          description: Price of solar energy surplus
+        commercialName:
+          type: string
+          example: Commercial name
+          description: Contract commercial name
+        holderName:
+          type: string
+          example: John Doe
+          description: Bank account holder name
+        iban:
+          type: string
+          example: ES0000000000000000000000
+          description: International Bank Account Number (IBAN)
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    AssignExternalContractToContractRequest:
+      type: object
+      description: Request to link a contract with an eternal id
+      required:
+      - contractId
+      - externalContractId
+      properties:
+        contractId:
+          type: string
+        externalContractId:
+          type: string
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    HouseContractEnergyPriceRequest:
+      type: object
+      description: Request to put energy prices for a contract
+      properties:
+        prices:
+          type: array
+          description: List of energy prices and dates
+          items:
+            type: object
+            $ref: '#/components/schemas/HouseContractEnergyPriceItem'
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    HouseContractDetail:
+      type: object
+      description: Detail of contract
+      properties:
+        id:
+          type: string
+          format: uuid
+        houseId:
+          type: string
+          format: uuid
+        cups:
+          type: string
+        contractedPower:
+          type: array
+          items:
+            type: number
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        powerPrices:
+          type: array
+          items:
+            type: number
+        energyPrices:
+          type: array
+          items:
+            type: number
+        provider:
+          type: string
+        codefare:
+          type: string
+          example: 2T
+          description: Contract codefare
+        tariffType:
+          type: string
+          enum:
+          - PVPC_2_0_TD
+          - MERCADO_LIBRE_2_0_TD_FIJA
+          - MERCADO_LIBRE_2_0_TD
+          - MERCADO_LIBRE_3_0_TD
+          - INDEXADA_2_0_TD
+          - MERCADO_LIBRE_6_1_TD
+          - OMIE_MARGEN
+          description: Contract tariff type
+        distributor:
+          type: string
+        pvpc:
+          type: boolean
+        socialBonus:
+          type: boolean
+        tariffName:
+          type: string
+        status:
+          type: string
+        solarPrice:
+          type: number
+          format: float
+        commercialName:
+          type: string
+        holderName:
+          type: string
+        iban:
+          type: string
+        margin:
+          type: number
+          format: float
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

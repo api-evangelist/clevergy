@@ -1,0 +1,267 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Invoices - Deprecated API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Invoices - Deprecated
+paths:
+  /houses/{houseId}/invoices:
+    post:
+      summary: Create an electricity invoice
+      description: 'This endpoint provides a signed URL for uploading a PDF invoice:
+
+        - Step 1: POST invoice metadata to obtain the upload URL.
+
+        - Step 2: PUT the PDF file to the returned URL (valid for 15 minutes).
+
+        :::warning
+
+        **Use only for electricity invoices.**<br />
+
+        This endpoint is being deprecated and its functionality will be replaced by a new endpoint.
+
+        Once the new endpoint is available, we will communicate it accordingly.
+
+        :::
+
+        '
+      tags:
+      - Invoices - Deprecated
+      operationId: createHouseInvoice
+      parameters:
+      - name: houseId
+        in: path
+        description: Id of the house
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Invoice created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignedUrl'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: House Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateHouseInvoice'
+  /houses/{houseId}/invoices/{invoiceId}:
+    delete:
+      summary: Delete house invoice
+      description: Deletes a house invoice
+      tags:
+      - Invoices - Deprecated
+      operationId: deleteHouseInvoice
+      parameters:
+      - name: houseId
+        in: path
+        description: Id of the house
+        required: true
+        schema:
+          type: string
+      - name: invoiceId
+        in: path
+        description: Id of the invoice
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Invoice deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: House or Invoice Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    SignedUrl:
+      type: object
+      description: Bucket url to put a file
+      properties:
+        url:
+          type: string
+          example: https://signed_url_to_put_the_object
+          description: Signed url to put the object
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    CreateHouseInvoice:
+      type: object
+      description: Create house invoice request
+      required:
+      - startDate
+      - endDate
+      - totalCost
+      properties:
+        startDate:
+          type: string
+          format: date
+          example: '2022-12-31'
+          description: Start of invoicing period
+        endDate:
+          type: string
+          format: date
+          example: '2022-12-31'
+          description: End of invoicing period
+        totalCost:
+          type: number
+          format: float
+          example: '0.883'
+          description: Total cost in €
+        energyConsumptionP1:
+          type: number
+          format: float
+          example: '0.883'
+          description: P1 consumptions in kWh
+        energyConsumptionP2:
+          type: number
+          format: float
+          example: '0.883'
+          description: P2 consumptions in kWh
+        energyConsumptionP3:
+          type: number
+          format: float
+          example: '0.883'
+          description: P3 consumptions in kWh
+        totalEnergyConsumption:
+          type: number
+          format: float
+          example: '0.883'
+          description: Total consumptions in kWh
+        energyCost:
+          type: number
+          format: float
+          example: '0.883'
+          description: Energy cost in €
+        powerCost:
+          type: number
+          format: float
+          example: '0.883'
+          description: Power cost in €
+        otherCost:
+          type: number
+          format: float
+          example: '0.883'
+          description: Sum of other costs in €
+        discountCost:
+          type: number
+          format: float
+          example: '0.883'
+          description: Total discounts in €
+        taxCost:
+          type: number
+          format: float
+          example: '0.883'
+          description: Total taxes in €
+        exportSaving:
+          type: number
+          format: float
+          example: '-0.25'
+          description: Total saving of export in €
+        serviceCost:
+          type: number
+          format: float
+          example: '0.25'
+          description: Cost of service in €
+        virtualWallet:
+          type: number
+          format: float
+          example: '0.25'
+          description: Virtual wallet balance €
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

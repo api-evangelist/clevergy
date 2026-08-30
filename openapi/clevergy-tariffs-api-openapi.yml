@@ -1,0 +1,535 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Tariffs API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Tariffs
+paths:
+  /invoice-analysis/{invoiceAnalysisId}/tariffs:
+    get:
+      summary: Get invoice analysis tariffs
+      description: 'Get all available tariffs based on the invoice with their monthly invoice saving
+
+        '
+      tags:
+      - Tariffs
+      operationId: getInvoiceTariffs
+      parameters:
+      - name: invoiceAnalysisId
+        in: path
+        description: ID of invoice analysis
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Tariffs with its monthly savings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceTariffs'
+        '204':
+          description: No content. Returned when there are no defined tariffs.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /tariffs:
+    post:
+      summary: Create new tariff
+      description: Creates a new tariff and returns it
+      tags:
+      - Tariffs
+      operationId: createTariff
+      responses:
+        '200':
+          description: Tariff successfully added.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tariff'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '409':
+          description: Conflict. Tariff already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorConflict'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTariff'
+        description: Tariff attributes
+    get:
+      summary: Get tariffs
+      description: 'Returns a list of tariffs
+
+        '
+      tags:
+      - Tariffs
+      operationId: getTariffs
+      responses:
+        '200':
+          description: list of tariffs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tariff'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /tariffs/{tariffId}:
+    get:
+      summary: Get tariff details
+      description: 'Returns the details of a tariff
+
+        '
+      tags:
+      - Tariffs
+      operationId: getTariff
+      parameters:
+      - name: tariffId
+        in: path
+        description: ID of tariff
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: tariff details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tariff'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Update tariff
+      description: Updates a tariff and returns it
+      tags:
+      - Tariffs
+      operationId: updateTariff
+      parameters:
+      - name: tariffId
+        in: path
+        description: ID of tariff
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Tariff successfully updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tariff'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTariff'
+        description: Tariff attributes
+    delete:
+      summary: Delete tariff
+      description: Deletes a tariff
+      tags:
+      - Tariffs
+      operationId: deleteTariff
+      parameters:
+      - name: tariffId
+        in: path
+        description: ID of tariff
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Tariff successfully deleted.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /tariffs/{tariffId}/energy-prices:
+    put:
+      summary: Set tariff energy prices
+      description: 'Sets the energy prices of a tariff, excluding taxes. The given dates should be in UTC, and sets the price (in €/kWh) for the given hour.
+
+        Eg.: if a price for 2025-03-12T10:00:00Z is provided, it sets the price for the energy from 10:00 to 11:00.
+
+        '
+      tags:
+      - Tariffs
+      operationId: setTariffEnergyPrices
+      parameters:
+      - name: tariffId
+        in: path
+        description: ID of tariff
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record successfully set.
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TariffEnergyPrices'
+        description: tariff energy prices to set
+        required: true
+components:
+  schemas:
+    InvoiceTariff:
+      type: object
+      required:
+      - tariff
+      properties:
+        invoiceSaving:
+          type: number
+        tariff:
+          $ref: '#/components/schemas/Tariff'
+    CreateTariff:
+      type: object
+      description: Tariff
+      required:
+      - internalName
+      - commercialName
+      - type
+      properties:
+        internalName:
+          type: string
+        commercialName:
+          type: string
+        commercialDescription:
+          type: string
+        powerPrices:
+          type: array
+          items:
+            type: number
+        energyPrices:
+          type: array
+          items:
+            type: number
+        provider:
+          type: string
+        type:
+          type: string
+          enum:
+          - PVPC_2_0_TD
+          - MERCADO_LIBRE_2_0_TD_FIJA
+          - MERCADO_LIBRE_2_0_TD
+          - MERCADO_LIBRE_3_0_TD
+          - INDEXADA_2_0_TD
+          - MERCADO_LIBRE_6_1_TD
+          - OMIE_MARGEN
+        solarPrice:
+          type: number
+          format: float
+        margin:
+          type: number
+          format: float
+    HttpErrorConflict:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2025-01-01T12:00:00.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 409
+        error:
+          description: Http error description
+          type: string
+          example: Conflict
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    InvoiceTariffs:
+      type: array
+      items:
+        $ref: '#/components/schemas/InvoiceTariff'
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
+    TariffEnergyPrices:
+      type: object
+      description: Tariff energy prices
+      properties:
+        prices:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/TariffEnergyPrice'
+      required:
+      - prices
+    Tariff:
+      type: object
+      description: Tariff
+      required:
+      - id
+      - internalName
+      - commercialName
+      - type
+      properties:
+        id:
+          type: string
+        internalName:
+          type: string
+        commercialName:
+          type: string
+        commercialDescription:
+          type: string
+        powerPrices:
+          type: array
+          items:
+            type: number
+        energyPrices:
+          type: array
+          items:
+            type: number
+        provider:
+          type: string
+        type:
+          type: string
+          enum:
+          - PVPC_2_0_TD
+          - MERCADO_LIBRE_2_0_TD_FIJA
+          - MERCADO_LIBRE_2_0_TD
+          - MERCADO_LIBRE_3_0_TD
+          - INDEXADA_2_0_TD
+          - MERCADO_LIBRE_6_1_TD
+          - OMIE_MARGEN
+        solarPrice:
+          type: number
+          format: float
+        margin:
+          type: number
+          format: float
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    TariffEnergyPrice:
+      type: object
+      description: Tariff energy price
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: UTC date and hour of the price. Will be truncated to hours
+          example: '2025-01-11T10:00:00Z'
+        price:
+          type: number
+          format: float
+          description: Price in €/kWh
+          example: 0.11
+      required:
+      - date
+      - price
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

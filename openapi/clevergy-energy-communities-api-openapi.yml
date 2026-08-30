@@ -1,0 +1,315 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Energy communities API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Energy communities
+paths:
+  /energy-communities/{communityId}/remove-house:
+    post:
+      summary: Remove a house from an energy community
+      description: 'Removes a house from an energy community
+
+        '
+      tags:
+      - Energy communities
+      operationId: removeEnergyCommunityHouseFromInstallation
+      parameters:
+      - name: communityId
+        in: path
+        description: Alphanumeric id from energy community
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: House successfully removed
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorForbidden'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RemoveEnergyCommunityHouseRequest'
+  /energy-communities/{energyCommunityId}/houses:
+    post:
+      summary: Assign a house to an energy community
+      description: 'Assign a house to an energy community
+
+        '
+      tags:
+      - Energy communities
+      operationId: assignHouseToEnergyCommunity
+      parameters:
+      - name: energyCommunityId
+        in: path
+        description: Alphanumeric id from energy community
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: House successfully assigned
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnergyCommunityHouse'
+  /energy-communities/{energyCommunityId}/update-share:
+    post:
+      summary: Update share
+      description: 'Update share for an energy community house
+
+        '
+      tags:
+      - Energy communities
+      operationId: updateEnergyCommunityHouseShare
+      parameters:
+      - name: energyCommunityId
+        in: path
+        description: Alphanumeric id from energy community
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: House successfully updated
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorForbidden'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEnergyCommunityHouseRequest'
+components:
+  schemas:
+    HttpErrorForbidden:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 403
+        error:
+          description: Http error description
+          type: string
+          example: Forbidden
+        path:
+          description: Request path
+          type: string
+          example: /users/U4NW5zdmstUtRZW5Oi3S2CR5l0U2/houses
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    EnergyCommunityHouse:
+      type: object
+      description: Assign a house to an energy community
+      required:
+      - houseId
+      - share
+      properties:
+        houseId:
+          type: string
+          description: House Id
+        share:
+          type: number
+          description: Share (in percentage) in the energy community
+        installationId:
+          type: string
+          description: Installation Id
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    UpdateEnergyCommunityHouseRequest:
+      type: object
+      description: Update energy community house share
+      required:
+      - houseId
+      - share
+      properties:
+        houseId:
+          type: string
+          description: House Id
+        share:
+          type: number
+          description: Share (in percentage) in the energy community
+        installationId:
+          type: string
+          description: Installation Id
+    RemoveEnergyCommunityHouseRequest:
+      type: object
+      description: Remove energy community house
+      required:
+      - houseId
+      properties:
+        houseId:
+          type: string
+          description: House Id
+        installationId:
+          type: string
+          description: Installation Id
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

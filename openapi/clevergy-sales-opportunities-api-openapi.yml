@@ -1,0 +1,497 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Sales Opportunities API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Sales Opportunities
+paths:
+  /sales-opportunities:
+    get:
+      summary: List sales opportunities
+      description: 'Returns a paginated list of sales opportunities for the tenant.
+
+        Currently only CONTRACT opportunities are returned.
+
+        Results are sorted by createdAt descending.
+
+        '
+      tags:
+      - Sales Opportunities
+      operationId: getSalesOpportunities
+      parameters:
+      - name: page
+        in: query
+        description: Number of the page starting at 1
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 1
+      - name: size
+        in: query
+        description: Size of the page (max 100)
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      - name: status
+        in: query
+        description: Filter by status. Multiple values can be comma-separated.
+        required: false
+        schema:
+          type: string
+          enum:
+          - STARTED
+          - POTENTIAL
+          - FORMALIZED
+          - CONVERTED
+          - REJECTED
+      - name: product
+        in: query
+        description: 'Filter by product. Currently only CONTRACT is supported; other values return 400.
+
+          '
+        required: false
+        schema:
+          type: string
+          enum:
+          - CONTRACT
+      responses:
+        '200':
+          description: Paginated list of sales opportunities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalesOpportunitiesPage'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sales-opportunities/contract/{id}:
+    get:
+      summary: Get contract sales opportunity details
+      description: 'Returns the details of a CONTRACT sales opportunity, including contracting
+
+        payload fields (contact data, CUPS, IBAN, invoice references, etc.).
+
+        Returns 404 if the opportunity does not exist or is not a CONTRACT product.
+
+        '
+      tags:
+      - Sales Opportunities
+      operationId: getContractSalesOpportunity
+      parameters:
+      - name: id
+        in: path
+        description: Sales opportunity ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Contract sales opportunity details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractSalesOpportunity'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      summary: Update contract sales opportunity status
+      description: 'Partially updates a CONTRACT sales opportunity. Currently only the status
+
+        field is supported. Returns the updated opportunity.
+
+        Returns 404 if the opportunity does not exist or is not a CONTRACT product.
+
+        '
+      tags:
+      - Sales Opportunities
+      operationId: patchContractSalesOpportunity
+      parameters:
+      - name: id
+        in: path
+        description: Sales opportunity ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Updated contract sales opportunity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractSalesOpportunity'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchContractSalesOpportunityRequest'
+        description: Fields to update
+        required: true
+  /sales-opportunities/{id}:
+    delete:
+      summary: Delete a sales opportunity
+      description: 'Hard-deletes a sales opportunity. Currently only CONTRACT opportunities are
+
+        supported; other products return 404. Related notes are removed by cascade.
+
+        Emits a Pub/Sub DELETE event (tenant webhooks are not notified for DELETE).
+
+        '
+      tags:
+      - Sales Opportunities
+      operationId: deleteSalesOpportunity
+      parameters:
+      - name: id
+        in: path
+        description: Sales opportunity ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Deleted contract sales opportunity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractSalesOpportunity'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    PatchContractSalesOpportunityRequest:
+      type: object
+      description: Partial update for a CONTRACT sales opportunity
+      properties:
+        status:
+          type: string
+          enum:
+          - STARTED
+          - POTENTIAL
+          - FORMALIZED
+          - CONVERTED
+          - REJECTED
+      required:
+      - status
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
+    SalesOpportunitySummary:
+      type: object
+      description: Summary of a sales opportunity
+      properties:
+        id:
+          type: string
+        product:
+          type: string
+          enum:
+          - CONTRACT
+          - SOLAR
+          - HEATPUMP
+          - BATTERY
+          - DEVICES
+          - EV
+          - OTHER
+        status:
+          type: string
+          enum:
+          - STARTED
+          - POTENTIAL
+          - FORMALIZED
+          - CONVERTED
+          - REJECTED
+        userId:
+          type: string
+        holder:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        nif:
+          type: string
+        houseId:
+          type: string
+        address:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - product
+      - status
+      - createdAt
+      - updatedAt
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    ContractSalesOpportunity:
+      type: object
+      description: CONTRACT sales opportunity details including contracting payload fields
+      properties:
+        id:
+          type: string
+        product:
+          type: string
+          enum:
+          - CONTRACT
+        status:
+          type: string
+          enum:
+          - STARTED
+          - POTENTIAL
+          - FORMALIZED
+          - CONVERTED
+          - REJECTED
+        userId:
+          type: string
+        holder:
+          type: string
+        nif:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        houseId:
+          type: string
+        address:
+          type: string
+        tariffId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        referralCode:
+          type: string
+        invoiceId:
+          type: string
+        invoiceAnalysisId:
+          type: string
+        contractedPower:
+          type: array
+          items:
+            type: number
+            format: double
+        contactEmail:
+          type: string
+        contactName:
+          type: string
+        contactSurname:
+          type: string
+        contactPhone:
+          type: string
+        contactNif:
+          type: string
+        cups:
+          type: string
+        addressBlockNumber:
+          type: string
+        addressFloor:
+          type: string
+        addressStaircase:
+          type: string
+        addressDoor:
+          type: string
+        addressPostalCode:
+          type: string
+        addressAdditionalInfo:
+          type: string
+        bankAccountHolder:
+          type: string
+        iban:
+          type: string
+        submitted:
+          type: boolean
+      required:
+      - id
+      - product
+      - status
+      - createdAt
+      - updatedAt
+    SalesOpportunitiesPage:
+      type: object
+      description: Paginated list of sales opportunities
+      properties:
+        size:
+          type: integer
+          description: Number of elements in the page requested
+        page:
+          type: integer
+          description: Number of the page requested
+        totalPages:
+          type: integer
+          description: Number of total pages
+        totalElements:
+          type: integer
+          description: Number of total elements in the list
+        elements:
+          type: array
+          description: List of sales opportunities
+          items:
+            $ref: '#/components/schemas/SalesOpportunitySummary'
+      required:
+      - size
+      - page
+      - totalPages
+      - totalElements
+      - elements
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

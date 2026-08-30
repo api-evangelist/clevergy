@@ -1,0 +1,650 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Contracts|Electricity API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Contracts|Electricity
+paths:
+  /users/{userId}/electricity-contracts:
+    post:
+      summary: Create a new electricity contract
+      description: 'Creates a new electricity contract with the provided details
+
+
+        :::tip
+
+        **Recommended guide**
+
+        If you are unsure which parameters to include when creating an electricity contract, refer to the [complete documentation](https://docs.clever.gy/developer/how-to-set-up/contracts).
+
+        :::
+
+        '
+      tags:
+      - Contracts|Electricity
+      operationId: createElectricityContract
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Electricity contract created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ElectricityContract'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        '409':
+          description: Contract already exists (only if contract number is provided)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorConflict'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ElectricityContractRequest'
+        description: Electricity contract details to create
+        required: true
+    get:
+      summary: Get user electricity contracts
+      description: Retrieves the details of the user electricity contracts
+      tags:
+      - Contracts|Electricity
+      operationId: getUserElectricityContracts
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful retrieval of electricity contracts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ElectricityContract'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /users/{userId}/electricity-contracts/{contractId}:
+    put:
+      summary: Update an existing electricity contract
+      description: Updates the details of an existing electricity contract
+      tags:
+      - Contracts|Electricity
+      operationId: updateElectricityContract
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+      - name: contractId
+        in: path
+        description: ID of electricity contract
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Electricity contract updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ElectricityContract'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Electricity contract not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        '409':
+          description: Contract already exists (only if contract number is provided)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorConflict'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ElectricityContractRequest'
+        description: Electricity contract details to update
+        required: true
+    delete:
+      summary: Delete an electricity contract
+      description: Deletes an existing electricity contract
+      tags:
+      - Contracts|Electricity
+      operationId: deleteElectricityContract
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+      - name: contractId
+        in: path
+        description: ID of electricity contract
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Electricity contract deleted successfully
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Electricity contract not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      summary: Retrieves electricity contract
+      description: Retrieves the details of a specific electricity contract
+      tags:
+      - Contracts|Electricity
+      operationId: getElectricityContract
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+      - name: contractId
+        in: path
+        description: ID of electricity contract
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Electricity contract retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ElectricityContract'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Electricity contract not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    HttpErrorConflict:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2025-01-01T12:00:00.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 409
+        error:
+          description: Http error description
+          type: string
+          example: Conflict
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    ElectricityContract:
+      type: object
+      description: Electricity contract details
+      required:
+      - id
+      - startDate
+      - status
+      - address
+      - cups
+      - importTariffType
+      - tariffName
+      - tariffAccess
+      - contractPower
+      - fileUrl
+      properties:
+        id:
+          type: string
+          example: contract-123
+          description: Unique identifier of the electricity contract
+        startDate:
+          type: string
+          format: date
+          example: '2023-02-01'
+          description: Start date of the electricity contract
+        endDate:
+          type: string
+          format: date
+          example: '2024-02-01'
+          description: End date of the electricity contract
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          example: ACTIVE
+          description: Status of the electricity contract
+        address:
+          type: string
+          example: 123 Main St, Springfield
+          description: Address associated with the electricity contract
+        postalCode:
+          type: string
+          example: '12345'
+          description: Postal code associated with the electricity contract
+        connectionId:
+          type: string
+          example: conn-456
+          description: UUID of the electricity connection
+        connectionContractId:
+          type: string
+          example: contract-789
+          description: ID of the connection contract
+        cups:
+          type: string
+          example: ES1234567890123456AB
+          description: Universal Point of Supply Code (CUPS)
+        importTariffType:
+          type: string
+          enum:
+          - FIXED
+          - PVPC
+          - INDEXED
+          - PERIOD
+          - CUSTOM
+          example: 2.0TD
+          description: Import tariff access code
+        surplusTariffType:
+          type: string
+          enum:
+          - FIXED
+          - PVPC
+          - INDEXED
+          - PERIOD
+          - CUSTOM
+          example: FIXED
+          description: Surplus tariff access code
+        tariffAccess:
+          type: string
+          enum:
+          - 2.0TD
+          - 3.0TD
+          - 6.1TD
+          example: 2.0TD
+          description: Tariff access code
+        tariffName:
+          type: string
+          example: Standard Electricity Tariff
+          description: Name of the tariff applied to the contract
+        iban:
+          type: string
+          example: ES7620770024003102575766
+          description: IBAN for billing purposes
+        distributorName:
+          type: string
+          example: Electricity Distributor S.A.
+          description: Name of the electricity distributor company
+        holderName:
+          type: string
+          example: John Doe
+          description: Name of the contract holder
+        commercialName:
+          type: string
+          example: Electricity Commercial S.L.
+          description: Name of the commercial electricity company
+        contractPower:
+          type: array
+          items:
+            type: number
+            format: double
+          example:
+          - 3.45
+          - 3.45
+          description: Contracted power for each period (kW). The array should contain up to 6 periods.
+        powerPrices:
+          type: array
+          items:
+            type: number
+            format: double
+          example:
+          - 0.1
+          - 0.05
+          description: Power prices for each period (€/kW). The array should contain up to 6 periods.
+        energyPrices:
+          type: array
+          items:
+            type: number
+            format: double
+          example:
+          - 0.15
+          - 0.1
+          - 0.05
+          description: Energy prices for each period (€/kWh). The array should contain up to 6 periods.
+        surplusPrices:
+          type: array
+          items:
+            type: number
+            format: double
+          example:
+          - 0.05
+          description: Surplus prices for each period (€/kWh). The array should contain up to 6 periods.
+        fileUrl:
+          type: string
+          example: https://example.com/contracts/electricity/contract-123.pdf
+          description: URL to access the electricity contract file. Also used to upload a new contract file as response in POST and PUT methods.
+        contractNumber:
+          type: string
+          description: Contract number
+          example: EC-12345
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
+    ElectricityContractRequest:
+      type: object
+      description: Request to create or update an electricity contract
+      required:
+      - startDate
+      - status
+      - address
+      - cups
+      - importTariffType
+      - tariffName
+      - tariffAccess
+      - contractPower
+      properties:
+        startDate:
+          type: string
+          format: date
+          example: '2023-02-01'
+          description: Start date of the electricity contract
+        endDate:
+          type: string
+          format: date
+          example: '2024-02-01'
+          description: End date of the electricity contract
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          example: ACTIVE
+          description: Status of the electricity contract
+        address:
+          type: string
+          example: 123 Main St, Springfield
+          description: Address associated with the electricity contract
+        postalCode:
+          type: string
+          example: '12345'
+          description: Postal code associated with the electricity contract
+        cups:
+          type: string
+          example: ES1234567890123456AB
+          description: Universal Point of Supply Code (CUPS)
+        importTariffType:
+          type: string
+          enum:
+          - FIXED
+          - PVPC
+          - INDEXED
+          - PERIOD
+          - CUSTOM
+          example: FIXED
+          description: Import tariff type
+        surplusTariffType:
+          type: string
+          enum:
+          - FIXED
+          - PVPC
+          - INDEXED
+          - PERIOD
+          - CUSTOM
+          example: FIXED
+          description: Surplus tariff type
+        tariffAccess:
+          type: string
+          enum:
+          - 2.0TD
+          - 3.0TD
+          - 6.1TD
+          example: 2.0TD
+          description: Tariff access code
+        tariffName:
+          type: string
+          example: Standard Electricity Tariff
+          description: Name of the tariff applied to the contract
+        iban:
+          type: string
+          example: ES7620770024003102575766
+          description: IBAN for billing purposes
+        distributorName:
+          type: string
+          example: Electricity Distributor S.A.
+          description: Name of the electricity distributor company
+        holderName:
+          type: string
+          example: John Doe
+          description: Name of the contract holder
+        commercialName:
+          type: string
+          example: Electricity Commercial S.L.
+          description: Name of the commercial electricity company
+        contractPower:
+          type: array
+          items:
+            type: number
+            format: double
+          example:
+          - 3.45
+          - 3.45
+          description: Contracted power for each period (kW). The array should contain up to 6 periods.
+        powerPrices:
+          type: array
+          items:
+            type: number
+            format: double
+          example:
+          - 0.1
+          - 0.05
+          description: Power prices for each period (€/kW). The array should contain up to 6 periods.
+        energyPrices:
+          type: array
+          items:
+            type: number
+            format: double
+          example:
+          - 0.15
+          description: Energy prices for each period (€/kWh). The array should contain up to 6 periods.
+        surplusPrices:
+          type: array
+          items:
+            type: number
+            format: double
+          example:
+          - 0.05
+          description: Surplus prices for each period (€/kWh). The array should contain up to 6 periods.
+        contractNumber:
+          type: string
+          description: Contract number
+          example: EC-12345
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

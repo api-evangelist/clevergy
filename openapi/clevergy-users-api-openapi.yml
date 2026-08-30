@@ -1,0 +1,719 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Users API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Users
+paths:
+  /users:
+    get:
+      summary: Get users
+      description: 'Returns a paginated list of users filtered by a given criteria. If no filter
+
+        parameter is included (nif, email), all the tenant users shall be returned.
+
+        '
+      tags:
+      - Users
+      operationId: getUsers
+      parameters:
+      - name: page
+        in: query
+        description: Number of the page starting at 1
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: size
+        in: query
+        description: Size of the page
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: sort
+        in: query
+        description: Field to order by.
+        required: false
+        schema:
+          type: string
+          enum:
+          - id
+          - name
+          - surname
+          - email
+          - nif
+          default: id
+      - name: direction
+        in: query
+        description: Direction of the order.
+        required: false
+        schema:
+          type: string
+          enum:
+          - ASC
+          - DESC
+          default: ASC
+      - name: nif
+        in: query
+        description: Filter by nif
+        schema:
+          type: string
+      - name: email
+        in: query
+        description: Filter by email
+        schema:
+          type: string
+      responses:
+        '200':
+          description: paginated list of users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersPage'
+        '400':
+          description: Incorrect sort criteria or no filter parameter provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create new user
+      description: Creates a new user and returns the id and the status of the created user
+      tags:
+      - Users
+      operationId: createUser
+      responses:
+        '200':
+          description: Record successfully added.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreated'
+        '400':
+          description: Bad request (user already exists)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '409':
+          description: User already exists with this email
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUserExists'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+        description: User registration attributes
+  /users/{userId}:
+    put:
+      summary: Update an user
+      description: 'Updates user properties
+
+        '
+      tags:
+      - Users
+      operationId: updateUser
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record successfully updated.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUser'
+        description: user properties to update
+        required: true
+    delete:
+      summary: Delete an user
+      description: 'Deletes the user''s account and all its related information (meters, energy
+
+        data...).
+
+
+        **Please note that this action is irreversible.**
+
+
+        When the response is a 202, the process is not immediate and usually takes
+
+        several minutes until the user is permanently deleted.
+
+        '
+      tags:
+      - Users
+      operationId: deleteUserAccount
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+      responses:
+        '202':
+          description: Record successfully deleted.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /users/{userId}/app-devices:
+    get:
+      description: Retrieve a user app devices
+      summary: Retrieve a user app devices
+      tags:
+      - Users
+      operationId: getUserAppDevices
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: List of user app devices
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAppDevicesList'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /users/{userId}/authorize-user:
+    post:
+      description: Authorizes a user resource (a house) to another user
+      summary: Authorize a user
+      tags:
+      - Users
+      operationId: authorizeUser
+      parameters:
+      - name: userId
+        in: path
+        description: The ID of the owner user
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '201':
+          description: Authorized successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorizeUserRequest'
+        description: User authorization attributes
+  /users/{userId}/houses:
+    get:
+      summary: Get user houses
+      description: 'Returns the user houses
+
+        '
+      deprecated: true
+      operationId: getUserHouses
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Houses of a given user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserHouses'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorForbidden'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+      - Users
+  /users/{userId}/user-detail:
+    get:
+      summary: Get user details
+      description: 'Retrieves detailed information about a specific user.
+
+        '
+      tags:
+      - Users
+      operationId: getUser
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    UserRegistration:
+      type: object
+      properties:
+        name:
+          type: string
+          example: John
+        surname:
+          type: string
+          example: Doe
+        email:
+          type: string
+          format: email
+          example: john.doe@example.com
+        dni:
+          type: string
+          example: 12345678X
+        phoneNumber:
+          type: string
+          example: '600000000'
+        language:
+          type: string
+          example: es-ES
+          description: User language in BCP 47 format
+    AuthorizeUserRequest:
+      type: object
+      properties:
+        cups:
+          description: The ID of the supply point to authorize
+          type: string
+        authorizedUserId:
+          description: The ID of the user to authorize
+          type: string
+        status:
+          description: The authorization status
+          type: string
+          enum:
+          - AUTHORIZED
+          - REVOKED
+      required:
+      - cups
+      - authorizedUserId
+      - status
+    HttpErrorUserExists:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 409
+        error:
+          description: Http error description
+          type: string
+          example: User exists
+    UserHouses:
+      type: array
+      items:
+        type: object
+        properties:
+          houseId:
+            type: string
+            example: 8ec307fc-3b4c-4f6f-b320-fa2587990a46
+          cups:
+            type: string
+            example: ES0022123456781234AB0F
+          address:
+            type: string
+            example: Leonardo da Vinci 7
+          postalCode:
+            type: string
+            example: '41092'
+          firstConsumptionDate:
+            type: string
+            format: date-time
+            example: '2022-12-31T23:00:00'
+          lastConsumptionDate:
+            type: string
+            format: date-time
+            example: '2023-12-31T22:00:00'
+    HttpErrorForbidden:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 403
+        error:
+          description: Http error description
+          type: string
+          example: Forbidden
+        path:
+          description: Request path
+          type: string
+          example: /users/U4NW5zdmstUtRZW5Oi3S2CR5l0U2/houses
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    UserAppDevice:
+      type: object
+      description: User app device
+      properties:
+        userId:
+          type: string
+          format: uuid
+        deviceToken:
+          type: string
+      required:
+      - userId
+      - deviceToken
+    UsersPage:
+      type: object
+      description: Paginated list of users
+      properties:
+        size:
+          type: integer
+          description: Number of elements in the page requested
+        page:
+          type: integer
+          description: Number of the page requested
+        totalPages:
+          type: integer
+          description: Number of total pages
+        totalElements:
+          type: integer
+          description: Number of total elements in the list
+        elements:
+          type: array
+          description: List of users
+          items:
+            type: object
+            $ref: '#/components/schemas/UsersPageElement'
+      required:
+      - size
+      - page
+      - totalPages
+      - totalElements
+      - elements
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
+    UsersPageElement:
+      type: object
+      properties:
+        id:
+          type: string
+          example: U4NW5zdmstUtRZW5Oi3S2CR5l0U2
+        name:
+          type: string
+          example: Pedro
+        surname:
+          type: string
+          example: García
+        email:
+          type: string
+          example: pedro.garcia@mail.com
+        nif:
+          type: string
+          example: 00000000T
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: U4NW5zdmstUtRZW5Oi3S2CR5l0U2
+        name:
+          type: string
+          example: Pedro
+        surname:
+          type: string
+          example: García
+        email:
+          type: string
+          example: pedro.garcia@mail.com
+        nif:
+          type: string
+          example: 00000000T
+        language:
+          type: string
+          example: es-ES
+          description: User language in BCP 47 format
+        optOutCode:
+          type: string
+          example: 123456
+          description: Code to opt out of emails
+      required:
+      - id
+      - email
+      - optOutCode
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    UserCreated:
+      type: object
+      properties:
+        id:
+          type: string
+          example: U4NW5zdmstUtRZW5Oi3S2CR5l0U2
+        status:
+          type: string
+          example: INITIAL
+    UserAppDevicesList:
+      type: array
+      items:
+        type: object
+        $ref: '#/components/schemas/UserAppDevice'
+    UpdateUser:
+      type: object
+      properties:
+        name:
+          type: string
+          example: John
+        surname:
+          type: string
+          example: Doe
+        email:
+          type: string
+          format: email
+          example: john.doe@example.com
+        dni:
+          type: string
+          example: 12345678X
+        phoneNumber:
+          type: string
+          example: '600000000'
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

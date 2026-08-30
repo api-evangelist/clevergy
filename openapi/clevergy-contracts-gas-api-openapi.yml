@@ -1,0 +1,580 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Contracts|Gas API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Contracts|Gas
+paths:
+  /users/{userId}/gas-contracts:
+    post:
+      summary: Create a new gas contract
+      description: 'Creates a new gas contract with the provided details
+
+
+        :::tip
+
+        **Recommended guide**
+
+        If you are unsure which parameters to include when creating a gas contract, refer to the [complete documentation](https://docs.clever.gy/developer/how-to-set-up/contracts).
+
+        :::
+
+        '
+      tags:
+      - Contracts|Gas
+      operationId: createGasContract
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Gas contract created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GasContract'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        '409':
+          description: Contract already exists (only if contract number is provided)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorConflict'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GasContractRequest'
+        description: Gas contract details to create
+        required: true
+    get:
+      summary: Get user gas contracts
+      description: Retrieves the details of the user's gas contracts
+      tags:
+      - Contracts|Gas
+      operationId: getUserGasContracts
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful retrieval of user's gas contracts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GasContract'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /users/{userId}/gas-contracts/{contractId}:
+    put:
+      summary: Update an existing gas contract
+      description: Updates the details of an existing gas contract
+      tags:
+      - Contracts|Gas
+      operationId: updateGasContract
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+      - name: contractId
+        in: path
+        description: ID of gas contract
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Gas contract updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GasContract'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Gas contract not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        '409':
+          description: Contract already exists (only if contract number is provided)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorConflict'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GasContractRequest'
+        description: Gas contract details to update
+        required: true
+    delete:
+      summary: Delete a gas contract
+      description: Deletes an existing gas contract
+      tags:
+      - Contracts|Gas
+      operationId: deleteGasContract
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+      - name: contractId
+        in: path
+        description: ID of gas contract
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Gas contract deleted successfully
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Gas contract not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      summary: Retrieve a gas contract
+      description: Retrieves the details of a specific gas contract
+      tags:
+      - Contracts|Gas
+      operationId: getGasContract
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+      - name: contractId
+        in: path
+        description: ID of gas contract
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Gas contract retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GasContract'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Gas contract not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    GasContractRequest:
+      type: object
+      description: Request to create a new gas contract
+      required:
+      - startDate
+      - status
+      - address
+      - cups
+      - tariffAccess
+      - tariffName
+      properties:
+        startDate:
+          type: string
+          format: date
+          example: '2023-02-01'
+          description: Start date of the gas contract
+        endDate:
+          type: string
+          format: date
+          example: '2024-02-01'
+          description: End date of the gas contract
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          example: ACTIVE
+          description: Status of the gas contract
+        address:
+          type: string
+          example: 123 Main St, Springfield
+          description: Address associated with the gas contract
+        postalCode:
+          type: string
+          example: '12345'
+          description: Postal code associated with the gas contract
+        cups:
+          type: string
+          example: ES1234567890123456AB
+          description: Universal Point of Supply Code (CUPS)
+        tariffAccess:
+          type: string
+          enum:
+          - RL01
+          - RL02
+          - RL03
+          - RL04
+          - RL05
+          - RL06
+          - RL07
+          - RL08
+          - RL09
+          - RL10
+          - RL11
+          example: RL01
+          description: Tariff access code
+        tariffName:
+          type: string
+          example: Standard Gas Tariff
+          description: Name of the tariff applied to the contract
+        iban:
+          type: string
+          example: ES7620770024003102575766
+          description: IBAN for billing purposes
+        distributorName:
+          type: string
+          example: Gas Distributor S.A.
+          description: Name of the gas distributor company
+        holderName:
+          type: string
+          example: John Doe
+          description: Name of the contract holder
+        commercialName:
+          type: string
+          example: Gas Commercial S.L.
+          description: Name of the commercial gas company
+        fixedPrice:
+          type: number
+          format: number
+          example: 20.5
+          description: Fixed price component of the gas contract (€/day)
+        energyPrice:
+          type: number
+          format: number
+          example: 0.065
+          description: Energy price component of the gas contract (€/kWh)
+        pressure:
+          type: number
+          example: 0.5
+          description: Supply pressure in bar
+        contractNumber:
+          type: string
+          description: Contract number
+          example: GC-12345
+    HttpErrorConflict:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2025-01-01T12:00:00.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 409
+        error:
+          description: Http error description
+          type: string
+          example: Conflict
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
+    GasContract:
+      type: object
+      description: Gas contract details
+      required:
+      - id
+      - startDate
+      - status
+      - address
+      - cups
+      - tariffAccess
+      - tariffName
+      - fileUrl
+      properties:
+        id:
+          type: string
+          example: contract-123
+          description: Unique identifier of the gas contract
+        startDate:
+          type: string
+          format: date
+          example: '2023-02-01'
+          description: Start date of the gas contract
+        endDate:
+          type: string
+          format: date
+          example: '2024-02-01'
+          description: End date of the gas contract
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          example: ACTIVE
+          description: Status of the gas contract
+        address:
+          type: string
+          example: 123 Main St, Springfield
+          description: Address associated with the gas contract
+        postalCode:
+          type: string
+          example: '12345'
+          description: Postal code associated with the gas contract
+        connectionId:
+          type: string
+          example: conn-456
+          description: UUID of the gas connection
+        connectionContractId:
+          type: string
+          example: contract-789
+          description: ID of the connection contract
+        cups:
+          type: string
+          example: ES1234567890123456AB
+          description: Universal Point of Supply Code (CUPS)
+        tariffAccess:
+          type: string
+          enum:
+          - RL01
+          - RL02
+          - RL03
+          - RL04
+          - RL05
+          - RL06
+          - RL07
+          - RL08
+          - RL09
+          - RL10
+          - RL11
+          example: RL01
+          description: Tariff access code
+        tariffName:
+          type: string
+          example: Standard Gas Tariff
+          description: Name of the tariff applied to the contract
+        iban:
+          type: string
+          example: ES7620770024003102575766
+          description: IBAN for billing purposes
+        distributorName:
+          type: string
+          example: Gas Distributor S.A.
+          description: Name of the gas distributor company
+        holderName:
+          type: string
+          example: John Doe
+          description: Name of the contract holder
+        commercialName:
+          type: string
+          example: Gas Commercial S.L.
+          description: Name of the commercial gas company
+        fixedPrice:
+          type: number
+          format: number
+          example: 20.5
+          description: Fixed price component of the gas contract (€/day)
+        energyPrice:
+          type: number
+          format: number
+          example: 0.065
+          description: Energy price component of the gas contract (€/kWh)
+        pressure:
+          type: number
+          example: 0.5
+          description: Supply pressure in bar
+        fileUrl:
+          type: string
+          example: https://example.com/contracts/gas/contract-123.pdf
+          description: URL to access the gas contract file. Also used to upload a new contract file as response in POST and PUT methods.
+        contractNumber:
+          type: string
+          description: Contract number
+          example: GC-12345
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

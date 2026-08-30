@@ -1,0 +1,577 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Houses API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Houses
+paths:
+  /houses:
+    get:
+      summary: Get all the tenant houses
+      description: 'Get tenant houses
+
+        '
+      tags:
+      - Houses
+      operationId: getTenantHouses
+      parameters:
+      - name: cursor
+        in: query
+        description: Cursor for pagination (not inclusive)
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - name: limit
+        in: query
+        description: Maximum number of houses to return (max 100)
+        required: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: Page of houses
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HousesPage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /houses/{houseId}:
+    delete:
+      summary: Delete a house
+      description: 'Deletes a house
+
+        '
+      tags:
+      - Houses
+      operationId: deleteHouse
+      parameters:
+      - name: houseId
+        in: path
+        description: ID of house
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: House deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorForbidden'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /houses/{houseId}/house-detail:
+    get:
+      summary: Get house details
+      description: 'Returns house details.
+
+        '
+      tags:
+      - Houses
+      operationId: getHouseDetail
+      parameters:
+      - name: houseId
+        in: path
+        description: ID of the house
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: House details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserHouseWithIntegrations'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /houses/{houseId}/update:
+    put:
+      summary: Update a house
+      description: 'Update a house
+
+        '
+      tags:
+      - Houses
+      operationId: updateHouse
+      parameters:
+      - name: houseId
+        in: path
+        description: Id of the house
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: House updated successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateHouse'
+  /users/{userId}/houses:
+    post:
+      summary: Create a house
+      description: 'Create a new house for the user
+
+        '
+      tags:
+      - Houses
+      operationId: createHouse
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Created house
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HouseCreated'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateHouse'
+  /users/{userId}/supplies:
+    get:
+      summary: Get user houses
+      description: 'Search a list of houses of the user.
+
+        '
+      tags:
+      - Houses
+      operationId: getUserSupplies
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Supplies of a given user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserHouses'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    HouseCreated:
+      type: object
+      description: Create house response
+      properties:
+        id:
+          type: string
+          description: House id
+          example: f8c3de3d-1fea-4d7c-a8b0-29f63c4c3454
+        address:
+          type: string
+          description: House address
+          example: Leonardo da Vinci 7
+        postalCode:
+          type: string
+          description: House postal code
+          example: '41092'
+    UserHouses:
+      type: array
+      items:
+        type: object
+        properties:
+          houseId:
+            type: string
+            example: 8ec307fc-3b4c-4f6f-b320-fa2587990a46
+          cups:
+            type: string
+            example: ES0022123456781234AB0F
+          address:
+            type: string
+            example: Leonardo da Vinci 7
+          postalCode:
+            type: string
+            example: '41092'
+          firstConsumptionDate:
+            type: string
+            format: date-time
+            example: '2022-12-31T23:00:00'
+          lastConsumptionDate:
+            type: string
+            format: date-time
+            example: '2023-12-31T22:00:00'
+    HousesPage:
+      type: object
+      description: Page of houses
+      properties:
+        cursor:
+          type: string
+          format: uuid
+          description: Cursor for next page request
+        elements:
+          type: array
+          description: List of houses
+          items:
+            type: object
+            $ref: '#/components/schemas/House'
+      required:
+      - elements
+    HttpErrorForbidden:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 403
+        error:
+          description: Http error description
+          type: string
+          example: Forbidden
+        path:
+          description: Request path
+          type: string
+          example: /users/U4NW5zdmstUtRZW5Oi3S2CR5l0U2/houses
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    UpdateHouse:
+      type: object
+      properties:
+        address:
+          type: string
+          description: address (horizontal address. street, number, etc)
+        postalCode:
+          type: string
+          description: postal code
+        selfConsumptionTypeCode:
+          type: string
+          description: self consumption type code (2 digits). Deprecated, the API ignores this field.
+          x-deprecated: true
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    House:
+      type: object
+      required:
+      - houseId
+      properties:
+        houseId:
+          type: string
+          format: uuid
+        cups:
+          type: string
+        address:
+          type: string
+        postalCode:
+          type: string
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
+    CreateHouse:
+      type: object
+      description: Create house request
+      properties:
+        address:
+          type: string
+          description: House address (should not exceed 124 characters)
+          example: Leonardo da Vinci 7
+        postalCode:
+          type: string
+          description: House postal code
+          example: '41092'
+        cups:
+          type: string
+          description: Deprecated. When filled, CUPS of the supply to connect. This field will be removed in a future version.
+          example: ES0022123456781234AB0F
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    HouseIntegrations:
+      type: object
+      properties:
+        huaweiB2C:
+          type: object
+          $ref: '#/components/schemas/HouseIntegration'
+        froniusB2C:
+          type: object
+          $ref: '#/components/schemas/HouseIntegration'
+        enodeB2C:
+          type: object
+          $ref: '#/components/schemas/HouseIntegration'
+        sungrowB2C:
+          type: object
+          $ref: '#/components/schemas/HouseIntegration'
+        smaB2C:
+          type: object
+          $ref: '#/components/schemas/HouseIntegration'
+        wibeeeSolar:
+          type: object
+          $ref: '#/components/schemas/HouseIntegration'
+        shelly:
+          type: object
+          $ref: '#/components/schemas/HouseIntegration'
+    UserHouseWithIntegrations:
+      type: object
+      properties:
+        details:
+          type: object
+          properties:
+            houseId:
+              type: string
+              format: uuid
+            userId:
+              type: string
+            cups:
+              type: string
+            address:
+              type: string
+            postalCode:
+              type: string
+            timeZone:
+              type: string
+          required:
+          - houseId
+          - userId
+        houseMetadata:
+          type: object
+          properties:
+            firstDateEnergy:
+              type: string
+              format: date
+            lastDateEnergy:
+              type: string
+              format: date
+            firstDatePower:
+              type: string
+              format: date
+            lastDatePower:
+              type: string
+              format: date
+            firstDateCost:
+              type: string
+              format: date
+            lastDateCost:
+              type: string
+              format: date
+            isOwner:
+              type: boolean
+        houseIntegrations:
+          type: object
+          $ref: '#/components/schemas/HouseIntegrations'
+        supplyPoints:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/SupplyPoint'
+      required:
+      - details
+      - houseMetadata
+      - houseIntegrations
+      - supplyPoints
+    HouseIntegration:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - NONE
+          - CONNECTED
+      required:
+      - status
+    SupplyPoint:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+          - GAS
+          - ELECTRICITY
+        houseId:
+          type: string
+        cups:
+          type: string
+      required:
+      - id
+      - type
+      - houseId
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

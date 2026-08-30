@@ -1,0 +1,127 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Access control API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Access control
+paths:
+  /auth/{userId}/token:
+    get:
+      summary: Get user access token
+      description: 'Returns user jwt based on the email. The jwt can be used in some endpoints
+
+        of the API to obtain energy data from the user.
+
+        '
+      tags:
+      - Access control
+      operationId: retrieveUserAccessToken
+      parameters:
+      - name: userId
+        in: path
+        description: Clevergy ID from the user (also available with email)
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: User jwt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthUser'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    AuthUser:
+      type: object
+      properties:
+        jwt:
+          type: string
+          example: eyJhbGciOiJSJhdWQiOiJodHRwczopdC5nb29nbGVhcGlzLmNvbS9nb29nbGUuaWRlbnRpdHkuaWRlbnRpdHl0b29sa2l0LnYxLklkZW50aXRF0IjoxNzAzODU0NzY5LCJpc3MiOiJwdWJsaWMtZnJvbnQtYmFja0BjbGV2ZXJneS5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsInN1YiI6InB1YmxpYy1mcm9udC1iYWNrQGNXA
+        userId:
+          type: string
+          example: U7Q02aMJm9VokGsNIZmID3BK25p3
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

@@ -1,0 +1,113 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Connections API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Connections
+paths:
+  /connections:
+    get:
+      summary: Get all connections.
+      description: Get connections.
+      tags:
+      - Connections
+      operationId: getConnection
+      responses:
+        '200':
+          description: List of connections
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    ConnectionResponse:
+      type: array
+      items:
+        type: object
+        $ref: '#/components/schemas/Connection'
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    Connection:
+      type: object
+      properties:
+        connectionId:
+          type: string
+          format: uuid
+          example: 1253a9ca-2b85-14f1-b93d-42010aeb51df
+        name:
+          type: string
+          example: Audinfor
+        vendor:
+          type: string
+          enum:
+          - AUDINFOR
+          - GISCE
+          - ENEXPA
+          example: AUDINFOR
+        type:
+          type: string
+          enum:
+          - ERP
+          example: ERP
+      required:
+      - connectionId
+      - name
+      - type
+      - vendor
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

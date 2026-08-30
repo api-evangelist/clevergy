@@ -1,0 +1,777 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Invoices API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Invoices
+paths:
+  /invoice-analysis:
+    post:
+      summary: Analyze invoice
+      description: 'Analizes an invoice from an url
+
+        '
+      tags:
+      - Invoices
+      operationId: analyzeInvoice
+      responses:
+        '200':
+          description: Invoice analized and recorded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceAnalysisId'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalyzeInvoice'
+        description: Invoice url. (Should be a public url)
+  /invoice-analysis/{invoiceAnalysisId}:
+    get:
+      summary: Get invoice analysis
+      description: 'Get latest available invoice analysis
+
+        '
+      tags:
+      - Invoices
+      operationId: getInvoiceAnalysisById
+      parameters:
+      - name: invoiceAnalysisId
+        in: path
+        description: ID of invoice analysis.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: latest invoice analysis
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceAnalysis'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /contracts/{contractId}/invoices/{id}:
+    get:
+      summary: Get invoice by ID
+      description: Retrieves the details of a specific invoice by its ID
+      tags:
+      - Invoices
+      operationId: getInvoiceById
+      parameters:
+      - name: contractId
+        in: path
+        description: ID of the contract for which to retrieve the invoice
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: ID of the invoice to retrieve
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Invoice details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoice'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Invoice not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete an invoice
+      description: Deletes a specific invoice by its ID
+      tags:
+      - Invoices
+      operationId: deleteInvoice
+      parameters:
+      - name: contractId
+        in: path
+        description: ID of the contract for which to delete the invoice
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: ID of the invoice to delete
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Invoice deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Invoice not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Update an invoice
+      description: Updates the details of a specific invoice by its ID
+      tags:
+      - Invoices
+      operationId: updateInvoice
+      parameters:
+      - name: contractId
+        in: path
+        description: ID of the contract for which to update the invoice
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: ID of the invoice to update
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Invoice updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoice'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Invoice not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        '409':
+          description: Invoice already exists for this user with the same external id (including on another contract of the same user)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorConflict'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrUpdateInvoiceRequest'
+        description: Updated invoice details
+        required: true
+  /users/{userId}/invoices:
+    get:
+      summary: Get invoices by user ID
+      description: Retrieves all invoices associated with a specific user, including those without an uploaded PDF (`fileUrl` is null in that case).
+      tags:
+      - Invoices
+      operationId: getInvoicesByUser
+      parameters:
+      - name: userId
+        in: path
+        description: ID of the user whose invoices to retrieve
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of invoices retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Invoice'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /contracts/{contractId}/invoices:
+    get:
+      summary: Get invoices by contract ID
+      description: Retrieves all invoices associated with a specific contract, including those without an uploaded PDF (`fileUrl` is null in that case).
+      tags:
+      - Invoices
+      operationId: getInvoicesByContract
+      parameters:
+      - name: contractId
+        in: path
+        description: ID of the contract whose invoices to retrieve
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of invoices retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Invoice'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Contract not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create a new invoice
+      description: 'Creates a new invoice with the provided details. This endpoint provides a signed URL for uploading a PDF invoice.
+
+
+        :::tip
+
+        **Recommended guide**
+
+        If you are unsure which parameters to include when creating a gas or electricity invoice, refer to the [complete documentation](https://docs.clever.gy/developer/how-to-set-up/invoices).
+
+        :::
+
+
+        ### Steps and considerations
+
+        1. POST invoice metadata to obtain the upload URL (`fileUrl` field).
+
+        2. PUT the PDF file to the returned URL (valid for 15 minutes).
+
+
+        > **Important:** After creating the invoice, the PDF must be uploaded to the `fileUrl` returned in the response. If the PDF is not uploaded, the invoice will not be processed and will not be available to the customer.
+
+        '
+      tags:
+      - Invoices
+      operationId: createInvoice
+      parameters:
+      - name: contractId
+        in: path
+        description: ID of the contract for which to create the invoice
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Invoice created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoice'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Contract not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        '409':
+          description: Invoice already exists for this user with the same external id (including on another contract of the same user)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorConflict'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrUpdateInvoiceRequest'
+        description: Invoice details to create
+        required: true
+components:
+  schemas:
+    Invoice:
+      type: object
+      description: Invoice information
+      required:
+      - id
+      - issueDate
+      - invoicePeriodFrom
+      - invoicePeriodTo
+      - type
+      - cost
+      - contractId
+      properties:
+        id:
+          type: string
+          example: invoice-123
+          description: Unique identifier of the invoice
+        issueDate:
+          type: string
+          format: date
+          example: '2023-01-15'
+          description: Date when the invoice was issued
+        invoicePeriodFrom:
+          type: string
+          format: date
+          example: '2023-01-01'
+          description: Start of the invoice period
+        invoicePeriodTo:
+          type: string
+          format: date
+          example: '2023-01-31'
+          description: End of the invoice period
+        type:
+          type: string
+          enum:
+          - ELECTRICITY
+          - GAS
+          - WATER
+          - OTHER
+          example: ELECTRICITY
+          description: Type of the contract
+        cost:
+          type: number
+          format: double
+          example: 125.5
+          description: Total cost of the invoice
+        contractId:
+          type: string
+          example: contract-123
+          description: ID of the contract associated with this invoice
+        externalId:
+          type: string
+          example: ext-456
+          description: External identifier for the invoice, used for integration with third-party systems. Unique per Clevergy user; may be reused across different users.
+        concepts:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            energy: '75.20'
+            taxes: '15.30'
+            fixed: '35.00'
+          description: Additional invoice concepts as key-value pairs
+        fileUrl:
+          type:
+          - string
+          - 'null'
+          example: https://example.com/invoices/detail/123
+          description: Signed URL to access the invoice PDF when available. Null when no file has been uploaded for this invoice.
+        obtainMethod:
+          type: string
+          enum:
+          - REAL
+          - ESTIMATED
+          example: REAL
+          description: Method in which the invoice is obtained
+        totalEnergyConsumption:
+          type: number
+          format: double
+          example: 350.75
+          description: Total energy consumption recorded in the invoice in kWh
+        paymentDate:
+          type: string
+          format: date
+          example: '2023-02-01'
+          description: Date when the invoice was paid
+        paymentStatus:
+          type: string
+          enum:
+          - PENDING
+          - PAID
+          - OVERDUE
+          example: PAID
+          description: Payment status of the invoice
+    HttpErrorConflict:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2025-01-01T12:00:00.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 409
+        error:
+          description: Http error description
+          type: string
+          example: Conflict
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    InvoiceAnalysisId:
+      type: object
+      properties:
+        invoiceAnalysisId:
+          type: string
+          format: uuid
+          example: 044b7fef-4a80-42ac-a8c6-addd9c9d86a4
+    InvoiceAnalysis:
+      type: object
+      properties:
+        dni:
+          type: string
+          example: 1111111A
+        name:
+          type: string
+          example: John
+        surname:
+          type: string
+          example: Doe
+        houseCity:
+          type: string
+          example: Madrid
+        houseStreet:
+          type: string
+          example: Avenida
+        houseNumber:
+          type: string
+          example: '53'
+        houseProvince:
+          type: string
+          example: Madrid
+        postalCode:
+          type: string
+          example: '28005'
+        cups:
+          type: string
+          example: ES0000000000000000EYOF
+        marketer:
+          type: string
+          example: Iberdrola
+        contractedPowerP1:
+          type: number
+          format: float
+          example: '4.6'
+        contractedPowerP2:
+          type: number
+          format: float
+          example: '4.6'
+        maxPowerDemandedP1:
+          type: number
+          format: float
+          example: '3.4'
+        maxPowerDemandedP2:
+          type: number
+          format: float
+          example: '3.5'
+        energyConsumptionP1:
+          type: number
+          format: float
+          example: '50.0'
+        energyConsumptionP2:
+          type: number
+          format: float
+          example: '152.0'
+        energyConsumptionP3:
+          type: number
+          format: float
+          example: '108.0'
+        totalEnergyConsumption:
+          type: number
+          format: float
+          example: '210.0'
+        totalCost:
+          type: number
+          format: float
+          example: '78.77'
+        startDate:
+          type: string
+          format: date
+          example: '2024-01-01'
+        endDate:
+          type: string
+          format: date
+          example: '2024-01-31'
+        renovationDate:
+          type: string
+          format: date
+          example: '2026-03-05'
+    AnalyzeInvoice:
+      type: object
+      properties:
+        invoiceUrl:
+          type: string
+          example: https://example/invoice-123
+    CreateOrUpdateInvoiceRequest:
+      type: object
+      description: Request to create a new invoice
+      required:
+      - issueDate
+      - invoicePeriodFrom
+      - invoicePeriodTo
+      - type
+      - cost
+      - externalId
+      - obtainMethod
+      properties:
+        issueDate:
+          type: string
+          format: date-time
+          example: '2023-01-15T12:00:00Z'
+          description: Date when the invoice was issued
+        invoicePeriodFrom:
+          type: string
+          format: date-time
+          example: '2023-01-01T00:00:00Z'
+          description: Start of the invoice period
+        invoicePeriodTo:
+          type: string
+          format: date-time
+          example: '2023-01-31T23:59:59Z'
+          description: End of the invoice period
+        type:
+          type: string
+          enum:
+          - ELECTRICITY
+          - GAS
+          - WATER
+          - OTHER
+          example: ELECTRICITY
+          description: Type of the contract
+        cost:
+          type: number
+          format: double
+          example: 125.5
+          description: Total cost of the invoice
+        externalId:
+          type: string
+          example: ext-456
+          description: External identifier for the invoice, used for integration with third-party systems. Must be unique per Clevergy user (cannot be reused across that user's contracts); may be reused for different users.
+        concepts:
+          type: object
+          properties:
+            energyCost:
+              type: number
+              format: double
+              example: 75.2
+              description: Cost of energy consumption in the invoice
+            powerCost:
+              type: number
+              format: double
+              example: 35
+              description: Cost of power in the invoice
+            otherCost:
+              type: number
+              format: double
+              example: 15.3
+              description: Cost of other concepts in the invoice (e.g., taxes, fees)
+            totalEnergySurplus:
+              type: number
+              format: double
+              example: 10.5
+              description: Total energy surplus in the invoice in kWh
+            surplusSaving:
+              type: number
+              format: double
+              example: 5
+              description: Savings from energy surplus in the invoice
+            discountSaving:
+              type: number
+              format: double
+              example: 20
+              description: Savings from discounts applied in the invoice
+            virtualWallet:
+              type: number
+              format: double
+              example: 15
+              description: Amount credited to the virtual wallet from the invoice. This can be positive (credit) or negative (debit)
+            excessPowerCost:
+              type: number
+              format: double
+              example: 10
+              description: Cost of excess power consumption in the invoice
+            reactiveEnergyCost:
+              type: number
+              format: double
+              example: 8
+              description: Cost of reactive energy consumption in the invoice
+          additionalProperties: false
+          description: Additional invoice concepts as key-value pairs
+        obtainMethod:
+          type: string
+          enum:
+          - REAL
+          - ESTIMATED
+          example: REAL
+          description: Method in which the invoice is obtained
+        totalEnergyConsumption:
+          type: number
+          format: double
+          example: 350.75
+          description: Total energy consumption recorded in the invoice in kWh
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

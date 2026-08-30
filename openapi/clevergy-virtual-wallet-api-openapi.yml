@@ -1,0 +1,136 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Virtual wallet API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Virtual wallet
+paths:
+  /users/{userId}/virtual-wallet:
+    post:
+      summary: Create virtual wallet transaction
+      description: 'Creates user virtual wallet transaction
+
+        '
+      tags:
+      - Virtual wallet
+      operationId: createVirtualWalletTransaction
+      parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: User virtual wallet transaction created
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '422':
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnprocessableEntity'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserVirtualWalletTransaction'
+        description: User virtual wallet transaction request
+components:
+  schemas:
+    HttpErrorUnprocessableEntity:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 422
+        error:
+          description: Http error description
+          type: string
+          example: Unprocessable Entity
+        path:
+          description: Request path
+          type: string
+          example: /users
+    UserVirtualWalletTransaction:
+      type: object
+      required:
+      - date
+      - amount
+      - totalBalance
+      properties:
+        date:
+          type: string
+          format: date
+        amount:
+          type: number
+          format: float
+          description: Transaction amount (in Euros)
+        totalBalance:
+          type: number
+          format: float
+          description: Total balance after the transaction (in Euros)
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

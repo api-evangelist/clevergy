@@ -1,0 +1,68 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Tips API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Tips
+paths:
+  /tips:
+    get:
+      summary: Get tips
+      description: Get all public tips
+      tags:
+      - Tips
+      operationId: getPublicSavingTips
+      responses:
+        '200':
+          description: List of public saving tips
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  $ref: '#/components/schemas/PublicSavingTip'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security: []
+components:
+  schemas:
+    PublicSavingTip:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Elige neveras con buena calificación energética
+        text:
+          type: string
+          example: Si tu nevera es antigua, plantéate comprar una nevera con  calificación energética alta. Podrás ahorrar un 20% en tu factura.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

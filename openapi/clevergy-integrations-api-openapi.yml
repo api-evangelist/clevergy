@@ -1,0 +1,409 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Integrations API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Integrations
+paths:
+  /houses/{houseId}/installations:
+    post:
+      summary: Link installation to a house
+      description: 'Link installation to a house
+
+        '
+      tags:
+      - Integrations
+      operationId: connectInstallation
+      parameters:
+      - name: houseId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Assigned installation to house
+        '404':
+          description: House not found
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectInstallationRequest'
+  /installations:
+    get:
+      summary: Get all installations
+      description: 'Get all installations
+
+        '
+      tags:
+      - Integrations
+      operationId: getInstallations
+      parameters:
+      - name: page
+        in: query
+        description: Number of the page starting at 1
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: size
+        in: query
+        description: Size of the page
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: sort
+        in: query
+        description: 'Order by this param (ex:capacity, plantName, plantAddress,
+
+          plantCode...).
+
+          '
+        required: false
+        schema:
+          type: string
+          default: plantName
+      - name: direction
+        in: query
+        description: Direction of the order.
+        required: false
+        schema:
+          type: string
+          enum:
+          - ASC
+          - DESC
+          default: DESC
+      - name: integrationId
+        in: query
+        description: Filter by integration id
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - name: name
+        in: query
+        description: Filter by installation name
+        required: false
+        schema:
+          type: string
+      - name: hasHouseLinked
+        in: query
+        description: Filter by installation linked with house
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: List of installations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Installation'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /installations/{installationId}:
+    put:
+      summary: Update an installation
+      description: 'Update an installation
+
+        '
+      tags:
+      - Integrations
+      operationId: updateInstallation
+      parameters:
+      - name: installationId
+        in: path
+        description: Id of the installation to update
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Installation updated successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Installation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInstallation'
+  /integrations/users:
+    post:
+      summary: Assign an external user id to a user
+      description: 'Assign an external user id to a user for an integration
+
+        '
+      tags:
+      - Integrations
+      operationId: assignExternalUserIdToUser
+      responses:
+        '200':
+          description: External user id successfully assigned to user.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignExternalUserIdToUser'
+    get:
+      summary: Get assigned users for an integration
+      description: 'Get assigned users for an integration.
+
+        '
+      tags:
+      - Integrations
+      operationId: getAssignedUsersOfIntegration
+      parameters:
+      - name: userId
+        in: query
+        description: user id
+        schema:
+          type: string
+      - name: externalUserId
+        in: query
+        description: external user id
+        required: true
+        schema:
+          type: string
+      - name: vendor
+        in: query
+        description: integration vendor
+        required: true
+        schema:
+          type: string
+          enum:
+          - AUDINFOR
+          - GISCE
+      responses:
+        '200':
+          description: Assigned users successfully retrieved.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    AssignExternalUserIdToUser:
+      type: object
+      description: External user  assignation request
+      required:
+      - userId
+      - externalUserId
+      - vendor
+      properties:
+        userId:
+          type: string
+        externalUserId:
+          type: string
+        vendor:
+          type: string
+          enum:
+          - AUDINFOR
+          - GISCE
+        connectionId:
+          type: string
+    Installation:
+      type: object
+      required:
+      - installationId
+      - integrationId
+      - name
+      - vendor
+      - vendorId
+      - status
+      properties:
+        installationId:
+          type: string
+          format: uuid
+        integrationId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        address:
+          type: string
+        capacity:
+          type: number
+          format: float
+        vendor:
+          type: string
+          enum:
+          - HUAWEI
+          - HUAWEI_OAUTH
+          - SOLAR_EDGE
+          - FRONIUS_B2C
+          - FRONIUS
+          - GOODWE
+          - GOODWE_B2B
+          - GROWATT
+          - SAJ
+          - SUNGROW
+          - SUNGROW_OAUTH
+          - SMA_OAUTH
+          - WIBEEE_SOLAR
+        connectionDate:
+          type: string
+          format: date-time
+        vendorId:
+          type: string
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - DISCONNECTED
+          - FAULTY
+          - SESSION_EXPIRED
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    UpdateInstallation:
+      type: object
+      properties:
+        capacity:
+          type: number
+          format: float
+          description: Capacity of the installation
+          example: 10
+        plantAddress:
+          type: string
+          description: Address of the installation
+          example: Leonardo da Vinci 7
+        plantName:
+          type: string
+          description: Name of the installation
+          example: My installation
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    ConnectInstallationRequest:
+      type: object
+      properties:
+        installationId:
+          type: string
+      required:
+      - installationId
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

@@ -1,0 +1,476 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Equipments API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Equipments
+paths:
+  /equipments:
+    get:
+      summary: Get all the tenant equipments of a given type
+      description: 'Get tenant equipments of a given type.
+
+        '
+      tags:
+      - Equipments
+      operationId: getTenantEquipments
+      parameters:
+      - name: integrationType
+        in: query
+        description: Filter by integration type
+        required: true
+        schema:
+          type: string
+          enum:
+          - DISTRIBUTOR
+          - SOLAR
+          - SMART_DEVICE
+          - STORAGE
+      - name: cursor
+        in: query
+        description: Cursor for pagination (not inclusive)
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - name: limit
+        in: query
+        description: Maximum number of equipments to return (max 100)
+        required: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: Page of equipments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EquipmentsPage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /equipments/{equipmentId}/storage:
+    get:
+      summary: Get storage equipment data
+      description: 'Returns the storage equipment information.
+
+        '
+      tags:
+      - Equipments
+      operationId: getStorageEquipment
+      parameters:
+      - name: equipmentId
+        in: path
+        description: Id of the equipment
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: StorageEquipment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageEquipment'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /equipments/{equipmentId}/storage/schedule:
+    post:
+      summary: Schedule an action for a storage equipment
+      description: 'Schedules an action (charge or discharge) for a storage equipment.
+
+        '
+      tags:
+      - Equipments
+      operationId: scheduleStorageEquipmentAction
+      parameters:
+      - name: equipmentId
+        in: path
+        description: Id of the equipment
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Action scheduled successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduleStorageActionRequest'
+        description: Request body to schedule an action
+        required: true
+  /equipments/{equipmentId}/storage/soc:
+    get:
+      summary: Get storage equipment state of charge
+      description: 'Returns the storage equipment state of charge information.
+
+        '
+      tags:
+      - Equipments
+      operationId: getStorageEquipmentSoc
+      parameters:
+      - name: equipmentId
+        in: path
+        description: Id of the equipment
+        required: true
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        description: Start date to filter by
+        required: true
+        schema:
+          type: string
+          format: date-time
+      - name: endDate
+        in: query
+        description: End date to filter by
+        required: true
+        schema:
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: StorageEquipmentSoc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageEquipmentSoc'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /houses/{houseId}/equipments:
+    get:
+      summary: Get equipments of a house
+      description: 'Returns the equipments of a house
+
+        '
+      tags:
+      - Equipments
+      operationId: getHouseEquipments
+      parameters:
+      - name: houseId
+        in: path
+        description: Id of the house
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: House equipments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HouseEquipments'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: House Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    ScheduleStorageActionItem:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: Date of the action in UTC format (e.g., 2023-10-01T12:00:00Z)
+        action:
+          type: string
+          description: Action to be performed on the storage equipment
+          enum:
+          - CHARGE
+          - DISCHARGE
+          - PAUSE
+        targetSOC:
+          type: number
+          format: float
+          description: Target state of charge in percentage
+        dispatchTimeMins:
+          type: number
+          format: integer
+          description: Dispatch time in minutes
+        powerKWDispatch:
+          type: number
+          format: float
+          description: Dispatch power in kW
+      required:
+      - date
+      - action
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    EquipmentsPage:
+      type: object
+      description: Page of equipments
+      properties:
+        cursor:
+          type: string
+          format: uuid
+          description: Cursor for next page request
+        elements:
+          type: array
+          description: List of equipments
+          items:
+            type: object
+            $ref: '#/components/schemas/Equipment'
+      required:
+      - elements
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    HouseEquipment:
+      type: object
+      properties:
+        equipmentId:
+          type: string
+        integrationType:
+          type: string
+          enum:
+          - SOLAR
+          - DISTRIBUTOR
+          - HYDRO
+          - SMART_DEVICE
+          - ERP
+          - DATADIS
+          - COMMUNITY
+          - STORAGE
+        vendor:
+          type: string
+      required:
+      - equipmentId
+      - integrationType
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
+    HouseEquipments:
+      type: object
+      properties:
+        equipments:
+          type: array
+          items:
+            $ref: '#/components/schemas/HouseEquipment'
+    StorageEquipment:
+      type: object
+      description: Storage equipment data
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          description: Equipment status
+          enum:
+          - ACTIVE
+          - INACTIVE
+        maxChargePower:
+          type: number
+          format: float
+          description: Maximum charge power in W
+          example: 100
+        maxDischargePower:
+          type: number
+          format: float
+          description: Maximum discharge power in W
+          example: 100
+        ratedCapacity:
+          type: number
+          format: float
+          description: Rated capacity in kWh
+          example: 50
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    StorageEquipmentSoc:
+      type: object
+      description: Storage equipment state of charge
+      required:
+      - time
+      - soc
+      properties:
+        time:
+          type: string
+          format: date-time
+          description: Time of measurement
+        soc:
+          type: number
+          format: float
+          description: State of charge in percentage
+    Equipment:
+      type: object
+      required:
+      - equipmentId
+      - integrationId
+      - vendor
+      properties:
+        equipmentId:
+          type: string
+          format: uuid
+        integrationId:
+          type: string
+          format: uuid
+        vendor:
+          type: string
+    ScheduleStorageActionRequest:
+      type: object
+      description: Request to create a set of scheduled actions for a storage equipment
+      properties:
+        actions:
+          type: array
+          description: List of actions to be scheduled
+          items:
+            type: object
+            $ref: '#/components/schemas/ScheduleStorageActionItem'
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

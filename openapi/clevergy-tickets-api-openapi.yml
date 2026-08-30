@@ -1,0 +1,392 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Tickets API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Tickets
+paths:
+  /tickets/{ticketId}:
+    get:
+      summary: Get ticket details
+      description: 'Returns the details of a ticket
+
+        '
+      tags:
+      - Tickets
+      operationId: getTicketDetails
+      parameters:
+      - name: ticketId
+        in: path
+        description: ID of ticket
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ticket details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Update ticket
+      description: Updates a ticket
+      tags:
+      - Tickets
+      operationId: updateTicket
+      parameters:
+      - name: ticketId
+        in: path
+        description: ID of ticket
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ticket details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTicketRequest'
+        description: Ticket attributes to be updated
+  /tickets/{ticketId}/comment:
+    post:
+      summary: Add comment
+      description: 'Add comment to ticket
+
+        '
+      tags:
+      - Tickets
+      operationId: addCommentToTicket
+      parameters:
+      - name: ticketId
+        in: path
+        description: ID of ticket
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Comment successfully added to ticket
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentRequest'
+        description: message of the comment to add
+        required: true
+  /comments/{commentId}/attachment-upload-url:
+    post:
+      description: Returns a signed, temporary bucket url to upload an file for a comment
+      tags:
+      - Tickets
+      operationId: createCommentAttachmentSignedUrl
+      parameters:
+      - name: commentId
+        in: path
+        description: ID of comment
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: A signed, temporary bucket url to upload an file for a comment. Valid for 15 minutes. To upload a file send a PUT request adding the file as form data. The file will be uploaded to the bucket and the url will be returned in the response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentAttachmentUrl'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentAttachmentRequest'
+        description: Comment attachment request
+        required: true
+components:
+  schemas:
+    CommentAttachmentRequest:
+      type: object
+      description: Request to get a signed url to upload a file for a comment
+      properties:
+        fileName:
+          type: string
+          description: The name of the file to upload. It should include the extension. If this file already exists, it will be overwritten.
+      required:
+      - fileName
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    CommentAttachmentUrl:
+      type: object
+      description: Signed url to attach a file to a comment
+      properties:
+        url:
+          type: string
+          description: The signed url to upload the file. Valid for 15 minutes. Send a PUT request to this url with the file as form data.
+      required:
+      - url
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
+    CommentRequest:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    Ticket:
+      type: object
+      description: Ticket
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        userId:
+          type: string
+        houseId:
+          type: string
+        contractId:
+          type: string
+        equipmentId:
+          type: string
+        alertId:
+          type: string
+        status:
+          type: string
+          enum:
+          - NEW
+          - OPEN
+          - PENDING
+          - SOLVED
+          - CLOSED
+        title:
+          type: string
+        description:
+          type: string
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - tenantId
+      - status
+      - title
+      - description
+      - createdAt
+      - updatedAt
+    Comment:
+      type: object
+      properties:
+        id:
+          type: number
+        ticketId:
+          type: string
+        message:
+          type: string
+        author:
+          type: string
+          enum:
+          - USER
+          - SUPPORT
+        attachments:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - ticketId
+      - message
+      - author
+      - attachments
+      - createdAt
+      - updatedAt
+    UpdateTicketRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - NEW
+          - OPEN
+          - PENDING
+          - SOLVED
+          - CLOSED
+      required:
+      - status
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app

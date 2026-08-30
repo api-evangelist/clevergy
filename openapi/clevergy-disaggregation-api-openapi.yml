@@ -1,0 +1,169 @@
+openapi: 3.2.0
+info:
+  title: Clevergy Connect Disaggregation API
+  description: Connect enables Clevergy customers to build integrations with the Clevergy platform. To request access please write to soporte.clientes@clever.gy
+  version: 1.0.0
+servers:
+- url: https://connect.clever.gy
+security:
+- key: []
+tags:
+- name: Disaggregation
+paths:
+  /houses/{houseId}/disaggregation:
+    get:
+      summary: Get house disaggregation
+      description: 'Returns the consumption disaggregation of a house.
+
+        '
+      tags:
+      - Disaggregation
+      operationId: getDisaggregationByHouse
+      parameters:
+      - name: houseId
+        in: path
+        description: Id of the house
+        required: true
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        description: Start date to filter by. p.e. 2025-04-01T00:00:00Z
+        required: true
+        schema:
+          type: string
+          format: date-time
+      - name: endDate
+        in: query
+        description: End date to filter by. p.e. 2025-04-30T00:00:00Z
+        required: true
+        schema:
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: Disaggregation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HouseDisaggregation'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorUnauthorized'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorNotFound'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    HouseDisaggregation:
+      properties:
+        devices:
+          type: array
+          items:
+            $ref: '#/components/schemas/DisaggregationDevice'
+    DisaggregationDevice:
+      properties:
+        device:
+          type: string
+          enum:
+          - AEROTHERMAL_BOILER
+          - AEROTHERMAL_HEATER
+          - AIR_CONDITIONING
+          - AUTOMATIC_IRRIGATION
+          - CERAMIC_HOB
+          - CHARGING_POINT
+          - DISHWASHER
+          - DRYER
+          - ELECTRIC_BOILER
+          - ELECTRIC_RADIATOR
+          - ELECTRIC_VEHICLE
+          - FILTER_PUMP
+          - FRIDGE
+          - FREEZER
+          - LIGHT
+          - OVEN
+          - OTHER
+          - STANDBY
+          - WASHING_MACHINE
+          example: FRIDGE
+        kwh:
+          type: number
+          format: float
+          example: '20.0'
+        percentage:
+          type: number
+          format: float
+          example: '14.6'
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+  securitySchemes:
+    key:
+      type: apiKey
+      in: header
+      name: clevergy-api-key
+x-google-endpoints:
+- name: connect.clever.gy
+  allowCors: true
+x-google-backend:
+  address: https://public-front-back-tl56gypzra-ew.a.run.app
