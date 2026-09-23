@@ -13,9 +13,7 @@ paths:
   /users/{userId}/electricity-contracts/{contractId}/energy-prices:
     get:
       summary: Get energy prices from a contract
-      description: 'Gets the contract energy prices for specific dates. It allows to filter by start and end date, with a maximum of a year between them.
-
-        '
+      description: Gets the contract energy prices for specific dates. It allows to filter by start and end date, with a maximum of a year between them.
       tags:
       - Contracts
       operationId: getContractEnergyPrices
@@ -73,9 +71,7 @@ paths:
                 $ref: '#/components/schemas/Error'
     put:
       summary: Add energy prices to a contract
-      description: 'Adds the contract energy prices for specific dates.
-
-        '
+      description: Adds the contract energy prices for specific dates.
       tags:
       - Contracts
       operationId: addContractEnergyPrices
@@ -167,6 +163,16 @@ components:
         surplusPrice:
           type: number
           description: Price of the surplus energy
+    ContractEnergyPriceRequest:
+      type: object
+      description: Request to put energy prices for a contract
+      properties:
+        prices:
+          type: array
+          description: List of energy prices and dates
+          items:
+            type: object
+            $ref: '#/components/schemas/ContractEnergyPriceItem'
     HttpErrorBadRequest:
       type: object
       properties:
@@ -198,16 +204,6 @@ components:
           format: int32
         message:
           type: string
-    ContractEnergyPriceRequest:
-      type: object
-      description: Request to put energy prices for a contract
-      properties:
-        prices:
-          type: array
-          description: List of energy prices and dates
-          items:
-            type: object
-            $ref: '#/components/schemas/ContractEnergyPriceItem'
   securitySchemes:
     key:
       type: apiKey

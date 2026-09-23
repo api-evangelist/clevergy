@@ -13,9 +13,7 @@ paths:
   /houses/{houseId}/settings:
     get:
       summary: Get house settings
-      description: 'Returns house settings.
-
-        '
+      description: Returns house settings.
       tags:
       - Settings
       operationId: getHouseSettings
@@ -53,9 +51,7 @@ paths:
                 $ref: '#/components/schemas/Error'
     put:
       summary: Update house settings
-      description: 'Updates house settings.
-
-        '
+      description: Updates house settings.
       tags:
       - Settings
       operationId: updateHouseSettings
@@ -98,26 +94,17 @@ paths:
               $ref: '#/components/schemas/HouseSettings'
 components:
   schemas:
-    HttpErrorNotFound:
+    Error:
       type: object
+      required:
+      - code
+      - message
       properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
+        code:
           type: integer
           format: int32
-          example: 404
-        error:
-          description: Http error description
+        message:
           type: string
-          example: Not Found
-        path:
-          description: Request path
-          type: string
-          example: /auth/alice.smith@gmail.com/token
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -180,17 +167,26 @@ components:
             - PHOTOVOLTAIC_SOLAR_PANEL
             - SOLAR_THERMAL_PANEL
             - WASHING_MACHINE
-    Error:
+    HttpErrorNotFound:
       type: object
-      required:
-      - code
-      - message
       properties:
-        code:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
           type: integer
           format: int32
-        message:
+          example: 404
+        error:
+          description: Http error description
           type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
   securitySchemes:
     key:
       type: apiKey

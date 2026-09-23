@@ -13,9 +13,6 @@ paths:
   /houses/{houseId}/installations:
     post:
       summary: Link installation to a house
-      description: 'Link installation to a house
-
-        '
       tags:
       - Integrations
       operationId: connectInstallation
@@ -44,9 +41,6 @@ paths:
   /installations:
     get:
       summary: Get all installations
-      description: 'Get all installations
-
-        '
       tags:
       - Integrations
       operationId: getInstallations
@@ -127,9 +121,6 @@ paths:
   /installations/{installationId}:
     put:
       summary: Update an installation
-      description: 'Update an installation
-
-        '
       tags:
       - Integrations
       operationId: updateInstallation
@@ -169,9 +160,7 @@ paths:
   /integrations/users:
     post:
       summary: Assign an external user id to a user
-      description: 'Assign an external user id to a user for an integration
-
-        '
+      description: Assign an external user id to a user for an integration
       tags:
       - Integrations
       operationId: assignExternalUserIdToUser
@@ -203,9 +192,7 @@ paths:
               $ref: '#/components/schemas/AssignExternalUserIdToUser'
     get:
       summary: Get assigned users for an integration
-      description: 'Get assigned users for an integration.
-
-        '
+      description: Get assigned users for an integration.
       tags:
       - Integrations
       operationId: getAssignedUsersOfIntegration
@@ -253,6 +240,49 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    UpdateInstallation:
+      type: object
+      properties:
+        capacity:
+          type: number
+          format: float
+          description: Capacity of the installation
+          example: 10
+        plantAddress:
+          type: string
+          description: Address of the installation
+          example: Leonardo da Vinci 7
+        plantName:
+          type: string
+          description: Name of the installation
+          example: My installation
+    ConnectInstallationRequest:
+      type: object
+      properties:
+        installationId:
+          type: string
+      required:
+      - installationId
     AssignExternalUserIdToUser:
       type: object
       description: External user  assignation request
@@ -323,6 +353,17 @@ components:
           - DISCONNECTED
           - FAULTY
           - SESSION_EXPIRED
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     HttpErrorNotFound:
       type: object
       properties:
@@ -343,60 +384,6 @@ components:
           description: Request path
           type: string
           example: /auth/alice.smith@gmail.com/token
-    HttpErrorUnauthorized:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 401
-        error:
-          description: Http error description
-          type: string
-          example: Unauthorized
-        path:
-          description: Request path
-          type: string
-          example: /auth/john.doe@gmail.com/token
-    UpdateInstallation:
-      type: object
-      properties:
-        capacity:
-          type: number
-          format: float
-          description: Capacity of the installation
-          example: 10
-        plantAddress:
-          type: string
-          description: Address of the installation
-          example: Leonardo da Vinci 7
-        plantName:
-          type: string
-          description: Name of the installation
-          example: My installation
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    ConnectInstallationRequest:
-      type: object
-      properties:
-        installationId:
-          type: string
-      required:
-      - installationId
   securitySchemes:
     key:
       type: apiKey

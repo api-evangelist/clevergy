@@ -13,9 +13,7 @@ paths:
   /energy-communities/{communityId}/remove-house:
     post:
       summary: Remove a house from an energy community
-      description: 'Removes a house from an energy community
-
-        '
+      description: Removes a house from an energy community
       tags:
       - Energy communities
       operationId: removeEnergyCommunityHouseFromInstallation
@@ -67,9 +65,6 @@ paths:
   /energy-communities/{energyCommunityId}/houses:
     post:
       summary: Assign a house to an energy community
-      description: 'Assign a house to an energy community
-
-        '
       tags:
       - Energy communities
       operationId: assignHouseToEnergyCommunity
@@ -115,9 +110,7 @@ paths:
   /energy-communities/{energyCommunityId}/update-share:
     post:
       summary: Update share
-      description: 'Update share for an energy community house
-
-        '
+      description: Update share for an energy community house
       tags:
       - Energy communities
       operationId: updateEnergyCommunityHouseShare
@@ -168,62 +161,6 @@ paths:
               $ref: '#/components/schemas/UpdateEnergyCommunityHouseRequest'
 components:
   schemas:
-    HttpErrorForbidden:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 403
-        error:
-          description: Http error description
-          type: string
-          example: Forbidden
-        path:
-          description: Request path
-          type: string
-          example: /users/U4NW5zdmstUtRZW5Oi3S2CR5l0U2/houses
-    HttpErrorNotFound:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 404
-        error:
-          description: Http error description
-          type: string
-          example: Not Found
-        path:
-          description: Request path
-          type: string
-          example: /auth/alice.smith@gmail.com/token
-    EnergyCommunityHouse:
-      type: object
-      description: Assign a house to an energy community
-      required:
-      - houseId
-      - share
-      properties:
-        houseId:
-          type: string
-          description: House Id
-        share:
-          type: number
-          description: Share (in percentage) in the energy community
-        installationId:
-          type: string
-          description: Installation Id
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -244,6 +181,38 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
+    EnergyCommunityHouse:
+      type: object
+      description: Assign a house to an energy community
+      required:
+      - houseId
+      - share
+      properties:
+        houseId:
+          type: string
+          description: House Id
+        share:
+          type: number
+          description: Share (in percentage) in the energy community
+        installationId:
+          type: string
+          description: Installation Id
+    UpdateEnergyCommunityHouseRequest:
+      type: object
+      description: Update energy community house share
+      required:
+      - houseId
+      - share
+      properties:
+        houseId:
+          type: string
+          description: House Id
+        share:
+          type: number
+          description: Share (in percentage) in the energy community
+        installationId:
+          type: string
+          description: Installation Id
     HttpErrorBadRequest:
       type: object
       properties:
@@ -264,33 +233,26 @@ components:
           description: Request path
           type: string
           example: /users
-    Error:
+    HttpErrorForbidden:
       type: object
-      required:
-      - code
-      - message
       properties:
-        code:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
           type: integer
           format: int32
-        message:
+          example: 403
+        error:
+          description: Http error description
           type: string
-    UpdateEnergyCommunityHouseRequest:
-      type: object
-      description: Update energy community house share
-      required:
-      - houseId
-      - share
-      properties:
-        houseId:
+          example: Forbidden
+        path:
+          description: Request path
           type: string
-          description: House Id
-        share:
-          type: number
-          description: Share (in percentage) in the energy community
-        installationId:
-          type: string
-          description: Installation Id
+          example: /users/U4NW5zdmstUtRZW5Oi3S2CR5l0U2/houses
     RemoveEnergyCommunityHouseRequest:
       type: object
       description: Remove energy community house
@@ -303,6 +265,37 @@ components:
         installationId:
           type: string
           description: Installation Id
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
   securitySchemes:
     key:
       type: apiKey

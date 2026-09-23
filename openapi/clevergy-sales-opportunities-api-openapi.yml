@@ -17,9 +17,7 @@ paths:
 
         Currently only CONTRACT opportunities are returned.
 
-        Results are sorted by createdAt descending.
-
-        '
+        Results are sorted by createdAt descending.'
       tags:
       - Sales Opportunities
       operationId: getSalesOpportunities
@@ -94,9 +92,7 @@ paths:
 
         payload fields (contact data, CUPS, IBAN, invoice references, etc.).
 
-        Returns 404 if the opportunity does not exist or is not a CONTRACT product.
-
-        '
+        Returns 404 if the opportunity does not exist or is not a CONTRACT product.'
       tags:
       - Sales Opportunities
       operationId: getContractSalesOpportunity
@@ -138,9 +134,7 @@ paths:
 
         field is supported. Returns the updated opportunity.
 
-        Returns 404 if the opportunity does not exist or is not a CONTRACT product.
-
-        '
+        Returns 404 if the opportunity does not exist or is not a CONTRACT product.'
       tags:
       - Sales Opportunities
       operationId: patchContractSalesOpportunity
@@ -196,9 +190,7 @@ paths:
 
         supported; other products return 404. Related notes are removed by cascade.
 
-        Emits a Pub/Sub DELETE event (tenant webhooks are not notified for DELETE).
-
-        '
+        Emits a Pub/Sub DELETE event (tenant webhooks are not notified for DELETE).'
       tags:
       - Sales Opportunities
       operationId: deleteSalesOpportunity
@@ -236,40 +228,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    HttpErrorNotFound:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 404
-        error:
-          description: Http error description
-          type: string
-          example: Not Found
-        path:
-          description: Request path
-          type: string
-          example: /auth/alice.smith@gmail.com/token
-    PatchContractSalesOpportunityRequest:
-      type: object
-      description: Partial update for a CONTRACT sales opportunity
-      properties:
-        status:
-          type: string
-          enum:
-          - STARTED
-          - POTENTIAL
-          - FORMALIZED
-          - CONVERTED
-          - REJECTED
-      required:
-      - status
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -290,87 +248,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    HttpErrorBadRequest:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 400
-        error:
-          description: Http error description
-          type: string
-          example: Bad Request
-        path:
-          description: Request path
-          type: string
-          example: /users
-    SalesOpportunitySummary:
-      type: object
-      description: Summary of a sales opportunity
-      properties:
-        id:
-          type: string
-        product:
-          type: string
-          enum:
-          - CONTRACT
-          - SOLAR
-          - HEATPUMP
-          - BATTERY
-          - DEVICES
-          - EV
-          - OTHER
-        status:
-          type: string
-          enum:
-          - STARTED
-          - POTENTIAL
-          - FORMALIZED
-          - CONVERTED
-          - REJECTED
-        userId:
-          type: string
-        holder:
-          type: string
-        email:
-          type: string
-        phoneNumber:
-          type: string
-        nif:
-          type: string
-        houseId:
-          type: string
-        address:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-      required:
-      - id
-      - product
-      - status
-      - createdAt
-      - updatedAt
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
     ContractSalesOpportunity:
       type: object
       description: CONTRACT sales opportunity details including contracting payload fields
@@ -458,6 +335,70 @@ components:
       - status
       - createdAt
       - updatedAt
+    SalesOpportunitySummary:
+      type: object
+      description: Summary of a sales opportunity
+      properties:
+        id:
+          type: string
+        product:
+          type: string
+          enum:
+          - CONTRACT
+          - SOLAR
+          - HEATPUMP
+          - BATTERY
+          - DEVICES
+          - EV
+          - OTHER
+        status:
+          type: string
+          enum:
+          - STARTED
+          - POTENTIAL
+          - FORMALIZED
+          - CONVERTED
+          - REJECTED
+        userId:
+          type: string
+        holder:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        nif:
+          type: string
+        houseId:
+          type: string
+        address:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - product
+      - status
+      - createdAt
+      - updatedAt
+    PatchContractSalesOpportunityRequest:
+      type: object
+      description: Partial update for a CONTRACT sales opportunity
+      properties:
+        status:
+          type: string
+          enum:
+          - STARTED
+          - POTENTIAL
+          - FORMALIZED
+          - CONVERTED
+          - REJECTED
+      required:
+      - status
     SalesOpportunitiesPage:
       type: object
       description: Paginated list of sales opportunities
@@ -485,6 +426,57 @@ components:
       - totalPages
       - totalElements
       - elements
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
   securitySchemes:
     key:
       type: apiKey

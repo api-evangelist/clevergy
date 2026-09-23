@@ -13,9 +13,7 @@ paths:
   /houses/{houseId}/contracts:
     post:
       summary: Create a contract
-      description: 'Creates a house contract
-
-        '
+      description: Creates a house contract
       tags:
       - Contracts - Deprecated
       operationId: createHouseContract
@@ -66,9 +64,7 @@ paths:
   /houses/{houseId}/contracts/{contractId}:
     get:
       summary: Get house contract by id
-      description: 'Gets a house contract by id
-
-        '
+      description: Gets a house contract by id
       tags:
       - Contracts - Deprecated
       operationId: getHouseContractById
@@ -115,9 +111,7 @@ paths:
   /houses/{houseId}/contracts/{contractId}/energy-prices:
     get:
       summary: Get energy prices from a contract
-      description: 'Gets the contract energy prices for specific dates. It allows to filter by start and end date, with a maximum of a year between them.
-
-        '
+      description: Gets the contract energy prices for specific dates. It allows to filter by start and end date, with a maximum of a year between them.
       tags:
       - Contracts - Deprecated
       operationId: getHouseContractEnergyPrices
@@ -175,9 +169,7 @@ paths:
                 $ref: '#/components/schemas/Error'
     put:
       summary: Add energy prices to a contract
-      description: 'Adds the contract energy prices for specific dates.
-
-        '
+      description: Adds the contract energy prices for specific dates.
       tags:
       - Contracts - Deprecated
       operationId: addHouseContractEnergyPrices
@@ -225,9 +217,7 @@ paths:
   /houses/{houseId}/external-contracts:
     post:
       summary: Link a contract with an external id
-      description: 'Links a contract with an external id
-
-        '
+      description: Links a contract with an external id
       tags:
       - Contracts - Deprecated
       operationId: assignExternalContractIdToContract
@@ -271,9 +261,7 @@ paths:
   /houses/{houseId}/external-contracts/{externalContractId}:
     get:
       summary: Get contract id from external id
-      description: 'Gets contract id from the external id it is linked to
-
-        '
+      description: Gets contract id from the external id it is linked to
       tags:
       - Contracts - Deprecated
       operationId: getHouseContractIdByExternalId
@@ -318,9 +306,7 @@ paths:
   /houses/{houseId}/last-contract:
     get:
       summary: Get the last contract of a house
-      description: 'Gets the last contract of a house
-
-        '
+      description: Gets the last contract of a house
       tags:
       - Contracts - Deprecated
       operationId: getLastHouseContract
@@ -360,9 +346,40 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    HouseContractEnergyPriceResponse:
+    AssignExternalContractToContractRequest:
       type: object
-      description: Energy prices and surplus prices for a contract
+      description: Request to link a contract with an eternal id
+      required:
+      - contractId
+      - externalContractId
+      properties:
+        contractId:
+          type: string
+        externalContractId:
+          type: string
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    HouseContractEnergyPriceRequest:
+      type: object
+      description: Request to put energy prices for a contract
       properties:
         prices:
           type: array
@@ -370,6 +387,95 @@ components:
           items:
             type: object
             $ref: '#/components/schemas/HouseContractEnergyPriceItem'
+    HouseContractDetail:
+      type: object
+      description: Detail of contract
+      properties:
+        id:
+          type: string
+          format: uuid
+        houseId:
+          type: string
+          format: uuid
+        cups:
+          type: string
+        contractedPower:
+          type: array
+          items:
+            type: number
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        powerPrices:
+          type: array
+          items:
+            type: number
+        energyPrices:
+          type: array
+          items:
+            type: number
+        provider:
+          type: string
+        codefare:
+          type: string
+          example: 2T
+          description: Contract codefare
+        tariffType:
+          type: string
+          enum:
+          - PVPC_2_0_TD
+          - MERCADO_LIBRE_2_0_TD_FIJA
+          - MERCADO_LIBRE_2_0_TD
+          - MERCADO_LIBRE_3_0_TD
+          - INDEXADA_2_0_TD
+          - MERCADO_LIBRE_6_1_TD
+          - OMIE_MARGEN
+          description: Contract tariff type
+        distributor:
+          type: string
+        pvpc:
+          type: boolean
+        socialBonus:
+          type: boolean
+        tariffName:
+          type: string
+        status:
+          type: string
+        solarPrice:
+          type: number
+          format: float
+        commercialName:
+          type: string
+        holderName:
+          type: string
+        iban:
+          type: string
+        margin:
+          type: number
+          format: float
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
     HouseContractEnergyPriceItem:
       type: object
       description: Energy price and surplus price for an specific date
@@ -468,6 +574,27 @@ components:
           type: string
           example: ES0000000000000000000000
           description: International Bank Account Number (IBAN)
+    HouseContractEnergyPriceResponse:
+      type: object
+      description: Energy prices and surplus prices for a contract
+      properties:
+        prices:
+          type: array
+          description: List of energy prices and dates
+          items:
+            type: object
+            $ref: '#/components/schemas/HouseContractEnergyPriceItem'
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     HttpErrorNotFound:
       type: object
       properties:
@@ -488,147 +615,6 @@ components:
           description: Request path
           type: string
           example: /auth/alice.smith@gmail.com/token
-    AssignExternalContractToContractRequest:
-      type: object
-      description: Request to link a contract with an eternal id
-      required:
-      - contractId
-      - externalContractId
-      properties:
-        contractId:
-          type: string
-        externalContractId:
-          type: string
-    HttpErrorUnauthorized:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 401
-        error:
-          description: Http error description
-          type: string
-          example: Unauthorized
-        path:
-          description: Request path
-          type: string
-          example: /auth/john.doe@gmail.com/token
-    HouseContractEnergyPriceRequest:
-      type: object
-      description: Request to put energy prices for a contract
-      properties:
-        prices:
-          type: array
-          description: List of energy prices and dates
-          items:
-            type: object
-            $ref: '#/components/schemas/HouseContractEnergyPriceItem'
-    HttpErrorBadRequest:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 400
-        error:
-          description: Http error description
-          type: string
-          example: Bad Request
-        path:
-          description: Request path
-          type: string
-          example: /users
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    HouseContractDetail:
-      type: object
-      description: Detail of contract
-      properties:
-        id:
-          type: string
-          format: uuid
-        houseId:
-          type: string
-          format: uuid
-        cups:
-          type: string
-        contractedPower:
-          type: array
-          items:
-            type: number
-        startDate:
-          type: string
-          format: date-time
-        endDate:
-          type: string
-          format: date-time
-        powerPrices:
-          type: array
-          items:
-            type: number
-        energyPrices:
-          type: array
-          items:
-            type: number
-        provider:
-          type: string
-        codefare:
-          type: string
-          example: 2T
-          description: Contract codefare
-        tariffType:
-          type: string
-          enum:
-          - PVPC_2_0_TD
-          - MERCADO_LIBRE_2_0_TD_FIJA
-          - MERCADO_LIBRE_2_0_TD
-          - MERCADO_LIBRE_3_0_TD
-          - INDEXADA_2_0_TD
-          - MERCADO_LIBRE_6_1_TD
-          - OMIE_MARGEN
-          description: Contract tariff type
-        distributor:
-          type: string
-        pvpc:
-          type: boolean
-        socialBonus:
-          type: boolean
-        tariffName:
-          type: string
-        status:
-          type: string
-        solarPrice:
-          type: number
-          format: float
-        commercialName:
-          type: string
-        holderName:
-          type: string
-        iban:
-          type: string
-        margin:
-          type: number
-          format: float
   securitySchemes:
     key:
       type: apiKey

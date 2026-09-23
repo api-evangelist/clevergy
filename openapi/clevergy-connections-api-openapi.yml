@@ -12,7 +12,7 @@ tags:
 paths:
   /connections:
     get:
-      summary: Get all connections.
+      summary: Get all connections
       description: Get connections.
       tags:
       - Connections
@@ -38,31 +38,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    ConnectionResponse:
-      type: array
-      items:
-        type: object
-        $ref: '#/components/schemas/Connection'
-    HttpErrorUnauthorized:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 401
-        error:
-          description: Http error description
-          type: string
-          example: Unauthorized
-        path:
-          description: Request path
-          type: string
-          example: /auth/john.doe@gmail.com/token
     Connection:
       type: object
       properties:
@@ -90,6 +65,11 @@ components:
       - name
       - type
       - vendor
+    ConnectionResponse:
+      type: array
+      items:
+        type: object
+        $ref: '#/components/schemas/Connection'
     Error:
       type: object
       required:
@@ -101,6 +81,26 @@ components:
           format: int32
         message:
           type: string
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
   securitySchemes:
     key:
       type: apiKey

@@ -20,11 +20,9 @@ paths:
 
         **Recommended guide**
 
-        If you are unsure which parameters to include when creating a gas contract, refer to the [complete documentation](https://docs.clever.gy/developer/how-to-set-up/contracts).
+        If you are unsure which parameters to include when creating a gas contract, refer to the complete documentation.
 
-        :::
-
-        '
+        :::'
       tags:
       - Contracts|Gas
       operationId: createGasContract
@@ -275,136 +273,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    GasContractRequest:
-      type: object
-      description: Request to create a new gas contract
-      required:
-      - startDate
-      - status
-      - address
-      - cups
-      - tariffAccess
-      - tariffName
-      properties:
-        startDate:
-          type: string
-          format: date
-          example: '2023-02-01'
-          description: Start date of the gas contract
-        endDate:
-          type: string
-          format: date
-          example: '2024-02-01'
-          description: End date of the gas contract
-        status:
-          type: string
-          enum:
-          - ACTIVE
-          - INACTIVE
-          example: ACTIVE
-          description: Status of the gas contract
-        address:
-          type: string
-          example: 123 Main St, Springfield
-          description: Address associated with the gas contract
-        postalCode:
-          type: string
-          example: '12345'
-          description: Postal code associated with the gas contract
-        cups:
-          type: string
-          example: ES1234567890123456AB
-          description: Universal Point of Supply Code (CUPS)
-        tariffAccess:
-          type: string
-          enum:
-          - RL01
-          - RL02
-          - RL03
-          - RL04
-          - RL05
-          - RL06
-          - RL07
-          - RL08
-          - RL09
-          - RL10
-          - RL11
-          example: RL01
-          description: Tariff access code
-        tariffName:
-          type: string
-          example: Standard Gas Tariff
-          description: Name of the tariff applied to the contract
-        iban:
-          type: string
-          example: ES7620770024003102575766
-          description: IBAN for billing purposes
-        distributorName:
-          type: string
-          example: Gas Distributor S.A.
-          description: Name of the gas distributor company
-        holderName:
-          type: string
-          example: John Doe
-          description: Name of the contract holder
-        commercialName:
-          type: string
-          example: Gas Commercial S.L.
-          description: Name of the commercial gas company
-        fixedPrice:
-          type: number
-          format: number
-          example: 20.5
-          description: Fixed price component of the gas contract (€/day)
-        energyPrice:
-          type: number
-          format: number
-          example: 0.065
-          description: Energy price component of the gas contract (€/kWh)
-        pressure:
-          type: number
-          example: 0.5
-          description: Supply pressure in bar
-        contractNumber:
-          type: string
-          description: Contract number
-          example: GC-12345
-    HttpErrorConflict:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2025-01-01T12:00:00.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 409
-        error:
-          description: Http error description
-          type: string
-          example: Conflict
-    HttpErrorNotFound:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 404
-        error:
-          description: Http error description
-          type: string
-          example: Not Found
-        path:
-          description: Request path
-          type: string
-          example: /auth/alice.smith@gmail.com/token
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -425,26 +293,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    HttpErrorBadRequest:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 400
-        error:
-          description: Http error description
-          type: string
-          example: Bad Request
-        path:
-          description: Request path
-          type: string
-          example: /users
     GasContract:
       type: object
       description: Gas contract details
@@ -557,6 +405,136 @@ components:
           type: string
           description: Contract number
           example: GC-12345
+    HttpErrorConflict:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2025-01-01T12:00:00.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 409
+        error:
+          description: Http error description
+          type: string
+          example: Conflict
+    GasContractRequest:
+      type: object
+      description: Request to create a new gas contract
+      required:
+      - startDate
+      - status
+      - address
+      - cups
+      - tariffAccess
+      - tariffName
+      properties:
+        startDate:
+          type: string
+          format: date
+          example: '2023-02-01'
+          description: Start date of the gas contract
+        endDate:
+          type: string
+          format: date
+          example: '2024-02-01'
+          description: End date of the gas contract
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          example: ACTIVE
+          description: Status of the gas contract
+        address:
+          type: string
+          example: 123 Main St, Springfield
+          description: Address associated with the gas contract
+        postalCode:
+          type: string
+          example: '12345'
+          description: Postal code associated with the gas contract
+        cups:
+          type: string
+          example: ES1234567890123456AB
+          description: Universal Point of Supply Code (CUPS)
+        tariffAccess:
+          type: string
+          enum:
+          - RL01
+          - RL02
+          - RL03
+          - RL04
+          - RL05
+          - RL06
+          - RL07
+          - RL08
+          - RL09
+          - RL10
+          - RL11
+          example: RL01
+          description: Tariff access code
+        tariffName:
+          type: string
+          example: Standard Gas Tariff
+          description: Name of the tariff applied to the contract
+        iban:
+          type: string
+          example: ES7620770024003102575766
+          description: IBAN for billing purposes
+        distributorName:
+          type: string
+          example: Gas Distributor S.A.
+          description: Name of the gas distributor company
+        holderName:
+          type: string
+          example: John Doe
+          description: Name of the contract holder
+        commercialName:
+          type: string
+          example: Gas Commercial S.L.
+          description: Name of the commercial gas company
+        fixedPrice:
+          type: number
+          format: number
+          example: 20.5
+          description: Fixed price component of the gas contract (€/day)
+        energyPrice:
+          type: number
+          format: number
+          example: 0.065
+          description: Energy price component of the gas contract (€/kWh)
+        pressure:
+          type: number
+          example: 0.5
+          description: Supply pressure in bar
+        contractNumber:
+          type: string
+          description: Contract number
+          example: GC-12345
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
     Error:
       type: object
       required:
@@ -568,6 +546,26 @@ components:
           format: int32
         message:
           type: string
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
   securitySchemes:
     key:
       type: apiKey

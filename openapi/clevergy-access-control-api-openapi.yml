@@ -8,18 +8,16 @@ servers:
 security:
 - key: []
 tags:
-- name: Access control
+- name: Access Control
 paths:
   /auth/{userId}/token:
     get:
       summary: Get user access token
       description: 'Returns user jwt based on the email. The jwt can be used in some endpoints
 
-        of the API to obtain energy data from the user.
-
-        '
+        of the API to obtain energy data from the user.'
       tags:
-      - Access control
+      - Access Control
       operationId: retrieveUserAccessToken
       parameters:
       - name: userId
@@ -55,6 +53,26 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    AuthUser:
+      type: object
+      properties:
+        jwt:
+          type: string
+          example: eyJhbGciOiJSJhdWQiOiJodHRwczopdC5nb29nbGVhcGlzLmNvbS9nb29nbGUuaWRlbnRpdHkuaWRlbnRpdHl0b29sa2l0LnYxLklkZW50aXRF0IjoxNzAzODU0NzY5LCJpc3MiOiJwdWJsaWMtZnJvbnQtYmFja0BjbGV2ZXJneS5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsInN1YiI6InB1YmxpYy1mcm9udC1iYWNrQGNXA
+        userId:
+          type: string
+          example: U7Q02aMJm9VokGsNIZmID3BK25p3
     HttpErrorNotFound:
       type: object
       properties:
@@ -75,15 +93,6 @@ components:
           description: Request path
           type: string
           example: /auth/alice.smith@gmail.com/token
-    AuthUser:
-      type: object
-      properties:
-        jwt:
-          type: string
-          example: eyJhbGciOiJSJhdWQiOiJodHRwczopdC5nb29nbGVhcGlzLmNvbS9nb29nbGUuaWRlbnRpdHkuaWRlbnRpdHl0b29sa2l0LnYxLklkZW50aXRF0IjoxNzAzODU0NzY5LCJpc3MiOiJwdWJsaWMtZnJvbnQtYmFja0BjbGV2ZXJneS5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsInN1YiI6InB1YmxpYy1mcm9udC1iYWNrQGNXA
-        userId:
-          type: string
-          example: U7Q02aMJm9VokGsNIZmID3BK25p3
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -104,17 +113,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
   securitySchemes:
     key:
       type: apiKey

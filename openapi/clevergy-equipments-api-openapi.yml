@@ -13,9 +13,7 @@ paths:
   /equipments:
     get:
       summary: Get all the tenant equipments of a given type
-      description: 'Get tenant equipments of a given type.
-
-        '
+      description: Get tenant equipments of a given type.
       tags:
       - Equipments
       operationId: getTenantEquipments
@@ -73,9 +71,7 @@ paths:
   /equipments/{equipmentId}/storage:
     get:
       summary: Get storage equipment data
-      description: 'Returns the storage equipment information.
-
-        '
+      description: Returns the storage equipment information.
       tags:
       - Equipments
       operationId: getStorageEquipment
@@ -114,9 +110,7 @@ paths:
   /equipments/{equipmentId}/storage/schedule:
     post:
       summary: Schedule an action for a storage equipment
-      description: 'Schedules an action (charge or discharge) for a storage equipment.
-
-        '
+      description: Schedules an action (charge or discharge) for a storage equipment.
       tags:
       - Equipments
       operationId: scheduleStorageEquipmentAction
@@ -158,9 +152,7 @@ paths:
   /equipments/{equipmentId}/storage/soc:
     get:
       summary: Get storage equipment state of charge
-      description: 'Returns the storage equipment state of charge information.
-
-        '
+      description: Returns the storage equipment state of charge information.
       tags:
       - Equipments
       operationId: getStorageEquipmentSoc
@@ -213,9 +205,7 @@ paths:
   /houses/{houseId}/equipments:
     get:
       summary: Get equipments of a house
-      description: 'Returns the equipments of a house
-
-        '
+      description: Returns the equipments of a house
       tags:
       - Equipments
       operationId: getHouseEquipments
@@ -253,6 +243,136 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    StorageEquipment:
+      type: object
+      description: Storage equipment data
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          description: Equipment status
+          enum:
+          - ACTIVE
+          - INACTIVE
+        maxChargePower:
+          type: number
+          format: float
+          description: Maximum charge power in W
+          example: 100
+        maxDischargePower:
+          type: number
+          format: float
+          description: Maximum discharge power in W
+          example: 100
+        ratedCapacity:
+          type: number
+          format: float
+          description: Rated capacity in kWh
+          example: 50
+    StorageEquipmentSoc:
+      type: object
+      description: Storage equipment state of charge
+      required:
+      - time
+      - soc
+      properties:
+        time:
+          type: string
+          format: date-time
+          description: Time of measurement
+        soc:
+          type: number
+          format: float
+          description: State of charge in percentage
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    EquipmentsPage:
+      type: object
+      description: Page of equipments
+      properties:
+        cursor:
+          type: string
+          format: uuid
+          description: Cursor for next page request
+        elements:
+          type: array
+          description: List of equipments
+          items:
+            type: object
+            $ref: '#/components/schemas/Equipment'
+      required:
+      - elements
+    Equipment:
+      type: object
+      required:
+      - equipmentId
+      - integrationId
+      - vendor
+      properties:
+        equipmentId:
+          type: string
+          format: uuid
+        integrationId:
+          type: string
+          format: uuid
+        vendor:
+          type: string
+    HouseEquipments:
+      type: object
+      properties:
+        equipments:
+          type: array
+          items:
+            $ref: '#/components/schemas/HouseEquipment'
+    ScheduleStorageActionRequest:
+      type: object
+      description: Request to create a set of scheduled actions for a storage equipment
+      properties:
+        actions:
+          type: array
+          description: List of actions to be scheduled
+          items:
+            type: object
+            $ref: '#/components/schemas/ScheduleStorageActionItem'
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
     ScheduleStorageActionItem:
       type: object
       properties:
@@ -282,62 +402,6 @@ components:
       required:
       - date
       - action
-    HttpErrorNotFound:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 404
-        error:
-          description: Http error description
-          type: string
-          example: Not Found
-        path:
-          description: Request path
-          type: string
-          example: /auth/alice.smith@gmail.com/token
-    EquipmentsPage:
-      type: object
-      description: Page of equipments
-      properties:
-        cursor:
-          type: string
-          format: uuid
-          description: Cursor for next page request
-        elements:
-          type: array
-          description: List of equipments
-          items:
-            type: object
-            $ref: '#/components/schemas/Equipment'
-      required:
-      - elements
-    HttpErrorUnauthorized:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 401
-        error:
-          description: Http error description
-          type: string
-          example: Unauthorized
-        path:
-          description: Request path
-          type: string
-          example: /auth/john.doe@gmail.com/token
     HouseEquipment:
       type: object
       properties:
@@ -359,60 +423,6 @@ components:
       required:
       - equipmentId
       - integrationType
-    HttpErrorBadRequest:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 400
-        error:
-          description: Http error description
-          type: string
-          example: Bad Request
-        path:
-          description: Request path
-          type: string
-          example: /users
-    HouseEquipments:
-      type: object
-      properties:
-        equipments:
-          type: array
-          items:
-            $ref: '#/components/schemas/HouseEquipment'
-    StorageEquipment:
-      type: object
-      description: Storage equipment data
-      required:
-      - status
-      properties:
-        status:
-          type: string
-          description: Equipment status
-          enum:
-          - ACTIVE
-          - INACTIVE
-        maxChargePower:
-          type: number
-          format: float
-          description: Maximum charge power in W
-          example: 100
-        maxDischargePower:
-          type: number
-          format: float
-          description: Maximum discharge power in W
-          example: 100
-        ratedCapacity:
-          type: number
-          format: float
-          description: Rated capacity in kWh
-          example: 50
     Error:
       type: object
       required:
@@ -424,46 +434,26 @@ components:
           format: int32
         message:
           type: string
-    StorageEquipmentSoc:
+    HttpErrorNotFound:
       type: object
-      description: Storage equipment state of charge
-      required:
-      - time
-      - soc
       properties:
-        time:
+        timestamp:
+          description: Request date and time
           type: string
-          format: date-time
-          description: Time of measurement
-        soc:
-          type: number
-          format: float
-          description: State of charge in percentage
-    Equipment:
-      type: object
-      required:
-      - equipmentId
-      - integrationId
-      - vendor
-      properties:
-        equipmentId:
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
           type: string
-          format: uuid
-        integrationId:
+          example: Not Found
+        path:
+          description: Request path
           type: string
-          format: uuid
-        vendor:
-          type: string
-    ScheduleStorageActionRequest:
-      type: object
-      description: Request to create a set of scheduled actions for a storage equipment
-      properties:
-        actions:
-          type: array
-          description: List of actions to be scheduled
-          items:
-            type: object
-            $ref: '#/components/schemas/ScheduleStorageActionItem'
+          example: /auth/alice.smith@gmail.com/token
   securitySchemes:
     key:
       type: apiKey

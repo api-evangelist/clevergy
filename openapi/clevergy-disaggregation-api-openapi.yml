@@ -13,9 +13,7 @@ paths:
   /houses/{houseId}/disaggregation:
     get:
       summary: Get house disaggregation
-      description: 'Returns the consumption disaggregation of a house.
-
-        '
+      description: Returns the consumption disaggregation of a house.
       tags:
       - Disaggregation
       operationId: getDisaggregationByHouse
@@ -67,26 +65,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    HttpErrorNotFound:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 404
-        error:
-          description: Http error description
-          type: string
-          example: Not Found
-        path:
-          description: Request path
-          type: string
-          example: /auth/alice.smith@gmail.com/token
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -157,6 +135,26 @@ components:
           format: int32
         message:
           type: string
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
   securitySchemes:
     key:
       type: apiKey

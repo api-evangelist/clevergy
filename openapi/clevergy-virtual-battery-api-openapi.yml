@@ -13,9 +13,7 @@ paths:
   /users/{userId}/virtual-battery:
     post:
       summary: Create virtual battery transaction
-      description: 'Creates a user virtual battery transaction
-
-        '
+      description: Creates a user virtual battery transaction
       tags:
       - Virtual battery
       operationId: createVirtualBatteryTransaction
@@ -55,6 +53,26 @@ paths:
         description: User virtual battery transaction request
 components:
   schemas:
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
     HttpErrorUnprocessableEntity:
       type: object
       properties:
@@ -93,26 +111,6 @@ components:
           type: number
           format: float
           description: Total balance after the transaction (in kW)
-    HttpErrorUnauthorized:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 401
-        error:
-          description: Http error description
-          type: string
-          example: Unauthorized
-        path:
-          description: Request path
-          type: string
-          example: /auth/john.doe@gmail.com/token
     Error:
       type: object
       required:

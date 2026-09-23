@@ -13,9 +13,7 @@ paths:
   /houses/{houseId}/energy-comparison:
     get:
       summary: Get energy comparison
-      description: 'Returns the energy of a house for a month and a comparison with different profiles
-
-        '
+      description: Returns the energy of a house for a month and a comparison with different profiles
       tags:
       - Energy
       operationId: getEnergyComparison
@@ -63,9 +61,7 @@ paths:
       summary: Get house energy
       description: 'Returns the energy of a house for a date period (from startDate to endDate)
 
-        grouped by date based on granularity
-
-        '
+        grouped by date based on granularity'
       tags:
       - Energy
       operationId: getEnergyByHouseId
@@ -155,9 +151,7 @@ paths:
 
         This endpoint is experimental. Please, contact us if you want to use it.
 
-        :::
-
-        '
+        :::'
       tags:
       - Energy
       operationId: storeHouseEnergies
@@ -202,6 +196,26 @@ paths:
               $ref: '#/components/schemas/StoreHouseEnergiesRequest'
 components:
   schemas:
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
     StoreHouseEnergiesRequest:
       type: object
       required:
@@ -212,62 +226,6 @@ components:
           items:
             type: object
             $ref: '#/components/schemas/EnergyEntry'
-    EnergyEntry:
-      type: object
-      properties:
-        wh:
-          type: number
-          format: float
-        date:
-          type: string
-          format: date-time
-        dateTo:
-          type: string
-          format: date-time
-          description: Not mandatory, if not provided, dateTo is one hour more than date.
-      required:
-      - date
-      - wh
-    HttpErrorForbidden:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 403
-        error:
-          description: Http error description
-          type: string
-          example: Forbidden
-        path:
-          description: Request path
-          type: string
-          example: /users/U4NW5zdmstUtRZW5Oi3S2CR5l0U2/houses
-    HttpErrorNotFound:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 404
-        error:
-          description: Http error description
-          type: string
-          example: Not Found
-        path:
-          description: Request path
-          type: string
-          example: /auth/alice.smith@gmail.com/token
     EnergyItem:
       type: object
       properties:
@@ -344,26 +302,6 @@ components:
             - energy
       required:
       - date
-    HttpErrorUnauthorized:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 401
-        error:
-          description: Http error description
-          type: string
-          example: Unauthorized
-        path:
-          description: Request path
-          type: string
-          example: /auth/john.doe@gmail.com/token
     EnergyComparison:
       required:
       - currentYear
@@ -396,6 +334,42 @@ components:
           type: number
           format: float
           description: Average consumption of homes in the neighborhood
+    HttpErrorForbidden:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 403
+        error:
+          description: Http error description
+          type: string
+          example: Forbidden
+        path:
+          description: Request path
+          type: string
+          example: /users/U4NW5zdmstUtRZW5Oi3S2CR5l0U2/houses
+    EnergyEntry:
+      type: object
+      properties:
+        wh:
+          type: number
+          format: float
+        date:
+          type: string
+          format: date-time
+        dateTo:
+          type: string
+          format: date-time
+          description: Not mandatory, if not provided, dateTo is one hour more than date.
+      required:
+      - date
+      - wh
     Error:
       type: object
       required:
@@ -407,6 +381,26 @@ components:
           format: int32
         message:
           type: string
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
   securitySchemes:
     key:
       type: apiKey

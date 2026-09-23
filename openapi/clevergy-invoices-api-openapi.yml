@@ -13,9 +13,7 @@ paths:
   /invoice-analysis:
     post:
       summary: Analyze invoice
-      description: 'Analizes an invoice from an url
-
-        '
+      description: Analizes an invoice from an url
       tags:
       - Invoices
       operationId: analyzeInvoice
@@ -47,9 +45,7 @@ paths:
   /invoice-analysis/{invoiceAnalysisId}:
     get:
       summary: Get invoice analysis
-      description: 'Get latest available invoice analysis
-
-        '
+      description: Get latest available invoice analysis
       tags:
       - Invoices
       operationId: getInvoiceAnalysisById
@@ -313,7 +309,7 @@ paths:
 
         **Recommended guide**
 
-        If you are unsure which parameters to include when creating a gas or electricity invoice, refer to the [complete documentation](https://docs.clever.gy/developer/how-to-set-up/invoices).
+        If you are unsure which parameters to include when creating a gas or electricity invoice, refer to the complete documentation.
 
         :::
 
@@ -325,9 +321,7 @@ paths:
         2. PUT the PDF file to the returned URL (valid for 15 minutes).
 
 
-        > **Important:** After creating the invoice, the PDF must be uploaded to the `fileUrl` returned in the response. If the PDF is not uploaded, the invoice will not be processed and will not be available to the customer.
-
-        '
+        > **Important:** After creating the invoice, the PDF must be uploaded to the `fileUrl` returned in the response. If the PDF is not uploaded, the invoice will not be processed and will not be available to the customer.'
       tags:
       - Invoices
       operationId: createInvoice
@@ -384,135 +378,6 @@ paths:
         required: true
 components:
   schemas:
-    Invoice:
-      type: object
-      description: Invoice information
-      required:
-      - id
-      - issueDate
-      - invoicePeriodFrom
-      - invoicePeriodTo
-      - type
-      - cost
-      - contractId
-      properties:
-        id:
-          type: string
-          example: invoice-123
-          description: Unique identifier of the invoice
-        issueDate:
-          type: string
-          format: date
-          example: '2023-01-15'
-          description: Date when the invoice was issued
-        invoicePeriodFrom:
-          type: string
-          format: date
-          example: '2023-01-01'
-          description: Start of the invoice period
-        invoicePeriodTo:
-          type: string
-          format: date
-          example: '2023-01-31'
-          description: End of the invoice period
-        type:
-          type: string
-          enum:
-          - ELECTRICITY
-          - GAS
-          - WATER
-          - OTHER
-          example: ELECTRICITY
-          description: Type of the contract
-        cost:
-          type: number
-          format: double
-          example: 125.5
-          description: Total cost of the invoice
-        contractId:
-          type: string
-          example: contract-123
-          description: ID of the contract associated with this invoice
-        externalId:
-          type: string
-          example: ext-456
-          description: External identifier for the invoice, used for integration with third-party systems. Unique per Clevergy user; may be reused across different users.
-        concepts:
-          type: object
-          additionalProperties:
-            type: string
-          example:
-            energy: '75.20'
-            taxes: '15.30'
-            fixed: '35.00'
-          description: Additional invoice concepts as key-value pairs
-        fileUrl:
-          type:
-          - string
-          - 'null'
-          example: https://example.com/invoices/detail/123
-          description: Signed URL to access the invoice PDF when available. Null when no file has been uploaded for this invoice.
-        obtainMethod:
-          type: string
-          enum:
-          - REAL
-          - ESTIMATED
-          example: REAL
-          description: Method in which the invoice is obtained
-        totalEnergyConsumption:
-          type: number
-          format: double
-          example: 350.75
-          description: Total energy consumption recorded in the invoice in kWh
-        paymentDate:
-          type: string
-          format: date
-          example: '2023-02-01'
-          description: Date when the invoice was paid
-        paymentStatus:
-          type: string
-          enum:
-          - PENDING
-          - PAID
-          - OVERDUE
-          example: PAID
-          description: Payment status of the invoice
-    HttpErrorConflict:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2025-01-01T12:00:00.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 409
-        error:
-          description: Http error description
-          type: string
-          example: Conflict
-    HttpErrorNotFound:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 404
-        error:
-          description: Http error description
-          type: string
-          example: Not Found
-        path:
-          description: Request path
-          type: string
-          example: /auth/alice.smith@gmail.com/token
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -533,131 +398,22 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    HttpErrorBadRequest:
+    HttpErrorConflict:
       type: object
       properties:
         timestamp:
           description: Request date and time
           type: string
-          example: '2023-12-26T10:23:19.508+00:00'
+          example: '2025-01-01T12:00:00.508+00:00'
         status:
           description: Http error code
           type: integer
           format: int32
-          example: 400
+          example: 409
         error:
           description: Http error description
           type: string
-          example: Bad Request
-        path:
-          description: Request path
-          type: string
-          example: /users
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    InvoiceAnalysisId:
-      type: object
-      properties:
-        invoiceAnalysisId:
-          type: string
-          format: uuid
-          example: 044b7fef-4a80-42ac-a8c6-addd9c9d86a4
-    InvoiceAnalysis:
-      type: object
-      properties:
-        dni:
-          type: string
-          example: 1111111A
-        name:
-          type: string
-          example: John
-        surname:
-          type: string
-          example: Doe
-        houseCity:
-          type: string
-          example: Madrid
-        houseStreet:
-          type: string
-          example: Avenida
-        houseNumber:
-          type: string
-          example: '53'
-        houseProvince:
-          type: string
-          example: Madrid
-        postalCode:
-          type: string
-          example: '28005'
-        cups:
-          type: string
-          example: ES0000000000000000EYOF
-        marketer:
-          type: string
-          example: Iberdrola
-        contractedPowerP1:
-          type: number
-          format: float
-          example: '4.6'
-        contractedPowerP2:
-          type: number
-          format: float
-          example: '4.6'
-        maxPowerDemandedP1:
-          type: number
-          format: float
-          example: '3.4'
-        maxPowerDemandedP2:
-          type: number
-          format: float
-          example: '3.5'
-        energyConsumptionP1:
-          type: number
-          format: float
-          example: '50.0'
-        energyConsumptionP2:
-          type: number
-          format: float
-          example: '152.0'
-        energyConsumptionP3:
-          type: number
-          format: float
-          example: '108.0'
-        totalEnergyConsumption:
-          type: number
-          format: float
-          example: '210.0'
-        totalCost:
-          type: number
-          format: float
-          example: '78.77'
-        startDate:
-          type: string
-          format: date
-          example: '2024-01-01'
-        endDate:
-          type: string
-          format: date
-          example: '2024-01-31'
-        renovationDate:
-          type: string
-          format: date
-          example: '2026-03-05'
-    AnalyzeInvoice:
-      type: object
-      properties:
-        invoiceUrl:
-          type: string
-          example: https://example/invoice-123
+          example: Conflict
     CreateOrUpdateInvoiceRequest:
       type: object
       description: Request to create a new invoice
@@ -765,6 +521,244 @@ components:
           format: double
           example: 350.75
           description: Total energy consumption recorded in the invoice in kWh
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
+    Invoice:
+      type: object
+      description: Invoice information
+      required:
+      - id
+      - issueDate
+      - invoicePeriodFrom
+      - invoicePeriodTo
+      - type
+      - cost
+      - contractId
+      properties:
+        id:
+          type: string
+          example: invoice-123
+          description: Unique identifier of the invoice
+        issueDate:
+          type: string
+          format: date
+          example: '2023-01-15'
+          description: Date when the invoice was issued
+        invoicePeriodFrom:
+          type: string
+          format: date
+          example: '2023-01-01'
+          description: Start of the invoice period
+        invoicePeriodTo:
+          type: string
+          format: date
+          example: '2023-01-31'
+          description: End of the invoice period
+        type:
+          type: string
+          enum:
+          - ELECTRICITY
+          - GAS
+          - WATER
+          - OTHER
+          example: ELECTRICITY
+          description: Type of the contract
+        cost:
+          type: number
+          format: double
+          example: 125.5
+          description: Total cost of the invoice
+        contractId:
+          type: string
+          example: contract-123
+          description: ID of the contract associated with this invoice
+        externalId:
+          type: string
+          example: ext-456
+          description: External identifier for the invoice, used for integration with third-party systems. Unique per Clevergy user; may be reused across different users.
+        concepts:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            energy: '75.20'
+            taxes: '15.30'
+            fixed: '35.00'
+          description: Additional invoice concepts as key-value pairs
+        fileUrl:
+          type:
+          - string
+          - 'null'
+          example: https://example.com/invoices/detail/123
+          description: Signed URL to access the invoice PDF when available. Null when no file has been uploaded for this invoice.
+        obtainMethod:
+          type: string
+          enum:
+          - REAL
+          - ESTIMATED
+          example: REAL
+          description: Method in which the invoice is obtained
+        totalEnergyConsumption:
+          type: number
+          format: double
+          example: 350.75
+          description: Total energy consumption recorded in the invoice in kWh
+        paymentDate:
+          type: string
+          format: date
+          example: '2023-02-01'
+          description: Date when the invoice was paid
+        paymentStatus:
+          type: string
+          enum:
+          - PENDING
+          - PAID
+          - OVERDUE
+          example: PAID
+          description: Payment status of the invoice
+    InvoiceAnalysis:
+      type: object
+      properties:
+        dni:
+          type: string
+          example: 1111111A
+        name:
+          type: string
+          example: John
+        surname:
+          type: string
+          example: Doe
+        houseCity:
+          type: string
+          example: Madrid
+        houseStreet:
+          type: string
+          example: Avenida
+        houseNumber:
+          type: string
+          example: '53'
+        houseProvince:
+          type: string
+          example: Madrid
+        postalCode:
+          type: string
+          example: '28005'
+        cups:
+          type: string
+          example: ES0000000000000000EYOF
+        marketer:
+          type: string
+          example: Iberdrola
+        contractedPowerP1:
+          type: number
+          format: float
+          example: '4.6'
+        contractedPowerP2:
+          type: number
+          format: float
+          example: '4.6'
+        maxPowerDemandedP1:
+          type: number
+          format: float
+          example: '3.4'
+        maxPowerDemandedP2:
+          type: number
+          format: float
+          example: '3.5'
+        energyConsumptionP1:
+          type: number
+          format: float
+          example: '50.0'
+        energyConsumptionP2:
+          type: number
+          format: float
+          example: '152.0'
+        energyConsumptionP3:
+          type: number
+          format: float
+          example: '108.0'
+        totalEnergyConsumption:
+          type: number
+          format: float
+          example: '210.0'
+        totalCost:
+          type: number
+          format: float
+          example: '78.77'
+        startDate:
+          type: string
+          format: date
+          example: '2024-01-01'
+        endDate:
+          type: string
+          format: date
+          example: '2024-01-31'
+        renovationDate:
+          type: string
+          format: date
+          example: '2026-03-05'
+    AnalyzeInvoice:
+      type: object
+      properties:
+        invoiceUrl:
+          type: string
+          example: https://example/invoice-123
+    InvoiceAnalysisId:
+      type: object
+      properties:
+        invoiceAnalysisId:
+          type: string
+          format: uuid
+          example: 044b7fef-4a80-42ac-a8c6-addd9c9d86a4
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
   securitySchemes:
     key:
       type: apiKey
