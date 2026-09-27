@@ -38,6 +38,17 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     Connection:
       type: object
       properties:
@@ -70,17 +81,6 @@ components:
       items:
         type: object
         $ref: '#/components/schemas/Connection'
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
     HttpErrorUnauthorized:
       type: object
       properties:

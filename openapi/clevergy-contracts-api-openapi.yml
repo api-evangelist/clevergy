@@ -128,6 +128,42 @@ components:
           items:
             type: object
             $ref: '#/components/schemas/ContractEnergyPriceItem'
+    ContractEnergyPriceItem:
+      type: object
+      description: Energy price and surplus price for an specific date
+      properties:
+        date:
+          type: string
+          format: date-time
+          example: '2022-12-31T23:00:00'
+          description: Date for the energy
+        price:
+          type: number
+          description: Price of the energy
+        surplusPrice:
+          type: number
+          description: Price of the surplus energy
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    ContractEnergyPriceRequest:
+      type: object
+      description: Request to put energy prices for a contract
+      properties:
+        prices:
+          type: array
+          description: List of energy prices and dates
+          items:
+            type: object
+            $ref: '#/components/schemas/ContractEnergyPriceItem'
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -148,31 +184,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    ContractEnergyPriceItem:
-      type: object
-      description: Energy price and surplus price for an specific date
-      properties:
-        date:
-          type: string
-          format: date-time
-          example: '2022-12-31T23:00:00'
-          description: Date for the energy
-        price:
-          type: number
-          description: Price of the energy
-        surplusPrice:
-          type: number
-          description: Price of the surplus energy
-    ContractEnergyPriceRequest:
-      type: object
-      description: Request to put energy prices for a contract
-      properties:
-        prices:
-          type: array
-          description: List of energy prices and dates
-          items:
-            type: object
-            $ref: '#/components/schemas/ContractEnergyPriceItem'
     HttpErrorBadRequest:
       type: object
       properties:
@@ -193,17 +204,6 @@ components:
           description: Request path
           type: string
           example: /users
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
   securitySchemes:
     key:
       type: apiKey

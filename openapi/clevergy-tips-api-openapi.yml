@@ -36,15 +36,6 @@ paths:
       security: []
 components:
   schemas:
-    PublicSavingTip:
-      type: object
-      properties:
-        title:
-          type: string
-          example: Elige neveras con buena calificación energética
-        text:
-          type: string
-          example: Si tu nevera es antigua, plantéate comprar una nevera con  calificación energética alta. Podrás ahorrar un 20% en tu factura.
     Error:
       type: object
       required:
@@ -56,6 +47,15 @@ components:
           format: int32
         message:
           type: string
+    PublicSavingTip:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Elige neveras con buena calificación energética
+        text:
+          type: string
+          example: Si tu nevera es antigua, plantéate comprar una nevera con  calificación energética alta. Podrás ahorrar un 20% en tu factura.
   securitySchemes:
     key:
       type: apiKey

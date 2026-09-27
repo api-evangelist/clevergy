@@ -228,26 +228,58 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    HttpErrorUnauthorized:
+    SalesOpportunitiesPage:
       type: object
+      description: Paginated list of sales opportunities
       properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
+        size:
+          type: integer
+          description: Number of elements in the page requested
+        page:
+          type: integer
+          description: Number of the page requested
+        totalPages:
+          type: integer
+          description: Number of total pages
+        totalElements:
+          type: integer
+          description: Number of total elements in the list
+        elements:
+          type: array
+          description: List of sales opportunities
+          items:
+            $ref: '#/components/schemas/SalesOpportunitySummary'
+      required:
+      - size
+      - page
+      - totalPages
+      - totalElements
+      - elements
+    PatchContractSalesOpportunityRequest:
+      type: object
+      description: Partial update for a CONTRACT sales opportunity
+      properties:
         status:
-          description: Http error code
+          type: string
+          enum:
+          - STARTED
+          - POTENTIAL
+          - FORMALIZED
+          - CONVERTED
+          - REJECTED
+      required:
+      - status
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
           type: integer
           format: int32
-          example: 401
-        error:
-          description: Http error description
+        message:
           type: string
-          example: Unauthorized
-        path:
-          description: Request path
-          type: string
-          example: /auth/john.doe@gmail.com/token
     ContractSalesOpportunity:
       type: object
       description: CONTRACT sales opportunity details including contracting payload fields
@@ -335,6 +367,26 @@ components:
       - status
       - createdAt
       - updatedAt
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
     SalesOpportunitySummary:
       type: object
       description: Summary of a sales opportunity
@@ -385,78 +437,6 @@ components:
       - status
       - createdAt
       - updatedAt
-    PatchContractSalesOpportunityRequest:
-      type: object
-      description: Partial update for a CONTRACT sales opportunity
-      properties:
-        status:
-          type: string
-          enum:
-          - STARTED
-          - POTENTIAL
-          - FORMALIZED
-          - CONVERTED
-          - REJECTED
-      required:
-      - status
-    SalesOpportunitiesPage:
-      type: object
-      description: Paginated list of sales opportunities
-      properties:
-        size:
-          type: integer
-          description: Number of elements in the page requested
-        page:
-          type: integer
-          description: Number of the page requested
-        totalPages:
-          type: integer
-          description: Number of total pages
-        totalElements:
-          type: integer
-          description: Number of total elements in the list
-        elements:
-          type: array
-          description: List of sales opportunities
-          items:
-            $ref: '#/components/schemas/SalesOpportunitySummary'
-      required:
-      - size
-      - page
-      - totalPages
-      - totalElements
-      - elements
-    HttpErrorBadRequest:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 400
-        error:
-          description: Http error description
-          type: string
-          example: Bad Request
-        path:
-          description: Request path
-          type: string
-          example: /users
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
     HttpErrorNotFound:
       type: object
       properties:
@@ -477,6 +457,26 @@ components:
           description: Request path
           type: string
           example: /auth/alice.smith@gmail.com/token
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
   securitySchemes:
     key:
       type: apiKey

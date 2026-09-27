@@ -401,6 +401,197 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    UserRegistration:
+      type: object
+      properties:
+        name:
+          type: string
+          example: John
+        surname:
+          type: string
+          example: Doe
+        email:
+          type: string
+          format: email
+          example: john.doe@example.com
+        dni:
+          type: string
+          example: 12345678X
+        phoneNumber:
+          type: string
+          example: '600000000'
+        language:
+          type: string
+          example: es-ES
+          description: User language in BCP 47 format
+    UsersPageElement:
+      type: object
+      properties:
+        id:
+          type: string
+          example: U4NW5zdmstUtRZW5Oi3S2CR5l0U2
+        name:
+          type: string
+          example: Pedro
+        surname:
+          type: string
+          example: García
+        email:
+          type: string
+          example: pedro.garcia@mail.com
+        nif:
+          type: string
+          example: 00000000T
+    UserAppDevicesList:
+      type: array
+      items:
+        type: object
+        $ref: '#/components/schemas/UserAppDevice'
+    UserAppDevice:
+      type: object
+      description: User app device
+      properties:
+        userId:
+          type: string
+          format: uuid
+        deviceToken:
+          type: string
+      required:
+      - userId
+      - deviceToken
+    HttpErrorForbidden:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 403
+        error:
+          description: Http error description
+          type: string
+          example: Forbidden
+        path:
+          description: Request path
+          type: string
+          example: /users/U4NW5zdmstUtRZW5Oi3S2CR5l0U2/houses
+    UserHouses:
+      type: array
+      items:
+        type: object
+        properties:
+          houseId:
+            type: string
+            example: 8ec307fc-3b4c-4f6f-b320-fa2587990a46
+          cups:
+            type: string
+            example: ES0022123456781234AB0F
+          address:
+            type: string
+            example: Leonardo da Vinci 7
+          postalCode:
+            type: string
+            example: '41092'
+          firstConsumptionDate:
+            type: string
+            format: date-time
+            example: '2022-12-31T23:00:00'
+          lastConsumptionDate:
+            type: string
+            format: date-time
+            example: '2023-12-31T22:00:00'
+    UpdateUser:
+      type: object
+      properties:
+        name:
+          type: string
+          example: John
+        surname:
+          type: string
+          example: Doe
+        email:
+          type: string
+          format: email
+          example: john.doe@example.com
+        dni:
+          type: string
+          example: 12345678X
+        phoneNumber:
+          type: string
+          example: '600000000'
+    UserCreated:
+      type: object
+      properties:
+        id:
+          type: string
+          example: U4NW5zdmstUtRZW5Oi3S2CR5l0U2
+        status:
+          type: string
+          example: INITIAL
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: U4NW5zdmstUtRZW5Oi3S2CR5l0U2
+        name:
+          type: string
+          example: Pedro
+        surname:
+          type: string
+          example: García
+        email:
+          type: string
+          example: pedro.garcia@mail.com
+        nif:
+          type: string
+          example: 00000000T
+        language:
+          type: string
+          example: es-ES
+          description: User language in BCP 47 format
+        optOutCode:
+          type: string
+          example: 123456
+          description: Code to opt out of emails
+      required:
+      - id
+      - email
+      - optOutCode
+    AuthorizeUserRequest:
+      type: object
+      properties:
+        cups:
+          description: The ID of the supply point to authorize
+          type: string
+        authorizedUserId:
+          description: The ID of the user to authorize
+          type: string
+        status:
+          description: The authorization status
+          type: string
+          enum:
+          - AUTHORIZED
+          - REVOKED
+      required:
+      - cups
+      - authorizedUserId
+      - status
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     UsersPage:
       type: object
       description: Paginated list of users
@@ -449,233 +640,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    HttpErrorUserExists:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 409
-        error:
-          description: Http error description
-          type: string
-          example: User exists
-    AuthorizeUserRequest:
-      type: object
-      properties:
-        cups:
-          description: The ID of the supply point to authorize
-          type: string
-        authorizedUserId:
-          description: The ID of the user to authorize
-          type: string
-        status:
-          description: The authorization status
-          type: string
-          enum:
-          - AUTHORIZED
-          - REVOKED
-      required:
-      - cups
-      - authorizedUserId
-      - status
-    UpdateUser:
-      type: object
-      properties:
-        name:
-          type: string
-          example: John
-        surname:
-          type: string
-          example: Doe
-        email:
-          type: string
-          format: email
-          example: john.doe@example.com
-        dni:
-          type: string
-          example: 12345678X
-        phoneNumber:
-          type: string
-          example: '600000000'
-    UserRegistration:
-      type: object
-      properties:
-        name:
-          type: string
-          example: John
-        surname:
-          type: string
-          example: Doe
-        email:
-          type: string
-          format: email
-          example: john.doe@example.com
-        dni:
-          type: string
-          example: 12345678X
-        phoneNumber:
-          type: string
-          example: '600000000'
-        language:
-          type: string
-          example: es-ES
-          description: User language in BCP 47 format
-    UserAppDevice:
-      type: object
-      description: User app device
-      properties:
-        userId:
-          type: string
-          format: uuid
-        deviceToken:
-          type: string
-      required:
-      - userId
-      - deviceToken
-    UserAppDevicesList:
-      type: array
-      items:
-        type: object
-        $ref: '#/components/schemas/UserAppDevice'
-    HttpErrorForbidden:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 403
-        error:
-          description: Http error description
-          type: string
-          example: Forbidden
-        path:
-          description: Request path
-          type: string
-          example: /users/U4NW5zdmstUtRZW5Oi3S2CR5l0U2/houses
-    UserCreated:
-      type: object
-      properties:
-        id:
-          type: string
-          example: U4NW5zdmstUtRZW5Oi3S2CR5l0U2
-        status:
-          type: string
-          example: INITIAL
-    User:
-      type: object
-      properties:
-        id:
-          type: string
-          example: U4NW5zdmstUtRZW5Oi3S2CR5l0U2
-        name:
-          type: string
-          example: Pedro
-        surname:
-          type: string
-          example: García
-        email:
-          type: string
-          example: pedro.garcia@mail.com
-        nif:
-          type: string
-          example: 00000000T
-        language:
-          type: string
-          example: es-ES
-          description: User language in BCP 47 format
-        optOutCode:
-          type: string
-          example: 123456
-          description: Code to opt out of emails
-      required:
-      - id
-      - email
-      - optOutCode
-    HttpErrorBadRequest:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 400
-        error:
-          description: Http error description
-          type: string
-          example: Bad Request
-        path:
-          description: Request path
-          type: string
-          example: /users
-    UserHouses:
-      type: array
-      items:
-        type: object
-        properties:
-          houseId:
-            type: string
-            example: 8ec307fc-3b4c-4f6f-b320-fa2587990a46
-          cups:
-            type: string
-            example: ES0022123456781234AB0F
-          address:
-            type: string
-            example: Leonardo da Vinci 7
-          postalCode:
-            type: string
-            example: '41092'
-          firstConsumptionDate:
-            type: string
-            format: date-time
-            example: '2022-12-31T23:00:00'
-          lastConsumptionDate:
-            type: string
-            format: date-time
-            example: '2023-12-31T22:00:00'
-    UsersPageElement:
-      type: object
-      properties:
-        id:
-          type: string
-          example: U4NW5zdmstUtRZW5Oi3S2CR5l0U2
-        name:
-          type: string
-          example: Pedro
-        surname:
-          type: string
-          example: García
-        email:
-          type: string
-          example: pedro.garcia@mail.com
-        nif:
-          type: string
-          example: 00000000T
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
     HttpErrorNotFound:
       type: object
       properties:
@@ -696,6 +660,42 @@ components:
           description: Request path
           type: string
           example: /auth/alice.smith@gmail.com/token
+    HttpErrorUserExists:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 409
+        error:
+          description: Http error description
+          type: string
+          example: User exists
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
   securitySchemes:
     key:
       type: apiKey

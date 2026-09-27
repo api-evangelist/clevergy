@@ -53,26 +53,35 @@ paths:
         description: User virtual battery transaction request
 components:
   schemas:
-    HttpErrorUnauthorized:
+    Error:
       type: object
+      required:
+      - code
+      - message
       properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
+        code:
           type: integer
           format: int32
-          example: 401
-        error:
-          description: Http error description
+        message:
           type: string
-          example: Unauthorized
-        path:
-          description: Request path
+    UserVirtualBatteryTransaction:
+      type: object
+      required:
+      - date
+      - amount
+      - totalBalance
+      properties:
+        date:
           type: string
-          example: /auth/john.doe@gmail.com/token
+          format: date
+        amount:
+          type: number
+          format: float
+          description: Transaction amount (in kW)
+        totalBalance:
+          type: number
+          format: float
+          description: Total balance after the transaction (in kW)
     HttpErrorUnprocessableEntity:
       type: object
       properties:
@@ -93,35 +102,26 @@ components:
           description: Request path
           type: string
           example: /users
-    UserVirtualBatteryTransaction:
+    HttpErrorUnauthorized:
       type: object
-      required:
-      - date
-      - amount
-      - totalBalance
       properties:
-        date:
+        timestamp:
+          description: Request date and time
           type: string
-          format: date
-        amount:
-          type: number
-          format: float
-          description: Transaction amount (in kW)
-        totalBalance:
-          type: number
-          format: float
-          description: Total balance after the transaction (in kW)
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
           type: integer
           format: int32
-        message:
+          example: 401
+        error:
+          description: Http error description
           type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
   securitySchemes:
     key:
       type: apiKey

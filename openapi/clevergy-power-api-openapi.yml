@@ -73,6 +73,39 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    EnergyCommunityPower:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - SOLAR
+          - WIND
+          - HYDRO
+        production:
+          type: number
+          format: float
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    SmartDevicesPower:
+      type: object
+      properties:
+        subtype:
+          type: string
+        vendor:
+          type: string
+        power:
+          type: number
+          format: float
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -93,28 +126,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    EnergyCommunityPower:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-          - SOLAR
-          - WIND
-          - HYDRO
-        production:
-          type: number
-          format: float
-    SmartDevicesPower:
-      type: object
-      properties:
-        subtype:
-          type: string
-        vendor:
-          type: string
-        power:
-          type: number
-          format: float
     PowerItem:
       type: object
       properties:
@@ -161,17 +172,6 @@ components:
           items:
             type: object
             $ref: '#/components/schemas/SmartDevicesPower'
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
     HttpErrorNotFound:
       type: object
       properties:

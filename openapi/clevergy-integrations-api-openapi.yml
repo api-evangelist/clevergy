@@ -240,42 +240,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    HttpErrorUnauthorized:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 401
-        error:
-          description: Http error description
-          type: string
-          example: Unauthorized
-        path:
-          description: Request path
-          type: string
-          example: /auth/john.doe@gmail.com/token
-    UpdateInstallation:
-      type: object
-      properties:
-        capacity:
-          type: number
-          format: float
-          description: Capacity of the installation
-          example: 10
-        plantAddress:
-          type: string
-          description: Address of the installation
-          example: Leonardo da Vinci 7
-        plantName:
-          type: string
-          description: Name of the installation
-          example: My installation
     ConnectInstallationRequest:
       type: object
       properties:
@@ -301,6 +265,33 @@ components:
           - AUDINFOR
           - GISCE
         connectionId:
+          type: string
+    UpdateInstallation:
+      type: object
+      properties:
+        capacity:
+          type: number
+          format: float
+          description: Capacity of the installation
+          example: 10
+        plantAddress:
+          type: string
+          description: Address of the installation
+          example: Leonardo da Vinci 7
+        plantName:
+          type: string
+          description: Name of the installation
+          example: My installation
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
           type: string
     Installation:
       type: object
@@ -353,17 +344,26 @@ components:
           - DISCONNECTED
           - FAULTY
           - SESSION_EXPIRED
-    Error:
+    HttpErrorUnauthorized:
       type: object
-      required:
-      - code
-      - message
       properties:
-        code:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
           type: integer
           format: int32
-        message:
+          example: 401
+        error:
+          description: Http error description
           type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
     HttpErrorNotFound:
       type: object
       properties:

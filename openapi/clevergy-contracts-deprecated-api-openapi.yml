@@ -346,6 +346,31 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    HouseContractEnergyPriceRequest:
+      type: object
+      description: Request to put energy prices for a contract
+      properties:
+        prices:
+          type: array
+          description: List of energy prices and dates
+          items:
+            type: object
+            $ref: '#/components/schemas/HouseContractEnergyPriceItem'
+    HouseContractEnergyPriceItem:
+      type: object
+      description: Energy price and surplus price for an specific date
+      properties:
+        date:
+          type: string
+          format: date-time
+          example: '2022-12-31T23:00:00'
+          description: Date for the energy
+        price:
+          type: number
+          description: Price of the energy
+        surplusPrice:
+          type: number
+          description: Price of the surplus energy
     AssignExternalContractToContractRequest:
       type: object
       description: Request to link a contract with an eternal id
@@ -357,36 +382,6 @@ components:
           type: string
         externalContractId:
           type: string
-    HttpErrorUnauthorized:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 401
-        error:
-          description: Http error description
-          type: string
-          example: Unauthorized
-        path:
-          description: Request path
-          type: string
-          example: /auth/john.doe@gmail.com/token
-    HouseContractEnergyPriceRequest:
-      type: object
-      description: Request to put energy prices for a contract
-      properties:
-        prices:
-          type: array
-          description: List of energy prices and dates
-          items:
-            type: object
-            $ref: '#/components/schemas/HouseContractEnergyPriceItem'
     HouseContractDetail:
       type: object
       description: Detail of contract
@@ -456,41 +451,27 @@ components:
         margin:
           type: number
           format: float
-    HttpErrorBadRequest:
+    HouseContractEnergyPriceResponse:
       type: object
+      description: Energy prices and surplus prices for a contract
       properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
+        prices:
+          type: array
+          description: List of energy prices and dates
+          items:
+            type: object
+            $ref: '#/components/schemas/HouseContractEnergyPriceItem'
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
           type: integer
           format: int32
-          example: 400
-        error:
-          description: Http error description
+        message:
           type: string
-          example: Bad Request
-        path:
-          description: Request path
-          type: string
-          example: /users
-    HouseContractEnergyPriceItem:
-      type: object
-      description: Energy price and surplus price for an specific date
-      properties:
-        date:
-          type: string
-          format: date-time
-          example: '2022-12-31T23:00:00'
-          description: Date for the energy
-        price:
-          type: number
-          description: Price of the energy
-        surplusPrice:
-          type: number
-          description: Price of the surplus energy
     CreateHouseContract:
       type: object
       description: Create house contract request
@@ -574,27 +555,26 @@ components:
           type: string
           example: ES0000000000000000000000
           description: International Bank Account Number (IBAN)
-    HouseContractEnergyPriceResponse:
+    HttpErrorUnauthorized:
       type: object
-      description: Energy prices and surplus prices for a contract
       properties:
-        prices:
-          type: array
-          description: List of energy prices and dates
-          items:
-            type: object
-            $ref: '#/components/schemas/HouseContractEnergyPriceItem'
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
           type: integer
           format: int32
-        message:
+          example: 401
+        error:
+          description: Http error description
           type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
     HttpErrorNotFound:
       type: object
       properties:
@@ -615,6 +595,26 @@ components:
           description: Request path
           type: string
           example: /auth/alice.smith@gmail.com/token
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
   securitySchemes:
     key:
       type: apiKey

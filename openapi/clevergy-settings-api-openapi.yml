@@ -105,7 +105,7 @@ components:
           format: int32
         message:
           type: string
-    HttpErrorUnauthorized:
+    HttpErrorNotFound:
       type: object
       properties:
         timestamp:
@@ -116,15 +116,15 @@ components:
           description: Http error code
           type: integer
           format: int32
-          example: 401
+          example: 404
         error:
           description: Http error description
           type: string
-          example: Unauthorized
+          example: Not Found
         path:
           description: Request path
           type: string
-          example: /auth/john.doe@gmail.com/token
+          example: /auth/alice.smith@gmail.com/token
     HouseSettings:
       type: object
       properties:
@@ -167,7 +167,7 @@ components:
             - PHOTOVOLTAIC_SOLAR_PANEL
             - SOLAR_THERMAL_PANEL
             - WASHING_MACHINE
-    HttpErrorNotFound:
+    HttpErrorUnauthorized:
       type: object
       properties:
         timestamp:
@@ -178,15 +178,15 @@ components:
           description: Http error code
           type: integer
           format: int32
-          example: 404
+          example: 401
         error:
           description: Http error description
           type: string
-          example: Not Found
+          example: Unauthorized
         path:
           description: Request path
           type: string
-          example: /auth/alice.smith@gmail.com/token
+          example: /auth/john.doe@gmail.com/token
   securitySchemes:
     key:
       type: apiKey

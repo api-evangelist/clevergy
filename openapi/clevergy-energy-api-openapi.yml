@@ -196,7 +196,55 @@ paths:
               $ref: '#/components/schemas/StoreHouseEnergiesRequest'
 components:
   schemas:
-    HttpErrorUnauthorized:
+    EnergyEntry:
+      type: object
+      properties:
+        wh:
+          type: number
+          format: float
+        date:
+          type: string
+          format: date-time
+        dateTo:
+          type: string
+          format: date-time
+          description: Not mandatory, if not provided, dateTo is one hour more than date.
+      required:
+      - date
+      - wh
+    EnergyComparison:
+      required:
+      - currentYear
+      - profile
+      properties:
+        consumption:
+          type: number
+          format: float
+          description: Energy consumption of the house
+        currentYear:
+          type: boolean
+          description: If the comparison is for the current year
+        profile:
+          type: string
+          enum:
+          - EFFICIENT,
+          - MEDIUM,
+          - INEFFICIENT
+          - NO_PROFILE
+          description: Current profile of the house
+        similarHomesConsumption:
+          type: number
+          format: float
+          description: Average consumption of similar homes. Can  be null (depends on configuration)
+        energyEfficientHomesConsumption:
+          type: number
+          format: float
+          description: Average consumption of energy efficient homes. Can be null (depends on configuration)
+        neighborhoodHomesConsumption:
+          type: number
+          format: float
+          description: Average consumption of homes in the neighborhood
+    HttpErrorForbidden:
       type: object
       properties:
         timestamp:
@@ -207,25 +255,26 @@ components:
           description: Http error code
           type: integer
           format: int32
-          example: 401
+          example: 403
         error:
           description: Http error description
           type: string
-          example: Unauthorized
+          example: Forbidden
         path:
           description: Request path
           type: string
-          example: /auth/john.doe@gmail.com/token
-    StoreHouseEnergiesRequest:
+          example: /users/U4NW5zdmstUtRZW5Oi3S2CR5l0U2/houses
+    Error:
       type: object
       required:
-      - energies
+      - code
+      - message
       properties:
-        energies:
-          type: array
-          items:
-            type: object
-            $ref: '#/components/schemas/EnergyEntry'
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     EnergyItem:
       type: object
       properties:
@@ -302,39 +351,7 @@ components:
             - energy
       required:
       - date
-    EnergyComparison:
-      required:
-      - currentYear
-      - profile
-      properties:
-        consumption:
-          type: number
-          format: float
-          description: Energy consumption of the house
-        currentYear:
-          type: boolean
-          description: If the comparison is for the current year
-        profile:
-          type: string
-          enum:
-          - EFFICIENT,
-          - MEDIUM,
-          - INEFFICIENT
-          - NO_PROFILE
-          description: Current profile of the house
-        similarHomesConsumption:
-          type: number
-          format: float
-          description: Average consumption of similar homes. Can  be null (depends on configuration)
-        energyEfficientHomesConsumption:
-          type: number
-          format: float
-          description: Average consumption of energy efficient homes. Can be null (depends on configuration)
-        neighborhoodHomesConsumption:
-          type: number
-          format: float
-          description: Average consumption of homes in the neighborhood
-    HttpErrorForbidden:
+    HttpErrorUnauthorized:
       type: object
       properties:
         timestamp:
@@ -345,42 +362,15 @@ components:
           description: Http error code
           type: integer
           format: int32
-          example: 403
+          example: 401
         error:
           description: Http error description
           type: string
-          example: Forbidden
+          example: Unauthorized
         path:
           description: Request path
           type: string
-          example: /users/U4NW5zdmstUtRZW5Oi3S2CR5l0U2/houses
-    EnergyEntry:
-      type: object
-      properties:
-        wh:
-          type: number
-          format: float
-        date:
-          type: string
-          format: date-time
-        dateTo:
-          type: string
-          format: date-time
-          description: Not mandatory, if not provided, dateTo is one hour more than date.
-      required:
-      - date
-      - wh
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
+          example: /auth/john.doe@gmail.com/token
     HttpErrorNotFound:
       type: object
       properties:
@@ -401,6 +391,16 @@ components:
           description: Request path
           type: string
           example: /auth/alice.smith@gmail.com/token
+    StoreHouseEnergiesRequest:
+      type: object
+      required:
+      - energies
+      properties:
+        energies:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/EnergyEntry'
   securitySchemes:
     key:
       type: apiKey

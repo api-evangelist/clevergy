@@ -58,7 +58,7 @@ tags:
 - Solar
 - Home Energy
 - Battery Storage
-- Electric Vehicle Charging
+- EV Charging
 - Smart Home
 - Sustainability
 - Spain
@@ -726,6 +726,8 @@ apis:
   humanURL: https://docs.clever.gy/connect-api/clevergy-connect-api
   baseURL: https://connect.clever.gy
   tags:
+  - Ticketing
+  tags_raw:
   - Tickets
   properties:
   - type: OpenAPI

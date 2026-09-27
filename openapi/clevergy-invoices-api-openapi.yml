@@ -378,26 +378,6 @@ paths:
         required: true
 components:
   schemas:
-    HttpErrorUnauthorized:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 401
-        error:
-          description: Http error description
-          type: string
-          example: Unauthorized
-        path:
-          description: Request path
-          type: string
-          example: /auth/john.doe@gmail.com/token
     HttpErrorConflict:
       type: object
       properties:
@@ -414,6 +394,19 @@ components:
           description: Http error description
           type: string
           example: Conflict
+    InvoiceAnalysisId:
+      type: object
+      properties:
+        invoiceAnalysisId:
+          type: string
+          format: uuid
+          example: 044b7fef-4a80-42ac-a8c6-addd9c9d86a4
+    AnalyzeInvoice:
+      type: object
+      properties:
+        invoiceUrl:
+          type: string
+          example: https://example/invoice-123
     CreateOrUpdateInvoiceRequest:
       type: object
       description: Request to create a new invoice
@@ -521,26 +514,17 @@ components:
           format: double
           example: 350.75
           description: Total energy consumption recorded in the invoice in kWh
-    HttpErrorBadRequest:
+    Error:
       type: object
+      required:
+      - code
+      - message
       properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
+        code:
           type: integer
           format: int32
-          example: 400
-        error:
-          description: Http error description
+        message:
           type: string
-          example: Bad Request
-        path:
-          description: Request path
-          type: string
-          example: /users
     Invoice:
       type: object
       description: Invoice information
@@ -715,30 +699,26 @@ components:
           type: string
           format: date
           example: '2026-03-05'
-    AnalyzeInvoice:
+    HttpErrorUnauthorized:
       type: object
       properties:
-        invoiceUrl:
+        timestamp:
+          description: Request date and time
           type: string
-          example: https://example/invoice-123
-    InvoiceAnalysisId:
-      type: object
-      properties:
-        invoiceAnalysisId:
-          type: string
-          format: uuid
-          example: 044b7fef-4a80-42ac-a8c6-addd9c9d86a4
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
           type: integer
           format: int32
-        message:
+          example: 401
+        error:
+          description: Http error description
           type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
     HttpErrorNotFound:
       type: object
       properties:
@@ -759,6 +739,26 @@ components:
           description: Request path
           type: string
           example: /auth/alice.smith@gmail.com/token
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
   securitySchemes:
     key:
       type: apiKey

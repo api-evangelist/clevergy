@@ -304,26 +304,6 @@ paths:
         required: true
 components:
   schemas:
-    HttpErrorUnauthorized:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 401
-        error:
-          description: Http error description
-          type: string
-          example: Unauthorized
-        path:
-          description: Request path
-          type: string
-          example: /auth/john.doe@gmail.com/token
     HttpErrorConflict:
       type: object
       properties:
@@ -340,6 +320,23 @@ components:
           description: Http error description
           type: string
           example: Conflict
+    TariffEnergyPrice:
+      type: object
+      description: Tariff energy price
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: UTC date and hour of the price. Will be truncated to hours
+          example: '2025-01-11T10:00:00Z'
+        price:
+          type: number
+          format: float
+          description: Price in €/kWh
+          example: 0.11
+      required:
+      - date
+      - price
     Tariff:
       type: object
       description: Tariff
@@ -394,23 +391,6 @@ components:
             $ref: '#/components/schemas/TariffEnergyPrice'
       required:
       - prices
-    TariffEnergyPrice:
-      type: object
-      description: Tariff energy price
-      properties:
-        date:
-          type: string
-          format: date-time
-          description: UTC date and hour of the price. Will be truncated to hours
-          example: '2025-01-11T10:00:00Z'
-        price:
-          type: number
-          format: float
-          description: Price in €/kWh
-          example: 0.11
-      required:
-      - date
-      - price
     InvoiceTariff:
       type: object
       required:
@@ -420,11 +400,18 @@ components:
           type: number
         tariff:
           $ref: '#/components/schemas/Tariff'
-    InvoiceTariffs:
-      type: array
-      items:
-        $ref: '#/components/schemas/InvoiceTariff'
-    HttpErrorBadRequest:
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    HttpErrorUnauthorized:
       type: object
       properties:
         timestamp:
@@ -435,15 +422,39 @@ components:
           description: Http error code
           type: integer
           format: int32
-          example: 400
+          example: 401
         error:
           description: Http error description
           type: string
-          example: Bad Request
+          example: Unauthorized
         path:
           description: Request path
           type: string
-          example: /users
+          example: /auth/john.doe@gmail.com/token
+    InvoiceTariffs:
+      type: array
+      items:
+        $ref: '#/components/schemas/InvoiceTariff'
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
     CreateTariff:
       type: object
       description: Tariff
@@ -484,18 +495,7 @@ components:
         margin:
           type: number
           format: float
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    HttpErrorNotFound:
+    HttpErrorBadRequest:
       type: object
       properties:
         timestamp:
@@ -506,15 +506,15 @@ components:
           description: Http error code
           type: integer
           format: int32
-          example: 404
+          example: 400
         error:
           description: Http error description
           type: string
-          example: Not Found
+          example: Bad Request
         path:
           description: Request path
           type: string
-          example: /auth/alice.smith@gmail.com/token
+          example: /users
   securitySchemes:
     key:
       type: apiKey
