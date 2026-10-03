@@ -53,17 +53,6 @@ paths:
         description: User virtual battery transaction request
 components:
   schemas:
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
     UserVirtualBatteryTransaction:
       type: object
       required:
@@ -122,6 +111,17 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
   securitySchemes:
     key:
       type: apiKey

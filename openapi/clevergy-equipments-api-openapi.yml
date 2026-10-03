@@ -264,41 +264,6 @@ components:
       required:
       - equipmentId
       - integrationType
-    StorageEquipmentSoc:
-      type: object
-      description: Storage equipment state of charge
-      required:
-      - time
-      - soc
-      properties:
-        time:
-          type: string
-          format: date-time
-          description: Time of measurement
-        soc:
-          type: number
-          format: float
-          description: State of charge in percentage
-    HttpErrorBadRequest:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 400
-        error:
-          description: Http error description
-          type: string
-          example: Bad Request
-        path:
-          description: Request path
-          type: string
-          example: /users
     HouseEquipments:
       type: object
       properties:
@@ -316,68 +281,6 @@ components:
           items:
             type: object
             $ref: '#/components/schemas/ScheduleStorageActionItem'
-    Equipment:
-      type: object
-      required:
-      - equipmentId
-      - integrationId
-      - vendor
-      properties:
-        equipmentId:
-          type: string
-          format: uuid
-        integrationId:
-          type: string
-          format: uuid
-        vendor:
-          type: string
-    EquipmentsPage:
-      type: object
-      description: Page of equipments
-      properties:
-        cursor:
-          type: string
-          format: uuid
-          description: Cursor for next page request
-        elements:
-          type: array
-          description: List of equipments
-          items:
-            type: object
-            $ref: '#/components/schemas/Equipment'
-      required:
-      - elements
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    HttpErrorUnauthorized:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 401
-        error:
-          description: Http error description
-          type: string
-          example: Unauthorized
-        path:
-          description: Request path
-          type: string
-          example: /auth/john.doe@gmail.com/token
     HttpErrorNotFound:
       type: object
       properties:
@@ -454,6 +357,103 @@ components:
           format: float
           description: Rated capacity in kWh
           example: 50
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
+    StorageEquipmentSoc:
+      type: object
+      description: Storage equipment state of charge
+      required:
+      - time
+      - soc
+      properties:
+        time:
+          type: string
+          format: date-time
+          description: Time of measurement
+        soc:
+          type: number
+          format: float
+          description: State of charge in percentage
+    EquipmentsPage:
+      type: object
+      description: Page of equipments
+      properties:
+        cursor:
+          type: string
+          format: uuid
+          description: Cursor for next page request
+        elements:
+          type: array
+          description: List of equipments
+          items:
+            type: object
+            $ref: '#/components/schemas/Equipment'
+      required:
+      - elements
+    Equipment:
+      type: object
+      required:
+      - equipmentId
+      - integrationId
+      - vendor
+      properties:
+        equipmentId:
+          type: string
+          format: uuid
+        integrationId:
+          type: string
+          format: uuid
+        vendor:
+          type: string
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
   securitySchemes:
     key:
       type: apiKey

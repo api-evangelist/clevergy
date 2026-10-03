@@ -240,32 +240,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    ConnectInstallationRequest:
-      type: object
-      properties:
-        installationId:
-          type: string
-      required:
-      - installationId
-    AssignExternalUserIdToUser:
-      type: object
-      description: External user  assignation request
-      required:
-      - userId
-      - externalUserId
-      - vendor
-      properties:
-        userId:
-          type: string
-        externalUserId:
-          type: string
-        vendor:
-          type: string
-          enum:
-          - AUDINFOR
-          - GISCE
-        connectionId:
-          type: string
     UpdateInstallation:
       type: object
       properties:
@@ -282,17 +256,33 @@ components:
           type: string
           description: Name of the installation
           example: My installation
-    Error:
+    ConnectInstallationRequest:
       type: object
-      required:
-      - code
-      - message
       properties:
-        code:
+        installationId:
+          type: string
+      required:
+      - installationId
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
           type: integer
           format: int32
-        message:
+          example: 404
+        error:
+          description: Http error description
           type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
     Installation:
       type: object
       required:
@@ -344,6 +334,25 @@ components:
           - DISCONNECTED
           - FAULTY
           - SESSION_EXPIRED
+    AssignExternalUserIdToUser:
+      type: object
+      description: External user  assignation request
+      required:
+      - userId
+      - externalUserId
+      - vendor
+      properties:
+        userId:
+          type: string
+        externalUserId:
+          type: string
+        vendor:
+          type: string
+          enum:
+          - AUDINFOR
+          - GISCE
+        connectionId:
+          type: string
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -364,26 +373,17 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    HttpErrorNotFound:
+    Error:
       type: object
+      required:
+      - code
+      - message
       properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
+        code:
           type: integer
           format: int32
-          example: 404
-        error:
-          description: Http error description
+        message:
           type: string
-          example: Not Found
-        path:
-          description: Request path
-          type: string
-          example: /auth/alice.smith@gmail.com/token
   securitySchemes:
     key:
       type: apiKey

@@ -401,29 +401,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    UserRegistration:
-      type: object
-      properties:
-        name:
-          type: string
-          example: John
-        surname:
-          type: string
-          example: Doe
-        email:
-          type: string
-          format: email
-          example: john.doe@example.com
-        dni:
-          type: string
-          example: 12345678X
-        phoneNumber:
-          type: string
-          example: '600000000'
-        language:
-          type: string
-          example: es-ES
-          description: User language in BCP 47 format
     UsersPageElement:
       type: object
       properties:
@@ -442,23 +419,6 @@ components:
         nif:
           type: string
           example: 00000000T
-    UserAppDevicesList:
-      type: array
-      items:
-        type: object
-        $ref: '#/components/schemas/UserAppDevice'
-    UserAppDevice:
-      type: object
-      description: User app device
-      properties:
-        userId:
-          type: string
-          format: uuid
-        deviceToken:
-          type: string
-      required:
-      - userId
-      - deviceToken
     HttpErrorForbidden:
       type: object
       properties:
@@ -479,6 +439,94 @@ components:
           description: Request path
           type: string
           example: /users/U4NW5zdmstUtRZW5Oi3S2CR5l0U2/houses
+    HttpErrorUserExists:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 409
+        error:
+          description: Http error description
+          type: string
+          example: User exists
+    UpdateUser:
+      type: object
+      properties:
+        name:
+          type: string
+          example: John
+        surname:
+          type: string
+          example: Doe
+        email:
+          type: string
+          format: email
+          example: john.doe@example.com
+        dni:
+          type: string
+          example: 12345678X
+        phoneNumber:
+          type: string
+          example: '600000000'
+    UserAppDevicesList:
+      type: array
+      items:
+        type: object
+        $ref: '#/components/schemas/UserAppDevice'
+    UserCreated:
+      type: object
+      properties:
+        id:
+          type: string
+          example: U4NW5zdmstUtRZW5Oi3S2CR5l0U2
+        status:
+          type: string
+          example: INITIAL
+    AuthorizeUserRequest:
+      type: object
+      properties:
+        cups:
+          description: The ID of the supply point to authorize
+          type: string
+        authorizedUserId:
+          description: The ID of the user to authorize
+          type: string
+        status:
+          description: The authorization status
+          type: string
+          enum:
+          - AUTHORIZED
+          - REVOKED
+      required:
+      - cups
+      - authorizedUserId
+      - status
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
     UserHouses:
       type: array
       items:
@@ -504,34 +552,18 @@ components:
             type: string
             format: date-time
             example: '2023-12-31T22:00:00'
-    UpdateUser:
+    UserAppDevice:
       type: object
+      description: User app device
       properties:
-        name:
+        userId:
           type: string
-          example: John
-        surname:
+          format: uuid
+        deviceToken:
           type: string
-          example: Doe
-        email:
-          type: string
-          format: email
-          example: john.doe@example.com
-        dni:
-          type: string
-          example: 12345678X
-        phoneNumber:
-          type: string
-          example: '600000000'
-    UserCreated:
-      type: object
-      properties:
-        id:
-          type: string
-          example: U4NW5zdmstUtRZW5Oi3S2CR5l0U2
-        status:
-          type: string
-          example: INITIAL
+      required:
+      - userId
+      - deviceToken
     User:
       type: object
       properties:
@@ -562,36 +594,6 @@ components:
       - id
       - email
       - optOutCode
-    AuthorizeUserRequest:
-      type: object
-      properties:
-        cups:
-          description: The ID of the supply point to authorize
-          type: string
-        authorizedUserId:
-          description: The ID of the user to authorize
-          type: string
-        status:
-          description: The authorization status
-          type: string
-          enum:
-          - AUTHORIZED
-          - REVOKED
-      required:
-      - cups
-      - authorizedUserId
-      - status
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
     UsersPage:
       type: object
       description: Paginated list of users
@@ -620,62 +622,6 @@ components:
       - totalPages
       - totalElements
       - elements
-    HttpErrorUnauthorized:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 401
-        error:
-          description: Http error description
-          type: string
-          example: Unauthorized
-        path:
-          description: Request path
-          type: string
-          example: /auth/john.doe@gmail.com/token
-    HttpErrorNotFound:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 404
-        error:
-          description: Http error description
-          type: string
-          example: Not Found
-        path:
-          description: Request path
-          type: string
-          example: /auth/alice.smith@gmail.com/token
-    HttpErrorUserExists:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 409
-        error:
-          description: Http error description
-          type: string
-          example: User exists
     HttpErrorBadRequest:
       type: object
       properties:
@@ -696,6 +642,60 @@ components:
           description: Request path
           type: string
           example: /users
+    UserRegistration:
+      type: object
+      properties:
+        name:
+          type: string
+          example: John
+        surname:
+          type: string
+          example: Doe
+        email:
+          type: string
+          format: email
+          example: john.doe@example.com
+        dni:
+          type: string
+          example: 12345678X
+        phoneNumber:
+          type: string
+          example: '600000000'
+        language:
+          type: string
+          example: es-ES
+          description: User language in BCP 47 format
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
   securitySchemes:
     key:
       type: apiKey

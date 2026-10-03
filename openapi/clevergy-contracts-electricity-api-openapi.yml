@@ -289,17 +289,6 @@ components:
           description: Http error description
           type: string
           example: Conflict
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
     ElectricityContractRequest:
       type: object
       description: Request to create or update an electricity contract
@@ -576,26 +565,6 @@ components:
           type: string
           description: Contract number
           example: EC-12345
-    HttpErrorUnauthorized:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 401
-        error:
-          description: Http error description
-          type: string
-          example: Unauthorized
-        path:
-          description: Request path
-          type: string
-          example: /auth/john.doe@gmail.com/token
     HttpErrorNotFound:
       type: object
       properties:
@@ -636,6 +605,37 @@ components:
           description: Request path
           type: string
           example: /users
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
   securitySchemes:
     key:
       type: apiKey

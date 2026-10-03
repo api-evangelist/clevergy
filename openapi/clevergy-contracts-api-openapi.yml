@@ -118,16 +118,6 @@ paths:
         required: true
 components:
   schemas:
-    ContractEnergyPriceResponse:
-      type: object
-      description: Energy prices and surplus prices for a contract
-      properties:
-        prices:
-          type: array
-          description: List of energy prices and dates
-          items:
-            type: object
-            $ref: '#/components/schemas/ContractEnergyPriceItem'
     ContractEnergyPriceItem:
       type: object
       description: Energy price and surplus price for an specific date
@@ -154,9 +144,9 @@ components:
           format: int32
         message:
           type: string
-    ContractEnergyPriceRequest:
+    ContractEnergyPriceResponse:
       type: object
-      description: Request to put energy prices for a contract
+      description: Energy prices and surplus prices for a contract
       properties:
         prices:
           type: array
@@ -164,26 +154,6 @@ components:
           items:
             type: object
             $ref: '#/components/schemas/ContractEnergyPriceItem'
-    HttpErrorUnauthorized:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 401
-        error:
-          description: Http error description
-          type: string
-          example: Unauthorized
-        path:
-          description: Request path
-          type: string
-          example: /auth/john.doe@gmail.com/token
     HttpErrorBadRequest:
       type: object
       properties:
@@ -204,6 +174,36 @@ components:
           description: Request path
           type: string
           example: /users
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    ContractEnergyPriceRequest:
+      type: object
+      description: Request to put energy prices for a contract
+      properties:
+        prices:
+          type: array
+          description: List of energy prices and dates
+          items:
+            type: object
+            $ref: '#/components/schemas/ContractEnergyPriceItem'
   securitySchemes:
     key:
       type: apiKey

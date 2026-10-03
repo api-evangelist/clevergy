@@ -73,6 +73,16 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    SmartDevicesPower:
+      type: object
+      properties:
+        subtype:
+          type: string
+        vendor:
+          type: string
+        power:
+          type: number
+          format: float
     EnergyCommunityPower:
       type: object
       properties:
@@ -85,28 +95,7 @@ components:
         production:
           type: number
           format: float
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    SmartDevicesPower:
-      type: object
-      properties:
-        subtype:
-          type: string
-        vendor:
-          type: string
-        power:
-          type: number
-          format: float
-    HttpErrorUnauthorized:
+    HttpErrorNotFound:
       type: object
       properties:
         timestamp:
@@ -117,15 +106,15 @@ components:
           description: Http error code
           type: integer
           format: int32
-          example: 401
+          example: 404
         error:
           description: Http error description
           type: string
-          example: Unauthorized
+          example: Not Found
         path:
           description: Request path
           type: string
-          example: /auth/john.doe@gmail.com/token
+          example: /auth/alice.smith@gmail.com/token
     PowerItem:
       type: object
       properties:
@@ -172,7 +161,7 @@ components:
           items:
             type: object
             $ref: '#/components/schemas/SmartDevicesPower'
-    HttpErrorNotFound:
+    HttpErrorUnauthorized:
       type: object
       properties:
         timestamp:
@@ -183,15 +172,26 @@ components:
           description: Http error code
           type: integer
           format: int32
-          example: 404
+          example: 401
         error:
           description: Http error description
           type: string
-          example: Not Found
+          example: Unauthorized
         path:
           description: Request path
           type: string
-          example: /auth/alice.smith@gmail.com/token
+          example: /auth/john.doe@gmail.com/token
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
   securitySchemes:
     key:
       type: apiKey

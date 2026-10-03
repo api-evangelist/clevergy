@@ -161,22 +161,6 @@ paths:
               $ref: '#/components/schemas/UpdateEnergyCommunityHouseRequest'
 components:
   schemas:
-    EnergyCommunityHouse:
-      type: object
-      description: Assign a house to an energy community
-      required:
-      - houseId
-      - share
-      properties:
-        houseId:
-          type: string
-          description: House Id
-        share:
-          type: number
-          description: Share (in percentage) in the energy community
-        installationId:
-          type: string
-          description: Installation Id
     HttpErrorForbidden:
       type: object
       properties:
@@ -197,6 +181,22 @@ components:
           description: Request path
           type: string
           example: /users/U4NW5zdmstUtRZW5Oi3S2CR5l0U2/houses
+    EnergyCommunityHouse:
+      type: object
+      description: Assign a house to an energy community
+      required:
+      - houseId
+      - share
+      properties:
+        houseId:
+          type: string
+          description: House Id
+        share:
+          type: number
+          description: Share (in percentage) in the energy community
+        installationId:
+          type: string
+          description: Installation Id
     RemoveEnergyCommunityHouseRequest:
       type: object
       description: Remove energy community house
@@ -209,17 +209,6 @@ components:
         installationId:
           type: string
           description: Installation Id
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
     UpdateEnergyCommunityHouseRequest:
       type: object
       description: Update energy community house share
@@ -236,26 +225,6 @@ components:
         installationId:
           type: string
           description: Installation Id
-    HttpErrorUnauthorized:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 401
-        error:
-          description: Http error description
-          type: string
-          example: Unauthorized
-        path:
-          description: Request path
-          type: string
-          example: /auth/john.doe@gmail.com/token
     HttpErrorNotFound:
       type: object
       properties:
@@ -296,6 +265,37 @@ components:
           description: Request path
           type: string
           example: /users
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
   securitySchemes:
     key:
       type: apiKey

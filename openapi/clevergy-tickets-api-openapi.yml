@@ -189,33 +189,6 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    CommentAttachmentUrl:
-      type: object
-      description: Signed url to attach a file to a comment
-      properties:
-        url:
-          type: string
-          description: The signed url to upload the file. Valid for 15 minutes. Send a PUT request to this url with the file as form data.
-      required:
-      - url
-    CommentRequest:
-      type: object
-      properties:
-        message:
-          type: string
-      required:
-      - message
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
     Comment:
       type: object
       properties:
@@ -248,6 +221,15 @@ components:
       - attachments
       - createdAt
       - updatedAt
+    CommentAttachmentUrl:
+      type: object
+      description: Signed url to attach a file to a comment
+      properties:
+        url:
+          type: string
+          description: The signed url to upload the file. Valid for 15 minutes. Send a PUT request to this url with the file as form data.
+      required:
+      - url
     CommentAttachmentRequest:
       type: object
       description: Request to get a signed url to upload a file for a comment
@@ -257,46 +239,6 @@ components:
           description: The name of the file to upload. It should include the extension. If this file already exists, it will be overwritten.
       required:
       - fileName
-    HttpErrorUnauthorized:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 401
-        error:
-          description: Http error description
-          type: string
-          example: Unauthorized
-        path:
-          description: Request path
-          type: string
-          example: /auth/john.doe@gmail.com/token
-    HttpErrorNotFound:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 404
-        error:
-          description: Http error description
-          type: string
-          example: Not Found
-        path:
-          description: Request path
-          type: string
-          example: /auth/alice.smith@gmail.com/token
     Ticket:
       type: object
       description: Ticket
@@ -345,19 +287,33 @@ components:
       - description
       - createdAt
       - updatedAt
-    UpdateTicketRequest:
+    HttpErrorNotFound:
       type: object
       properties:
-        status:
+        timestamp:
+          description: Request date and time
           type: string
-          enum:
-          - NEW
-          - OPEN
-          - PENDING
-          - SOLVED
-          - CLOSED
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    CommentRequest:
+      type: object
+      properties:
+        message:
+          type: string
       required:
-      - status
+      - message
     HttpErrorBadRequest:
       type: object
       properties:
@@ -378,6 +334,50 @@ components:
           description: Request path
           type: string
           example: /users
+    UpdateTicketRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - NEW
+          - OPEN
+          - PENDING
+          - SOLVED
+          - CLOSED
+      required:
+      - status
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
   securitySchemes:
     key:
       type: apiKey
