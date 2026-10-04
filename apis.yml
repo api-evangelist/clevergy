@@ -890,6 +890,9 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: CapabilityMap
+  url: capabilities/clevergy-capability-edges.yml
+  name: Clevergy Business Capability Map
 - type: Overlay
   url: overlays/clevergy-connect-api-overlay.yaml
 - type: Website

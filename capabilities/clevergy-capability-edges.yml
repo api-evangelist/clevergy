@@ -1,0 +1,37 @@
+slug: clevergy
+provider: Clevergy
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 2
+edges:
+- tag: Sales Opportunities
+  spec_file: clevergy-sales-opportunities-api-openapi.yml
+  capability_id: BC-410.30
+  capability_id_l1: BC-410
+  capability_name: Opportunity & Pipeline Management
+  confidence: 0.85
+  evidence: GET /sales-opportunities 'List sales opportunities'; PATCH /sales-opportunities/contract/{id}
+    'Update contract sales opportunity status'; schema SalesOpportunitySummary
+  reason: Operations list, inspect, status-update and delete sales opportunities generated for contracts
+    — a lead/opportunity pipeline surface, which is Opportunity & Pipeline Management. Slight residual
+    ambiguity only about whether it sits under account or pipeline management.
+- tag: Tariffs
+  spec_file: clevergy-tariffs-api-openapi.yml
+  capability_id: BC-440.20
+  capability_id_l1: BC-440
+  capability_name: Price List Management
+  confidence: 0.7
+  evidence: POST /tariffs createTariff 'Create new tariff'; PUT /tariffs/{tariffId}/energy-prices 'Set
+    tariff energy prices'; schemas Tariff, TariffEnergyPrice
+  reason: Full CRUD over tariffs plus setting their energy prices is maintenance of a price book / rate
+    catalogue, which maps to Price List Management. Confidence moderate because energy tariffs here may
+    also serve comparison/analysis of existing market rates rather than the vendor's own price setting.
