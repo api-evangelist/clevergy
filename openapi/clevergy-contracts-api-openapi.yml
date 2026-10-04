@@ -118,6 +118,26 @@ paths:
         required: true
 components:
   schemas:
+    ContractEnergyPriceRequest:
+      type: object
+      description: Request to put energy prices for a contract
+      properties:
+        prices:
+          type: array
+          description: List of energy prices and dates
+          items:
+            type: object
+            $ref: '#/components/schemas/ContractEnergyPriceItem'
+    ContractEnergyPriceResponse:
+      type: object
+      description: Energy prices and surplus prices for a contract
+      properties:
+        prices:
+          type: array
+          description: List of energy prices and dates
+          items:
+            type: object
+            $ref: '#/components/schemas/ContractEnergyPriceItem'
     ContractEnergyPriceItem:
       type: object
       description: Energy price and surplus price for an specific date
@@ -133,27 +153,6 @@ components:
         surplusPrice:
           type: number
           description: Price of the surplus energy
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    ContractEnergyPriceResponse:
-      type: object
-      description: Energy prices and surplus prices for a contract
-      properties:
-        prices:
-          type: array
-          description: List of energy prices and dates
-          items:
-            type: object
-            $ref: '#/components/schemas/ContractEnergyPriceItem'
     HttpErrorBadRequest:
       type: object
       properties:
@@ -174,6 +173,17 @@ components:
           description: Request path
           type: string
           example: /users
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -194,16 +204,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    ContractEnergyPriceRequest:
-      type: object
-      description: Request to put energy prices for a contract
-      properties:
-        prices:
-          type: array
-          description: List of energy prices and dates
-          items:
-            type: object
-            $ref: '#/components/schemas/ContractEnergyPriceItem'
   securitySchemes:
     key:
       type: apiKey

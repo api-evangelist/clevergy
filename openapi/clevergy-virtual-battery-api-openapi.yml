@@ -53,24 +53,6 @@ paths:
         description: User virtual battery transaction request
 components:
   schemas:
-    UserVirtualBatteryTransaction:
-      type: object
-      required:
-      - date
-      - amount
-      - totalBalance
-      properties:
-        date:
-          type: string
-          format: date
-        amount:
-          type: number
-          format: float
-          description: Transaction amount (in kW)
-        totalBalance:
-          type: number
-          format: float
-          description: Total balance after the transaction (in kW)
     HttpErrorUnprocessableEntity:
       type: object
       properties:
@@ -91,6 +73,35 @@ components:
           description: Request path
           type: string
           example: /users
+    UserVirtualBatteryTransaction:
+      type: object
+      required:
+      - date
+      - amount
+      - totalBalance
+      properties:
+        date:
+          type: string
+          format: date
+        amount:
+          type: number
+          format: float
+          description: Transaction amount (in kW)
+        totalBalance:
+          type: number
+          format: float
+          description: Total balance after the transaction (in kW)
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -111,17 +122,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
   securitySchemes:
     key:
       type: apiKey

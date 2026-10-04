@@ -228,56 +228,33 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    SalesOpportunitySummary:
+    SalesOpportunitiesPage:
       type: object
-      description: Summary of a sales opportunity
+      description: Paginated list of sales opportunities
       properties:
-        id:
-          type: string
-        product:
-          type: string
-          enum:
-          - CONTRACT
-          - SOLAR
-          - HEATPUMP
-          - BATTERY
-          - DEVICES
-          - EV
-          - OTHER
-        status:
-          type: string
-          enum:
-          - STARTED
-          - POTENTIAL
-          - FORMALIZED
-          - CONVERTED
-          - REJECTED
-        userId:
-          type: string
-        holder:
-          type: string
-        email:
-          type: string
-        phoneNumber:
-          type: string
-        nif:
-          type: string
-        houseId:
-          type: string
-        address:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
+        size:
+          type: integer
+          description: Number of elements in the page requested
+        page:
+          type: integer
+          description: Number of the page requested
+        totalPages:
+          type: integer
+          description: Number of total pages
+        totalElements:
+          type: integer
+          description: Number of total elements in the list
+        elements:
+          type: array
+          description: List of sales opportunities
+          items:
+            $ref: '#/components/schemas/SalesOpportunitySummary'
       required:
-      - id
-      - product
-      - status
-      - createdAt
-      - updatedAt
+      - size
+      - page
+      - totalPages
+      - totalElements
+      - elements
     ContractSalesOpportunity:
       type: object
       description: CONTRACT sales opportunity details including contracting payload fields
@@ -365,33 +342,6 @@ components:
       - status
       - createdAt
       - updatedAt
-    SalesOpportunitiesPage:
-      type: object
-      description: Paginated list of sales opportunities
-      properties:
-        size:
-          type: integer
-          description: Number of elements in the page requested
-        page:
-          type: integer
-          description: Number of the page requested
-        totalPages:
-          type: integer
-          description: Number of total pages
-        totalElements:
-          type: integer
-          description: Number of total elements in the list
-        elements:
-          type: array
-          description: List of sales opportunities
-          items:
-            $ref: '#/components/schemas/SalesOpportunitySummary'
-      required:
-      - size
-      - page
-      - totalPages
-      - totalElements
-      - elements
     PatchContractSalesOpportunityRequest:
       type: object
       description: Partial update for a CONTRACT sales opportunity
@@ -446,6 +396,67 @@ components:
           description: Request path
           type: string
           example: /users
+    SalesOpportunitySummary:
+      type: object
+      description: Summary of a sales opportunity
+      properties:
+        id:
+          type: string
+        product:
+          type: string
+          enum:
+          - CONTRACT
+          - SOLAR
+          - HEATPUMP
+          - BATTERY
+          - DEVICES
+          - EV
+          - OTHER
+        status:
+          type: string
+          enum:
+          - STARTED
+          - POTENTIAL
+          - FORMALIZED
+          - CONVERTED
+          - REJECTED
+        userId:
+          type: string
+        holder:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        nif:
+          type: string
+        houseId:
+          type: string
+        address:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - product
+      - status
+      - createdAt
+      - updatedAt
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -466,17 +477,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
   securitySchemes:
     key:
       type: apiKey

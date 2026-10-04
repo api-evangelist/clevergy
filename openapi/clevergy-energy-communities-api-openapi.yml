@@ -181,9 +181,76 @@ components:
           description: Request path
           type: string
           example: /users/U4NW5zdmstUtRZW5Oi3S2CR5l0U2/houses
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
     EnergyCommunityHouse:
       type: object
       description: Assign a house to an energy community
+      required:
+      - houseId
+      - share
+      properties:
+        houseId:
+          type: string
+          description: House Id
+        share:
+          type: number
+          description: Share (in percentage) in the energy community
+        installationId:
+          type: string
+          description: Installation Id
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    UpdateEnergyCommunityHouseRequest:
+      type: object
+      description: Update energy community house share
       required:
       - houseId
       - share
@@ -209,62 +276,6 @@ components:
         installationId:
           type: string
           description: Installation Id
-    UpdateEnergyCommunityHouseRequest:
-      type: object
-      description: Update energy community house share
-      required:
-      - houseId
-      - share
-      properties:
-        houseId:
-          type: string
-          description: House Id
-        share:
-          type: number
-          description: Share (in percentage) in the energy community
-        installationId:
-          type: string
-          description: Installation Id
-    HttpErrorNotFound:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 404
-        error:
-          description: Http error description
-          type: string
-          example: Not Found
-        path:
-          description: Request path
-          type: string
-          example: /auth/alice.smith@gmail.com/token
-    HttpErrorBadRequest:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 400
-        error:
-          description: Http error description
-          type: string
-          example: Bad Request
-        path:
-          description: Request path
-          type: string
-          example: /users
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -285,17 +296,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
   securitySchemes:
     key:
       type: apiKey

@@ -378,6 +378,26 @@ paths:
         required: true
 components:
   schemas:
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
     CreateOrUpdateInvoiceRequest:
       type: object
       description: Request to create a new invoice
@@ -485,22 +505,114 @@ components:
           format: double
           example: 350.75
           description: Total energy consumption recorded in the invoice in kWh
-    HttpErrorConflict:
+    HttpErrorBadRequest:
       type: object
       properties:
         timestamp:
           description: Request date and time
           type: string
-          example: '2025-01-01T12:00:00.508+00:00'
+          example: '2023-12-26T10:23:19.508+00:00'
         status:
           description: Http error code
           type: integer
           format: int32
-          example: 409
+          example: 400
         error:
           description: Http error description
           type: string
-          example: Conflict
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
+    InvoiceAnalysisId:
+      type: object
+      properties:
+        invoiceAnalysisId:
+          type: string
+          format: uuid
+          example: 044b7fef-4a80-42ac-a8c6-addd9c9d86a4
+    InvoiceAnalysis:
+      type: object
+      properties:
+        dni:
+          type: string
+          example: 1111111A
+        name:
+          type: string
+          example: John
+        surname:
+          type: string
+          example: Doe
+        houseCity:
+          type: string
+          example: Madrid
+        houseStreet:
+          type: string
+          example: Avenida
+        houseNumber:
+          type: string
+          example: '53'
+        houseProvince:
+          type: string
+          example: Madrid
+        postalCode:
+          type: string
+          example: '28005'
+        cups:
+          type: string
+          example: ES0000000000000000EYOF
+        marketer:
+          type: string
+          example: Iberdrola
+        contractedPowerP1:
+          type: number
+          format: float
+          example: '4.6'
+        contractedPowerP2:
+          type: number
+          format: float
+          example: '4.6'
+        maxPowerDemandedP1:
+          type: number
+          format: float
+          example: '3.4'
+        maxPowerDemandedP2:
+          type: number
+          format: float
+          example: '3.5'
+        energyConsumptionP1:
+          type: number
+          format: float
+          example: '50.0'
+        energyConsumptionP2:
+          type: number
+          format: float
+          example: '152.0'
+        energyConsumptionP3:
+          type: number
+          format: float
+          example: '108.0'
+        totalEnergyConsumption:
+          type: number
+          format: float
+          example: '210.0'
+        totalCost:
+          type: number
+          format: float
+          example: '78.77'
+        startDate:
+          type: string
+          format: date
+          example: '2024-01-01'
+        endDate:
+          type: string
+          format: date
+          example: '2024-01-31'
+        renovationDate:
+          type: string
+          format: date
+          example: '2026-03-05'
     Invoice:
       type: object
       description: Invoice information
@@ -594,140 +706,39 @@ components:
           - OVERDUE
           example: PAID
           description: Payment status of the invoice
-    HttpErrorNotFound:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 404
-        error:
-          description: Http error description
-          type: string
-          example: Not Found
-        path:
-          description: Request path
-          type: string
-          example: /auth/alice.smith@gmail.com/token
-    InvoiceAnalysisId:
-      type: object
-      properties:
-        invoiceAnalysisId:
-          type: string
-          format: uuid
-          example: 044b7fef-4a80-42ac-a8c6-addd9c9d86a4
-    InvoiceAnalysis:
-      type: object
-      properties:
-        dni:
-          type: string
-          example: 1111111A
-        name:
-          type: string
-          example: John
-        surname:
-          type: string
-          example: Doe
-        houseCity:
-          type: string
-          example: Madrid
-        houseStreet:
-          type: string
-          example: Avenida
-        houseNumber:
-          type: string
-          example: '53'
-        houseProvince:
-          type: string
-          example: Madrid
-        postalCode:
-          type: string
-          example: '28005'
-        cups:
-          type: string
-          example: ES0000000000000000EYOF
-        marketer:
-          type: string
-          example: Iberdrola
-        contractedPowerP1:
-          type: number
-          format: float
-          example: '4.6'
-        contractedPowerP2:
-          type: number
-          format: float
-          example: '4.6'
-        maxPowerDemandedP1:
-          type: number
-          format: float
-          example: '3.4'
-        maxPowerDemandedP2:
-          type: number
-          format: float
-          example: '3.5'
-        energyConsumptionP1:
-          type: number
-          format: float
-          example: '50.0'
-        energyConsumptionP2:
-          type: number
-          format: float
-          example: '152.0'
-        energyConsumptionP3:
-          type: number
-          format: float
-          example: '108.0'
-        totalEnergyConsumption:
-          type: number
-          format: float
-          example: '210.0'
-        totalCost:
-          type: number
-          format: float
-          example: '78.77'
-        startDate:
-          type: string
-          format: date
-          example: '2024-01-01'
-        endDate:
-          type: string
-          format: date
-          example: '2024-01-31'
-        renovationDate:
-          type: string
-          format: date
-          example: '2026-03-05'
-    HttpErrorBadRequest:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 400
-        error:
-          description: Http error description
-          type: string
-          example: Bad Request
-        path:
-          description: Request path
-          type: string
-          example: /users
     AnalyzeInvoice:
       type: object
       properties:
         invoiceUrl:
           type: string
           example: https://example/invoice-123
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    HttpErrorConflict:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2025-01-01T12:00:00.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 409
+        error:
+          description: Http error description
+          type: string
+          example: Conflict
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -748,17 +759,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
   securitySchemes:
     key:
       type: apiKey

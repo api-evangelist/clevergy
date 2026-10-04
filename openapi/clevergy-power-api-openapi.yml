@@ -73,28 +73,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    SmartDevicesPower:
-      type: object
-      properties:
-        subtype:
-          type: string
-        vendor:
-          type: string
-        power:
-          type: number
-          format: float
-    EnergyCommunityPower:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-          - SOLAR
-          - WIND
-          - HYDRO
-        production:
-          type: number
-          format: float
     HttpErrorNotFound:
       type: object
       properties:
@@ -115,6 +93,39 @@ components:
           description: Request path
           type: string
           example: /auth/alice.smith@gmail.com/token
+    EnergyCommunityPower:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - SOLAR
+          - WIND
+          - HYDRO
+        production:
+          type: number
+          format: float
+    SmartDevicesPower:
+      type: object
+      properties:
+        subtype:
+          type: string
+        vendor:
+          type: string
+        power:
+          type: number
+          format: float
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     PowerItem:
       type: object
       properties:
@@ -181,17 +192,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
   securitySchemes:
     key:
       type: apiKey

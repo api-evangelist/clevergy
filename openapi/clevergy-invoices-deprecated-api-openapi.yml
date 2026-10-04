@@ -112,6 +112,34 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    SignedUrl:
+      type: object
+      description: Bucket url to put a file
+      properties:
+        url:
+          type: string
+          example: https://signed_url_to_put_the_object
+          description: Signed url to put the object
     CreateHouseInvoice:
       type: object
       description: Create house invoice request
@@ -195,34 +223,17 @@ components:
           format: float
           example: '0.25'
           description: Virtual wallet balance €
-    HttpErrorNotFound:
+    Error:
       type: object
+      required:
+      - code
+      - message
       properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
+        code:
           type: integer
           format: int32
-          example: 404
-        error:
-          description: Http error description
+        message:
           type: string
-          example: Not Found
-        path:
-          description: Request path
-          type: string
-          example: /auth/alice.smith@gmail.com/token
-    SignedUrl:
-      type: object
-      description: Bucket url to put a file
-      properties:
-        url:
-          type: string
-          example: https://signed_url_to_put_the_object
-          description: Signed url to put the object
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -243,17 +254,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
   securitySchemes:
     key:
       type: apiKey

@@ -53,6 +53,15 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    AuthUser:
+      type: object
+      properties:
+        jwt:
+          type: string
+          example: eyJhbGciOiJSJhdWQiOiJodHRwczopdC5nb29nbGVhcGlzLmNvbS9nb29nbGUuaWRlbnRpdHkuaWRlbnRpdHl0b29sa2l0LnYxLklkZW50aXRF0IjoxNzAzODU0NzY5LCJpc3MiOiJwdWJsaWMtZnJvbnQtYmFja0BjbGV2ZXJneS5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsInN1YiI6InB1YmxpYy1mcm9udC1iYWNrQGNXA
+        userId:
+          type: string
+          example: U7Q02aMJm9VokGsNIZmID3BK25p3
     Error:
       type: object
       required:
@@ -104,15 +113,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    AuthUser:
-      type: object
-      properties:
-        jwt:
-          type: string
-          example: eyJhbGciOiJSJhdWQiOiJodHRwczopdC5nb29nbGVhcGlzLmNvbS9nb29nbGUuaWRlbnRpdHkuaWRlbnRpdHl0b29sa2l0LnYxLklkZW50aXRF0IjoxNzAzODU0NzY5LCJpc3MiOiJwdWJsaWMtZnJvbnQtYmFja0BjbGV2ZXJneS5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsInN1YiI6InB1YmxpYy1mcm9udC1iYWNrQGNXA
-        userId:
-          type: string
-          example: U7Q02aMJm9VokGsNIZmID3BK25p3
   securitySchemes:
     key:
       type: apiKey

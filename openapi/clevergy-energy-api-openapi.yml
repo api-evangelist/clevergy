@@ -196,6 +196,16 @@ paths:
               $ref: '#/components/schemas/StoreHouseEnergiesRequest'
 components:
   schemas:
+    StoreHouseEnergiesRequest:
+      type: object
+      required:
+      - energies
+      properties:
+        energies:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/EnergyEntry'
     HttpErrorForbidden:
       type: object
       properties:
@@ -216,38 +226,6 @@ components:
           description: Request path
           type: string
           example: /users/U4NW5zdmstUtRZW5Oi3S2CR5l0U2/houses
-    EnergyComparison:
-      required:
-      - currentYear
-      - profile
-      properties:
-        consumption:
-          type: number
-          format: float
-          description: Energy consumption of the house
-        currentYear:
-          type: boolean
-          description: If the comparison is for the current year
-        profile:
-          type: string
-          enum:
-          - EFFICIENT,
-          - MEDIUM,
-          - INEFFICIENT
-          - NO_PROFILE
-          description: Current profile of the house
-        similarHomesConsumption:
-          type: number
-          format: float
-          description: Average consumption of similar homes. Can  be null (depends on configuration)
-        energyEfficientHomesConsumption:
-          type: number
-          format: float
-          description: Average consumption of energy efficient homes. Can be null (depends on configuration)
-        neighborhoodHomesConsumption:
-          type: number
-          format: float
-          description: Average consumption of homes in the neighborhood
     HttpErrorNotFound:
       type: object
       properties:
@@ -268,16 +246,6 @@ components:
           description: Request path
           type: string
           example: /auth/alice.smith@gmail.com/token
-    StoreHouseEnergiesRequest:
-      type: object
-      required:
-      - energies
-      properties:
-        energies:
-          type: array
-          items:
-            type: object
-            $ref: '#/components/schemas/EnergyEntry'
     EnergyEntry:
       type: object
       properties:
@@ -370,6 +338,49 @@ components:
             - energy
       required:
       - date
+    EnergyComparison:
+      required:
+      - currentYear
+      - profile
+      properties:
+        consumption:
+          type: number
+          format: float
+          description: Energy consumption of the house
+        currentYear:
+          type: boolean
+          description: If the comparison is for the current year
+        profile:
+          type: string
+          enum:
+          - EFFICIENT,
+          - MEDIUM,
+          - INEFFICIENT
+          - NO_PROFILE
+          description: Current profile of the house
+        similarHomesConsumption:
+          type: number
+          format: float
+          description: Average consumption of similar homes. Can  be null (depends on configuration)
+        energyEfficientHomesConsumption:
+          type: number
+          format: float
+          description: Average consumption of energy efficient homes. Can be null (depends on configuration)
+        neighborhoodHomesConsumption:
+          type: number
+          format: float
+          description: Average consumption of homes in the neighborhood
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -390,17 +401,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
   securitySchemes:
     key:
       type: apiKey

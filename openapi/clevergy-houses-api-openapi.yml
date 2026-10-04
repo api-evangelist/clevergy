@@ -251,6 +251,53 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    CreateHouse:
+      type: object
+      description: Create house request
+      properties:
+        address:
+          type: string
+          description: House address (should not exceed 124 characters)
+          example: Leonardo da Vinci 7
+        postalCode:
+          type: string
+          description: House postal code
+          example: '41092'
+        cups:
+          type: string
+          description: Deprecated. When filled, CUPS of the supply to connect. This field will be removed in a future version.
+          example: ES0022123456781234AB0F
+    UpdateHouse:
+      type: object
+      properties:
+        address:
+          type: string
+          description: address (horizontal address. street, number, etc)
+        postalCode:
+          type: string
+          description: postal code
+        selfConsumptionTypeCode:
+          type: string
+          description: self consumption type code (2 digits). Deprecated, the API ignores this field.
+          x-deprecated: true
+    SupplyPoint:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+          - GAS
+          - ELECTRICITY
+        houseId:
+          type: string
+        cups:
+          type: string
+      required:
+      - id
+      - type
+      - houseId
     HttpErrorForbidden:
       type: object
       properties:
@@ -271,6 +318,36 @@ components:
           description: Request path
           type: string
           example: /users/U4NW5zdmstUtRZW5Oi3S2CR5l0U2/houses
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    HouseIntegration:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - NONE
+          - CONNECTED
+      required:
+      - status
     UserHouseWithIntegrations:
       type: object
       properties:
@@ -329,6 +406,26 @@ components:
       - houseMetadata
       - houseIntegrations
       - supplyPoints
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
     HouseCreated:
       type: object
       description: Create house response
@@ -359,39 +456,57 @@ components:
           type: string
         postalCode:
           type: string
-    UpdateHouse:
+    HouseIntegrations:
       type: object
       properties:
-        address:
-          type: string
-          description: address (horizontal address. street, number, etc)
-        postalCode:
-          type: string
-          description: postal code
-        selfConsumptionTypeCode:
-          type: string
-          description: self consumption type code (2 digits). Deprecated, the API ignores this field.
-          x-deprecated: true
-    HttpErrorNotFound:
+        huaweiB2C:
+          type: object
+          $ref: '#/components/schemas/HouseIntegration'
+        froniusB2C:
+          type: object
+          $ref: '#/components/schemas/HouseIntegration'
+        enodeB2C:
+          type: object
+          $ref: '#/components/schemas/HouseIntegration'
+        sungrowB2C:
+          type: object
+          $ref: '#/components/schemas/HouseIntegration'
+        smaB2C:
+          type: object
+          $ref: '#/components/schemas/HouseIntegration'
+        wibeeeSolar:
+          type: object
+          $ref: '#/components/schemas/HouseIntegration'
+        shelly:
+          type: object
+          $ref: '#/components/schemas/HouseIntegration'
+    HousesPage:
       type: object
+      description: Page of houses
       properties:
-        timestamp:
-          description: Request date and time
+        cursor:
           type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
+          format: uuid
+          description: Cursor for next page request
+        elements:
+          type: array
+          description: List of houses
+          items:
+            type: object
+            $ref: '#/components/schemas/House'
+      required:
+      - elements
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
           type: integer
           format: int32
-          example: 404
-        error:
-          description: Http error description
+        message:
           type: string
-          example: Not Found
-        path:
-          description: Request path
-          type: string
-          example: /auth/alice.smith@gmail.com/token
     UserHouses:
       type: array
       items:
@@ -417,110 +532,6 @@ components:
             type: string
             format: date-time
             example: '2023-12-31T22:00:00'
-    CreateHouse:
-      type: object
-      description: Create house request
-      properties:
-        address:
-          type: string
-          description: House address (should not exceed 124 characters)
-          example: Leonardo da Vinci 7
-        postalCode:
-          type: string
-          description: House postal code
-          example: '41092'
-        cups:
-          type: string
-          description: Deprecated. When filled, CUPS of the supply to connect. This field will be removed in a future version.
-          example: ES0022123456781234AB0F
-    SupplyPoint:
-      type: object
-      properties:
-        id:
-          type: string
-        type:
-          type: string
-          enum:
-          - GAS
-          - ELECTRICITY
-        houseId:
-          type: string
-        cups:
-          type: string
-      required:
-      - id
-      - type
-      - houseId
-    HouseIntegration:
-      type: object
-      properties:
-        status:
-          type: string
-          enum:
-          - NONE
-          - CONNECTED
-      required:
-      - status
-    HousesPage:
-      type: object
-      description: Page of houses
-      properties:
-        cursor:
-          type: string
-          format: uuid
-          description: Cursor for next page request
-        elements:
-          type: array
-          description: List of houses
-          items:
-            type: object
-            $ref: '#/components/schemas/House'
-      required:
-      - elements
-    HouseIntegrations:
-      type: object
-      properties:
-        huaweiB2C:
-          type: object
-          $ref: '#/components/schemas/HouseIntegration'
-        froniusB2C:
-          type: object
-          $ref: '#/components/schemas/HouseIntegration'
-        enodeB2C:
-          type: object
-          $ref: '#/components/schemas/HouseIntegration'
-        sungrowB2C:
-          type: object
-          $ref: '#/components/schemas/HouseIntegration'
-        smaB2C:
-          type: object
-          $ref: '#/components/schemas/HouseIntegration'
-        wibeeeSolar:
-          type: object
-          $ref: '#/components/schemas/HouseIntegration'
-        shelly:
-          type: object
-          $ref: '#/components/schemas/HouseIntegration'
-    HttpErrorBadRequest:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 400
-        error:
-          description: Http error description
-          type: string
-          example: Bad Request
-        path:
-          description: Request path
-          type: string
-          example: /users
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -541,17 +552,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
   securitySchemes:
     key:
       type: apiKey

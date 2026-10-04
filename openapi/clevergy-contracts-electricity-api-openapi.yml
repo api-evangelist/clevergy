@@ -273,150 +273,26 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    HttpErrorConflict:
+    HttpErrorNotFound:
       type: object
       properties:
         timestamp:
           description: Request date and time
           type: string
-          example: '2025-01-01T12:00:00.508+00:00'
+          example: '2023-12-26T10:23:19.508+00:00'
         status:
           description: Http error code
           type: integer
           format: int32
-          example: 409
+          example: 404
         error:
           description: Http error description
           type: string
-          example: Conflict
-    ElectricityContractRequest:
-      type: object
-      description: Request to create or update an electricity contract
-      required:
-      - startDate
-      - status
-      - address
-      - cups
-      - importTariffType
-      - tariffName
-      - tariffAccess
-      - contractPower
-      properties:
-        startDate:
+          example: Not Found
+        path:
+          description: Request path
           type: string
-          format: date
-          example: '2023-02-01'
-          description: Start date of the electricity contract
-        endDate:
-          type: string
-          format: date
-          example: '2024-02-01'
-          description: End date of the electricity contract
-        status:
-          type: string
-          enum:
-          - ACTIVE
-          - INACTIVE
-          example: ACTIVE
-          description: Status of the electricity contract
-        address:
-          type: string
-          example: 123 Main St, Springfield
-          description: Address associated with the electricity contract
-        postalCode:
-          type: string
-          example: '12345'
-          description: Postal code associated with the electricity contract
-        cups:
-          type: string
-          example: ES1234567890123456AB
-          description: Universal Point of Supply Code (CUPS)
-        importTariffType:
-          type: string
-          enum:
-          - FIXED
-          - PVPC
-          - INDEXED
-          - PERIOD
-          - CUSTOM
-          example: FIXED
-          description: Import tariff type
-        surplusTariffType:
-          type: string
-          enum:
-          - FIXED
-          - PVPC
-          - INDEXED
-          - PERIOD
-          - CUSTOM
-          example: FIXED
-          description: Surplus tariff type
-        tariffAccess:
-          type: string
-          enum:
-          - 2.0TD
-          - 3.0TD
-          - 6.1TD
-          example: 2.0TD
-          description: Tariff access code
-        tariffName:
-          type: string
-          example: Standard Electricity Tariff
-          description: Name of the tariff applied to the contract
-        iban:
-          type: string
-          example: ES7620770024003102575766
-          description: IBAN for billing purposes
-        distributorName:
-          type: string
-          example: Electricity Distributor S.A.
-          description: Name of the electricity distributor company
-        holderName:
-          type: string
-          example: John Doe
-          description: Name of the contract holder
-        commercialName:
-          type: string
-          example: Electricity Commercial S.L.
-          description: Name of the commercial electricity company
-        contractPower:
-          type: array
-          items:
-            type: number
-            format: double
-          example:
-          - 3.45
-          - 3.45
-          description: Contracted power for each period (kW). The array should contain up to 6 periods.
-        powerPrices:
-          type: array
-          items:
-            type: number
-            format: double
-          example:
-          - 0.1
-          - 0.05
-          description: Power prices for each period (€/kW). The array should contain up to 6 periods.
-        energyPrices:
-          type: array
-          items:
-            type: number
-            format: double
-          example:
-          - 0.15
-          description: Energy prices for each period (€/kWh). The array should contain up to 6 periods.
-        surplusPrices:
-          type: array
-          items:
-            type: number
-            format: double
-          example:
-          - 0.05
-          description: Surplus prices for each period (€/kWh). The array should contain up to 6 periods.
-        contractNumber:
-          type: string
-          description: Contract number
-          example: EC-12345
+          example: /auth/alice.smith@gmail.com/token
     ElectricityContract:
       type: object
       description: Electricity contract details
@@ -565,26 +441,6 @@ components:
           type: string
           description: Contract number
           example: EC-12345
-    HttpErrorNotFound:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 404
-        error:
-          description: Http error description
-          type: string
-          example: Not Found
-        path:
-          description: Request path
-          type: string
-          example: /auth/alice.smith@gmail.com/token
     HttpErrorBadRequest:
       type: object
       properties:
@@ -605,6 +461,161 @@ components:
           description: Request path
           type: string
           example: /users
+    ElectricityContractRequest:
+      type: object
+      description: Request to create or update an electricity contract
+      required:
+      - startDate
+      - status
+      - address
+      - cups
+      - importTariffType
+      - tariffName
+      - tariffAccess
+      - contractPower
+      properties:
+        startDate:
+          type: string
+          format: date
+          example: '2023-02-01'
+          description: Start date of the electricity contract
+        endDate:
+          type: string
+          format: date
+          example: '2024-02-01'
+          description: End date of the electricity contract
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          example: ACTIVE
+          description: Status of the electricity contract
+        address:
+          type: string
+          example: 123 Main St, Springfield
+          description: Address associated with the electricity contract
+        postalCode:
+          type: string
+          example: '12345'
+          description: Postal code associated with the electricity contract
+        cups:
+          type: string
+          example: ES1234567890123456AB
+          description: Universal Point of Supply Code (CUPS)
+        importTariffType:
+          type: string
+          enum:
+          - FIXED
+          - PVPC
+          - INDEXED
+          - PERIOD
+          - CUSTOM
+          example: FIXED
+          description: Import tariff type
+        surplusTariffType:
+          type: string
+          enum:
+          - FIXED
+          - PVPC
+          - INDEXED
+          - PERIOD
+          - CUSTOM
+          example: FIXED
+          description: Surplus tariff type
+        tariffAccess:
+          type: string
+          enum:
+          - 2.0TD
+          - 3.0TD
+          - 6.1TD
+          example: 2.0TD
+          description: Tariff access code
+        tariffName:
+          type: string
+          example: Standard Electricity Tariff
+          description: Name of the tariff applied to the contract
+        iban:
+          type: string
+          example: ES7620770024003102575766
+          description: IBAN for billing purposes
+        distributorName:
+          type: string
+          example: Electricity Distributor S.A.
+          description: Name of the electricity distributor company
+        holderName:
+          type: string
+          example: John Doe
+          description: Name of the contract holder
+        commercialName:
+          type: string
+          example: Electricity Commercial S.L.
+          description: Name of the commercial electricity company
+        contractPower:
+          type: array
+          items:
+            type: number
+            format: double
+          example:
+          - 3.45
+          - 3.45
+          description: Contracted power for each period (kW). The array should contain up to 6 periods.
+        powerPrices:
+          type: array
+          items:
+            type: number
+            format: double
+          example:
+          - 0.1
+          - 0.05
+          description: Power prices for each period (€/kW). The array should contain up to 6 periods.
+        energyPrices:
+          type: array
+          items:
+            type: number
+            format: double
+          example:
+          - 0.15
+          description: Energy prices for each period (€/kWh). The array should contain up to 6 periods.
+        surplusPrices:
+          type: array
+          items:
+            type: number
+            format: double
+          example:
+          - 0.05
+          description: Surplus prices for each period (€/kWh). The array should contain up to 6 periods.
+        contractNumber:
+          type: string
+          description: Contract number
+          example: EC-12345
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    HttpErrorConflict:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2025-01-01T12:00:00.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 409
+        error:
+          description: Http error description
+          type: string
+          example: Conflict
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -625,17 +636,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
   securitySchemes:
     key:
       type: apiKey

@@ -189,6 +189,71 @@ paths:
       x-summary-source: derived
 components:
   schemas:
+    CommentAttachmentUrl:
+      type: object
+      description: Signed url to attach a file to a comment
+      properties:
+        url:
+          type: string
+          description: The signed url to upload the file. Valid for 15 minutes. Send a PUT request to this url with the file as form data.
+      required:
+      - url
+    CommentRequest:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    HttpErrorNotFound:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    CommentAttachmentRequest:
+      type: object
+      description: Request to get a signed url to upload a file for a comment
+      properties:
+        fileName:
+          type: string
+          description: The name of the file to upload. It should include the extension. If this file already exists, it will be overwritten.
+      required:
+      - fileName
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
     Comment:
       type: object
       properties:
@@ -221,24 +286,6 @@ components:
       - attachments
       - createdAt
       - updatedAt
-    CommentAttachmentUrl:
-      type: object
-      description: Signed url to attach a file to a comment
-      properties:
-        url:
-          type: string
-          description: The signed url to upload the file. Valid for 15 minutes. Send a PUT request to this url with the file as form data.
-      required:
-      - url
-    CommentAttachmentRequest:
-      type: object
-      description: Request to get a signed url to upload a file for a comment
-      properties:
-        fileName:
-          type: string
-          description: The name of the file to upload. It should include the extension. If this file already exists, it will be overwritten.
-      required:
-      - fileName
     Ticket:
       type: object
       description: Ticket
@@ -287,53 +334,6 @@ components:
       - description
       - createdAt
       - updatedAt
-    HttpErrorNotFound:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 404
-        error:
-          description: Http error description
-          type: string
-          example: Not Found
-        path:
-          description: Request path
-          type: string
-          example: /auth/alice.smith@gmail.com/token
-    CommentRequest:
-      type: object
-      properties:
-        message:
-          type: string
-      required:
-      - message
-    HttpErrorBadRequest:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 400
-        error:
-          description: Http error description
-          type: string
-          example: Bad Request
-        path:
-          description: Request path
-          type: string
-          example: /users
     UpdateTicketRequest:
       type: object
       properties:
@@ -347,6 +347,17 @@ components:
           - CLOSED
       required:
       - status
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -367,17 +378,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
   securitySchemes:
     key:
       type: apiKey

@@ -304,74 +304,6 @@ paths:
         required: true
 components:
   schemas:
-    InvoiceTariff:
-      type: object
-      required:
-      - tariff
-      properties:
-        invoiceSaving:
-          type: number
-        tariff:
-          $ref: '#/components/schemas/Tariff'
-    Tariff:
-      type: object
-      description: Tariff
-      required:
-      - id
-      - internalName
-      - commercialName
-      - type
-      properties:
-        id:
-          type: string
-        internalName:
-          type: string
-        commercialName:
-          type: string
-        commercialDescription:
-          type: string
-        powerPrices:
-          type: array
-          items:
-            type: number
-        energyPrices:
-          type: array
-          items:
-            type: number
-        provider:
-          type: string
-        type:
-          type: string
-          enum:
-          - PVPC_2_0_TD
-          - MERCADO_LIBRE_2_0_TD_FIJA
-          - MERCADO_LIBRE_2_0_TD
-          - MERCADO_LIBRE_3_0_TD
-          - INDEXADA_2_0_TD
-          - MERCADO_LIBRE_6_1_TD
-          - OMIE_MARGEN
-        solarPrice:
-          type: number
-          format: float
-        margin:
-          type: number
-          format: float
-    HttpErrorConflict:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2025-01-01T12:00:00.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 409
-        error:
-          description: Http error description
-          type: string
-          example: Conflict
     HttpErrorNotFound:
       type: object
       properties:
@@ -432,23 +364,6 @@ components:
         margin:
           type: number
           format: float
-    TariffEnergyPrice:
-      type: object
-      description: Tariff energy price
-      properties:
-        date:
-          type: string
-          format: date-time
-          description: UTC date and hour of the price. Will be truncated to hours
-          example: '2025-01-11T10:00:00Z'
-        price:
-          type: number
-          format: float
-          description: Price in €/kWh
-          example: 0.11
-      required:
-      - date
-      - price
     InvoiceTariffs:
       type: array
       items:
@@ -473,6 +388,65 @@ components:
           description: Request path
           type: string
           example: /users
+    Tariff:
+      type: object
+      description: Tariff
+      required:
+      - id
+      - internalName
+      - commercialName
+      - type
+      properties:
+        id:
+          type: string
+        internalName:
+          type: string
+        commercialName:
+          type: string
+        commercialDescription:
+          type: string
+        powerPrices:
+          type: array
+          items:
+            type: number
+        energyPrices:
+          type: array
+          items:
+            type: number
+        provider:
+          type: string
+        type:
+          type: string
+          enum:
+          - PVPC_2_0_TD
+          - MERCADO_LIBRE_2_0_TD_FIJA
+          - MERCADO_LIBRE_2_0_TD
+          - MERCADO_LIBRE_3_0_TD
+          - INDEXADA_2_0_TD
+          - MERCADO_LIBRE_6_1_TD
+          - OMIE_MARGEN
+        solarPrice:
+          type: number
+          format: float
+        margin:
+          type: number
+          format: float
+    HttpErrorConflict:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2025-01-01T12:00:00.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 409
+        error:
+          description: Http error description
+          type: string
+          example: Conflict
     TariffEnergyPrices:
       type: object
       description: Tariff energy prices
@@ -484,6 +458,43 @@ components:
             $ref: '#/components/schemas/TariffEnergyPrice'
       required:
       - prices
+    InvoiceTariff:
+      type: object
+      required:
+      - tariff
+      properties:
+        invoiceSaving:
+          type: number
+        tariff:
+          $ref: '#/components/schemas/Tariff'
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    TariffEnergyPrice:
+      type: object
+      description: Tariff energy price
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: UTC date and hour of the price. Will be truncated to hours
+          example: '2025-01-11T10:00:00Z'
+        price:
+          type: number
+          format: float
+          description: Price in €/kWh
+          example: 0.11
+      required:
+      - date
+      - price
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -504,17 +515,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
   securitySchemes:
     key:
       type: apiKey

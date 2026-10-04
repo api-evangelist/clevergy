@@ -240,6 +240,25 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    AssignExternalUserIdToUser:
+      type: object
+      description: External user  assignation request
+      required:
+      - userId
+      - externalUserId
+      - vendor
+      properties:
+        userId:
+          type: string
+        externalUserId:
+          type: string
+        vendor:
+          type: string
+          enum:
+          - AUDINFOR
+          - GISCE
+        connectionId:
+          type: string
     UpdateInstallation:
       type: object
       properties:
@@ -256,13 +275,6 @@ components:
           type: string
           description: Name of the installation
           example: My installation
-    ConnectInstallationRequest:
-      type: object
-      properties:
-        installationId:
-          type: string
-      required:
-      - installationId
     HttpErrorNotFound:
       type: object
       properties:
@@ -283,6 +295,13 @@ components:
           description: Request path
           type: string
           example: /auth/alice.smith@gmail.com/token
+    ConnectInstallationRequest:
+      type: object
+      properties:
+        installationId:
+          type: string
+      required:
+      - installationId
     Installation:
       type: object
       required:
@@ -334,24 +353,16 @@ components:
           - DISCONNECTED
           - FAULTY
           - SESSION_EXPIRED
-    AssignExternalUserIdToUser:
+    Error:
       type: object
-      description: External user  assignation request
       required:
-      - userId
-      - externalUserId
-      - vendor
+      - code
+      - message
       properties:
-        userId:
-          type: string
-        externalUserId:
-          type: string
-        vendor:
-          type: string
-          enum:
-          - AUDINFOR
-          - GISCE
-        connectionId:
+        code:
+          type: integer
+          format: int32
+        message:
           type: string
     HttpErrorUnauthorized:
       type: object
@@ -373,17 +384,6 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
   securitySchemes:
     key:
       type: apiKey
