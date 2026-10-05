@@ -1,0 +1,12 @@
+{
+ "url": "https://assets.clever.gy/swagger/connect-api.yaml?v=1790935622294",
+ "requested_url": "https://assets.clever.gy/swagger/connect-api.yaml?v=1790935622294",
+ "status": 200,
+ "content_type": "application/yaml",
+ "bytes": 164028,
+ "sha256": "2adfe8420fcf5c44c2e756be8a48b79f229fc9f5ffc18066d465c7693e33b4b2",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "equivalent",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the provider's current document describes the same operations (Jaccard 1.0), but the bytes differ, so the archive is an earlier or reformatted copy."
+}
