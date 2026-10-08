@@ -81,3 +81,21 @@ note: >-
   integration's data freshness depends on the CUSTOMER's own Enphase plan (Clevergy syncs weekly
   by default and states that higher-frequency updates require an Enphase plan with higher request
   limits) — that is Enphase's rate card, not Clevergy's.
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models: []
+  units: []
+  plans:
+  - name: Plan Starter
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods: []
+  - name: Plan Pro
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods: []
