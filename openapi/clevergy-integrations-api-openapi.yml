@@ -240,41 +240,13 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    AssignExternalUserIdToUser:
+    ConnectInstallationRequest:
       type: object
-      description: External user  assignation request
+      properties:
+        installationId:
+          type: string
       required:
-      - userId
-      - externalUserId
-      - vendor
-      properties:
-        userId:
-          type: string
-        externalUserId:
-          type: string
-        vendor:
-          type: string
-          enum:
-          - AUDINFOR
-          - GISCE
-        connectionId:
-          type: string
-    UpdateInstallation:
-      type: object
-      properties:
-        capacity:
-          type: number
-          format: float
-          description: Capacity of the installation
-          example: 10
-        plantAddress:
-          type: string
-          description: Address of the installation
-          example: Leonardo da Vinci 7
-        plantName:
-          type: string
-          description: Name of the installation
-          example: My installation
+      - installationId
     HttpErrorNotFound:
       type: object
       properties:
@@ -295,13 +267,6 @@ components:
           description: Request path
           type: string
           example: /auth/alice.smith@gmail.com/token
-    ConnectInstallationRequest:
-      type: object
-      properties:
-        installationId:
-          type: string
-      required:
-      - installationId
     Installation:
       type: object
       required:
@@ -353,6 +318,25 @@ components:
           - DISCONNECTED
           - FAULTY
           - SESSION_EXPIRED
+    AssignExternalUserIdToUser:
+      type: object
+      description: External user  assignation request
+      required:
+      - userId
+      - externalUserId
+      - vendor
+      properties:
+        userId:
+          type: string
+        externalUserId:
+          type: string
+        vendor:
+          type: string
+          enum:
+          - AUDINFOR
+          - GISCE
+        connectionId:
+          type: string
     Error:
       type: object
       required:
@@ -364,6 +348,22 @@ components:
           format: int32
         message:
           type: string
+    UpdateInstallation:
+      type: object
+      properties:
+        capacity:
+          type: number
+          format: float
+          description: Capacity of the installation
+          example: 10
+        plantAddress:
+          type: string
+          description: Address of the installation
+          example: Leonardo da Vinci 7
+        plantName:
+          type: string
+          description: Name of the installation
+          example: My installation
     HttpErrorUnauthorized:
       type: object
       properties:

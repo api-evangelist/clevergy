@@ -243,37 +243,13 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    HouseEquipment:
+    HouseEquipments:
       type: object
       properties:
-        equipmentId:
-          type: string
-        integrationType:
-          type: string
-          enum:
-          - SOLAR
-          - DISTRIBUTOR
-          - HYDRO
-          - SMART_DEVICE
-          - ERP
-          - DATADIS
-          - COMMUNITY
-          - STORAGE
-        vendor:
-          type: string
-      required:
-      - equipmentId
-      - integrationType
-    ScheduleStorageActionRequest:
-      type: object
-      description: Request to create a set of scheduled actions for a storage equipment
-      properties:
-        actions:
+        equipments:
           type: array
-          description: List of actions to be scheduled
           items:
-            type: object
-            $ref: '#/components/schemas/ScheduleStorageActionItem'
+            $ref: '#/components/schemas/HouseEquipment'
     HttpErrorNotFound:
       type: object
       properties:
@@ -294,6 +270,27 @@ components:
           description: Request path
           type: string
           example: /auth/alice.smith@gmail.com/token
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    ScheduleStorageActionRequest:
+      type: object
+      description: Request to create a set of scheduled actions for a storage equipment
+      properties:
+        actions:
+          type: array
+          description: List of actions to be scheduled
+          items:
+            type: object
+            $ref: '#/components/schemas/ScheduleStorageActionItem'
     StorageEquipment:
       type: object
       description: Storage equipment data
@@ -321,76 +318,6 @@ components:
           format: float
           description: Rated capacity in kWh
           example: 50
-    Equipment:
-      type: object
-      required:
-      - equipmentId
-      - integrationId
-      - vendor
-      properties:
-        equipmentId:
-          type: string
-          format: uuid
-        integrationId:
-          type: string
-          format: uuid
-        vendor:
-          type: string
-    StorageEquipmentSoc:
-      type: object
-      description: Storage equipment state of charge
-      required:
-      - time
-      - soc
-      properties:
-        time:
-          type: string
-          format: date-time
-          description: Time of measurement
-        soc:
-          type: number
-          format: float
-          description: State of charge in percentage
-    HttpErrorBadRequest:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 400
-        error:
-          description: Http error description
-          type: string
-          example: Bad Request
-        path:
-          description: Request path
-          type: string
-          example: /users
-    HttpErrorUnauthorized:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 401
-        error:
-          description: Http error description
-          type: string
-          example: Unauthorized
-        path:
-          description: Request path
-          type: string
-          example: /auth/john.doe@gmail.com/token
     ScheduleStorageActionItem:
       type: object
       properties:
@@ -420,24 +347,27 @@ components:
       required:
       - date
       - action
-    HouseEquipments:
+    HouseEquipment:
       type: object
       properties:
-        equipments:
-          type: array
-          items:
-            $ref: '#/components/schemas/HouseEquipment'
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
+        equipmentId:
           type: string
+        integrationType:
+          type: string
+          enum:
+          - SOLAR
+          - DISTRIBUTOR
+          - HYDRO
+          - SMART_DEVICE
+          - ERP
+          - DATADIS
+          - COMMUNITY
+          - STORAGE
+        vendor:
+          type: string
+      required:
+      - equipmentId
+      - integrationType
     EquipmentsPage:
       type: object
       description: Page of equipments
@@ -454,6 +384,76 @@ components:
             $ref: '#/components/schemas/Equipment'
       required:
       - elements
+    StorageEquipmentSoc:
+      type: object
+      description: Storage equipment state of charge
+      required:
+      - time
+      - soc
+      properties:
+        time:
+          type: string
+          format: date-time
+          description: Time of measurement
+        soc:
+          type: number
+          format: float
+          description: State of charge in percentage
+    Equipment:
+      type: object
+      required:
+      - equipmentId
+      - integrationId
+      - vendor
+      properties:
+        equipmentId:
+          type: string
+          format: uuid
+        integrationId:
+          type: string
+          format: uuid
+        vendor:
+          type: string
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
   securitySchemes:
     key:
       type: apiKey

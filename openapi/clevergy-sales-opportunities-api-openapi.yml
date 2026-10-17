@@ -228,33 +228,37 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    SalesOpportunitiesPage:
+    HttpErrorNotFound:
       type: object
-      description: Paginated list of sales opportunities
       properties:
-        size:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
           type: integer
-          description: Number of elements in the page requested
-        page:
-          type: integer
-          description: Number of the page requested
-        totalPages:
-          type: integer
-          description: Number of total pages
-        totalElements:
-          type: integer
-          description: Number of total elements in the list
-        elements:
-          type: array
-          description: List of sales opportunities
-          items:
-            $ref: '#/components/schemas/SalesOpportunitySummary'
+          format: int32
+          example: 404
+        error:
+          description: Http error description
+          type: string
+          example: Not Found
+        path:
+          description: Request path
+          type: string
+          example: /auth/alice.smith@gmail.com/token
+    Error:
+      type: object
       required:
-      - size
-      - page
-      - totalPages
-      - totalElements
-      - elements
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     ContractSalesOpportunity:
       type: object
       description: CONTRACT sales opportunity details including contracting payload fields
@@ -356,46 +360,6 @@ components:
           - REJECTED
       required:
       - status
-    HttpErrorNotFound:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 404
-        error:
-          description: Http error description
-          type: string
-          example: Not Found
-        path:
-          description: Request path
-          type: string
-          example: /auth/alice.smith@gmail.com/token
-    HttpErrorBadRequest:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 400
-        error:
-          description: Http error description
-          type: string
-          example: Bad Request
-        path:
-          description: Request path
-          type: string
-          example: /users
     SalesOpportunitySummary:
       type: object
       description: Summary of a sales opportunity
@@ -446,17 +410,33 @@ components:
       - status
       - createdAt
       - updatedAt
-    Error:
+    SalesOpportunitiesPage:
       type: object
-      required:
-      - code
-      - message
+      description: Paginated list of sales opportunities
       properties:
-        code:
+        size:
           type: integer
-          format: int32
-        message:
-          type: string
+          description: Number of elements in the page requested
+        page:
+          type: integer
+          description: Number of the page requested
+        totalPages:
+          type: integer
+          description: Number of total pages
+        totalElements:
+          type: integer
+          description: Number of total elements in the list
+        elements:
+          type: array
+          description: List of sales opportunities
+          items:
+            $ref: '#/components/schemas/SalesOpportunitySummary'
+      required:
+      - size
+      - page
+      - totalPages
+      - totalElements
+      - elements
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -477,6 +457,26 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
   securitySchemes:
     key:
       type: apiKey

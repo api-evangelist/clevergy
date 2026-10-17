@@ -398,6 +398,86 @@ components:
           description: Request path
           type: string
           example: /auth/alice.smith@gmail.com/token
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    HttpErrorConflict:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2025-01-01T12:00:00.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 409
+        error:
+          description: Http error description
+          type: string
+          example: Conflict
+    InvoiceAnalysisId:
+      type: object
+      properties:
+        invoiceAnalysisId:
+          type: string
+          format: uuid
+          example: 044b7fef-4a80-42ac-a8c6-addd9c9d86a4
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
+    AnalyzeInvoice:
+      type: object
+      properties:
+        invoiceUrl:
+          type: string
+          example: https://example/invoice-123
+    HttpErrorUnauthorized:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 401
+        error:
+          description: Http error description
+          type: string
+          example: Unauthorized
+        path:
+          description: Request path
+          type: string
+          example: /auth/john.doe@gmail.com/token
     CreateOrUpdateInvoiceRequest:
       type: object
       description: Request to create a new invoice
@@ -505,33 +585,6 @@ components:
           format: double
           example: 350.75
           description: Total energy consumption recorded in the invoice in kWh
-    HttpErrorBadRequest:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 400
-        error:
-          description: Http error description
-          type: string
-          example: Bad Request
-        path:
-          description: Request path
-          type: string
-          example: /users
-    InvoiceAnalysisId:
-      type: object
-      properties:
-        invoiceAnalysisId:
-          type: string
-          format: uuid
-          example: 044b7fef-4a80-42ac-a8c6-addd9c9d86a4
     InvoiceAnalysis:
       type: object
       properties:
@@ -706,59 +759,6 @@ components:
           - OVERDUE
           example: PAID
           description: Payment status of the invoice
-    AnalyzeInvoice:
-      type: object
-      properties:
-        invoiceUrl:
-          type: string
-          example: https://example/invoice-123
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    HttpErrorConflict:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2025-01-01T12:00:00.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 409
-        error:
-          description: Http error description
-          type: string
-          example: Conflict
-    HttpErrorUnauthorized:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 401
-        error:
-          description: Http error description
-          type: string
-          example: Unauthorized
-        path:
-          description: Request path
-          type: string
-          example: /auth/john.doe@gmail.com/token
   securitySchemes:
     key:
       type: apiKey

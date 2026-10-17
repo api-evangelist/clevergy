@@ -189,22 +189,17 @@ paths:
       x-summary-source: derived
 components:
   schemas:
-    CommentAttachmentUrl:
+    Error:
       type: object
-      description: Signed url to attach a file to a comment
-      properties:
-        url:
-          type: string
-          description: The signed url to upload the file. Valid for 15 minutes. Send a PUT request to this url with the file as form data.
       required:
-      - url
-    CommentRequest:
-      type: object
+      - code
+      - message
       properties:
+        code:
+          type: integer
+          format: int32
         message:
           type: string
-      required:
-      - message
     HttpErrorNotFound:
       type: object
       properties:
@@ -225,35 +220,6 @@ components:
           description: Request path
           type: string
           example: /auth/alice.smith@gmail.com/token
-    CommentAttachmentRequest:
-      type: object
-      description: Request to get a signed url to upload a file for a comment
-      properties:
-        fileName:
-          type: string
-          description: The name of the file to upload. It should include the extension. If this file already exists, it will be overwritten.
-      required:
-      - fileName
-    HttpErrorBadRequest:
-      type: object
-      properties:
-        timestamp:
-          description: Request date and time
-          type: string
-          example: '2023-12-26T10:23:19.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 400
-        error:
-          description: Http error description
-          type: string
-          example: Bad Request
-        path:
-          description: Request path
-          type: string
-          example: /users
     Comment:
       type: object
       properties:
@@ -334,30 +300,31 @@ components:
       - description
       - createdAt
       - updatedAt
-    UpdateTicketRequest:
+    CommentAttachmentRequest:
       type: object
+      description: Request to get a signed url to upload a file for a comment
       properties:
-        status:
+        fileName:
           type: string
-          enum:
-          - NEW
-          - OPEN
-          - PENDING
-          - SOLVED
-          - CLOSED
+          description: The name of the file to upload. It should include the extension. If this file already exists, it will be overwritten.
       required:
-      - status
-    Error:
+      - fileName
+    CommentAttachmentUrl:
       type: object
-      required:
-      - code
-      - message
+      description: Signed url to attach a file to a comment
       properties:
-        code:
-          type: integer
-          format: int32
+        url:
+          type: string
+          description: The signed url to upload the file. Valid for 15 minutes. Send a PUT request to this url with the file as form data.
+      required:
+      - url
+    CommentRequest:
+      type: object
+      properties:
         message:
           type: string
+      required:
+      - message
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -378,6 +345,39 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
+    UpdateTicketRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - NEW
+          - OPEN
+          - PENDING
+          - SOLVED
+          - CLOSED
+      required:
+      - status
   securitySchemes:
     key:
       type: apiKey

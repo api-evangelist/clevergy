@@ -324,70 +324,65 @@ components:
           description: Request path
           type: string
           example: /auth/alice.smith@gmail.com/token
-    CreateTariff:
+    Error:
       type: object
-      description: Tariff
       required:
-      - internalName
-      - commercialName
-      - type
+      - code
+      - message
       properties:
-        internalName:
+        code:
+          type: integer
+          format: int32
+        message:
           type: string
-        commercialName:
-          type: string
-        commercialDescription:
-          type: string
-        powerPrices:
-          type: array
-          items:
-            type: number
-        energyPrices:
-          type: array
-          items:
-            type: number
-        provider:
-          type: string
-        type:
-          type: string
-          enum:
-          - PVPC_2_0_TD
-          - MERCADO_LIBRE_2_0_TD_FIJA
-          - MERCADO_LIBRE_2_0_TD
-          - MERCADO_LIBRE_3_0_TD
-          - INDEXADA_2_0_TD
-          - MERCADO_LIBRE_6_1_TD
-          - OMIE_MARGEN
-        solarPrice:
-          type: number
-          format: float
-        margin:
-          type: number
-          format: float
-    InvoiceTariffs:
-      type: array
-      items:
-        $ref: '#/components/schemas/InvoiceTariff'
-    HttpErrorBadRequest:
+    HttpErrorConflict:
       type: object
       properties:
         timestamp:
           description: Request date and time
           type: string
-          example: '2023-12-26T10:23:19.508+00:00'
+          example: '2025-01-01T12:00:00.508+00:00'
         status:
           description: Http error code
           type: integer
           format: int32
-          example: 400
+          example: 409
         error:
           description: Http error description
           type: string
-          example: Bad Request
-        path:
-          description: Request path
+          example: Conflict
+    TariffEnergyPrices:
+      type: object
+      description: Tariff energy prices
+      properties:
+        prices:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/TariffEnergyPrice'
+      required:
+      - prices
+    InvoiceTariffs:
+      type: array
+      items:
+        $ref: '#/components/schemas/InvoiceTariff'
+    TariffEnergyPrice:
+      type: object
+      description: Tariff energy price
+      properties:
+        date:
           type: string
-          example: /users
+          format: date-time
+          description: UTC date and hour of the price. Will be truncated to hours
+          example: '2025-01-11T10:00:00Z'
+        price:
+          type: number
+          format: float
+          description: Price in €/kWh
+          example: 0.11
+      required:
+      - date
+      - price
     Tariff:
       type: object
       description: Tariff
@@ -431,33 +426,46 @@ components:
         margin:
           type: number
           format: float
-    HttpErrorConflict:
+    CreateTariff:
       type: object
+      description: Tariff
+      required:
+      - internalName
+      - commercialName
+      - type
       properties:
-        timestamp:
-          description: Request date and time
+        internalName:
           type: string
-          example: '2025-01-01T12:00:00.508+00:00'
-        status:
-          description: Http error code
-          type: integer
-          format: int32
-          example: 409
-        error:
-          description: Http error description
+        commercialName:
           type: string
-          example: Conflict
-    TariffEnergyPrices:
-      type: object
-      description: Tariff energy prices
-      properties:
-        prices:
+        commercialDescription:
+          type: string
+        powerPrices:
           type: array
           items:
-            type: object
-            $ref: '#/components/schemas/TariffEnergyPrice'
-      required:
-      - prices
+            type: number
+        energyPrices:
+          type: array
+          items:
+            type: number
+        provider:
+          type: string
+        type:
+          type: string
+          enum:
+          - PVPC_2_0_TD
+          - MERCADO_LIBRE_2_0_TD_FIJA
+          - MERCADO_LIBRE_2_0_TD
+          - MERCADO_LIBRE_3_0_TD
+          - INDEXADA_2_0_TD
+          - MERCADO_LIBRE_6_1_TD
+          - OMIE_MARGEN
+        solarPrice:
+          type: number
+          format: float
+        margin:
+          type: number
+          format: float
     InvoiceTariff:
       type: object
       required:
@@ -467,34 +475,6 @@ components:
           type: number
         tariff:
           $ref: '#/components/schemas/Tariff'
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    TariffEnergyPrice:
-      type: object
-      description: Tariff energy price
-      properties:
-        date:
-          type: string
-          format: date-time
-          description: UTC date and hour of the price. Will be truncated to hours
-          example: '2025-01-11T10:00:00Z'
-        price:
-          type: number
-          format: float
-          description: Price in €/kWh
-          example: 0.11
-      required:
-      - date
-      - price
     HttpErrorUnauthorized:
       type: object
       properties:
@@ -515,6 +495,26 @@ components:
           description: Request path
           type: string
           example: /auth/john.doe@gmail.com/token
+    HttpErrorBadRequest:
+      type: object
+      properties:
+        timestamp:
+          description: Request date and time
+          type: string
+          example: '2023-12-26T10:23:19.508+00:00'
+        status:
+          description: Http error code
+          type: integer
+          format: int32
+          example: 400
+        error:
+          description: Http error description
+          type: string
+          example: Bad Request
+        path:
+          description: Request path
+          type: string
+          example: /users
   securitySchemes:
     key:
       type: apiKey
