@@ -264,3 +264,9 @@ x-google-endpoints:
   allowCors: true
 x-google-backend:
   address: https://public-front-back-tl56gypzra-ew.a.run.app
+x-provenance:
+  method: harvested
+  publisher: Clevergy
+  source: https://assets.clever.gy/swagger/connect-api.yaml?v=1790935622294
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
